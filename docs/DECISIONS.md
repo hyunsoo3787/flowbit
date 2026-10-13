@@ -4,30 +4,31 @@ This file records the foundational decisions for Flowbit, why they were made,
 and what was considered instead. When a decision changes, do not edit the old
 entry in place: mark it **Superseded** and add a new entry that explains why.
 
-Status values: **Accepted**, **Proposed**, **Superseded by D-XXX**.
+Status values: **Accepted**, **Proposed**, **Superseded by D-XXX**. A clarification
+that keeps a decision in force is appended to its entry as a dated **Amendment**.
 
-| ID                                                                         | Decision                                                    | Status   |
-| -------------------------------------------------------------------------- | ----------------------------------------------------------- | -------- |
-| [D-001](#d-001-full-product-scope-built-in-phases)                         | Full product scope, built in phases                         | Accepted |
-| [D-002](#d-002-support-both-self-hosting-and-saas)                         | Support both self-hosting and SaaS                          | Accepted |
-| [D-003](#d-003-typescript-across-the-whole-stack)                          | TypeScript across the whole stack                           | Accepted |
-| [D-004](#d-004-separate-spa-and-api-server-in-one-monorepo)                | Separate SPA and API server in one monorepo                 | Accepted |
-| [D-005](#d-005-nestjs-for-the-api-server)                                  | NestJS for the API server                                   | Accepted |
-| [D-006](#d-006-rest--openapi-as-the-api-style)                             | REST + OpenAPI as the API style                             | Accepted |
-| [D-007](#d-007-postgresql-only-with-prisma)                                | PostgreSQL only, with Prisma                                | Accepted |
-| [D-008](#d-008-organization--workspace--board-hierarchy)                   | Organization > Workspace > Board hierarchy                  | Accepted |
-| [D-009](#d-009-authentication-methods)                                     | Authentication methods                                      | Accepted |
-| [D-010](#d-010-real-time-sync-over-websockets)                             | Real-time sync over WebSockets                              | Accepted |
-| [D-011](#d-011-open-core-licensing-agpl-30--commercial-ee)                 | Open-core licensing (AGPL-3.0 + commercial `ee/`)           | Accepted |
-| [D-012](#d-012-cla-for-external-contributions)                             | CLA for external contributions                              | Accepted |
-| [D-013](#d-013-permissive-only-dependency-policy)                          | Permissive-only dependency policy                           | Accepted |
-| [D-014](#d-014-frontend-stack)                                             | Frontend stack                                              | Accepted |
-| [D-015](#d-015-fractional-indexing-for-ordering)                           | Fractional indexing for ordering                            | Accepted |
-| [D-016](#d-016-internationalization-from-day-one-en-ko)                    | Internationalization from day one (en, ko)                  | Accepted |
-| [D-017](#d-017-responsive-web--pwa-for-mobile)                             | Responsive web + PWA for mobile                             | Accepted |
-| [D-018](#d-018-languages-for-code-docs-and-readme)                         | Languages for code, docs and README                         | Accepted |
-| [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted |
-| [D-020](#d-020-better-auth-behind-our-own-auth-module)                     | Better Auth behind our own auth module                      | Accepted |
+| ID                                                                         | Decision                                                    | Status                        |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------- |
+| [D-001](#d-001-full-product-scope-built-in-phases)                         | Full product scope, built in phases                         | Accepted                      |
+| [D-002](#d-002-support-both-self-hosting-and-saas)                         | Support both self-hosting and SaaS                          | Accepted                      |
+| [D-003](#d-003-typescript-across-the-whole-stack)                          | TypeScript across the whole stack                           | Accepted                      |
+| [D-004](#d-004-separate-spa-and-api-server-in-one-monorepo)                | Separate SPA and API server in one monorepo                 | Accepted                      |
+| [D-005](#d-005-nestjs-for-the-api-server)                                  | NestJS for the API server                                   | Accepted                      |
+| [D-006](#d-006-rest--openapi-as-the-api-style)                             | REST + OpenAPI as the API style                             | Accepted                      |
+| [D-007](#d-007-postgresql-only-with-prisma)                                | PostgreSQL only, with Prisma                                | Accepted                      |
+| [D-008](#d-008-organization--workspace--board-hierarchy)                   | Organization > Workspace > Board hierarchy                  | Accepted                      |
+| [D-009](#d-009-authentication-methods)                                     | Authentication methods                                      | Accepted                      |
+| [D-010](#d-010-real-time-sync-over-websockets)                             | Real-time sync over WebSockets                              | Accepted                      |
+| [D-011](#d-011-open-core-licensing-agpl-30--commercial-ee)                 | Open-core licensing (AGPL-3.0 + commercial `ee/`)           | Accepted                      |
+| [D-012](#d-012-cla-for-external-contributions)                             | CLA for external contributions                              | Accepted                      |
+| [D-013](#d-013-permissive-only-dependency-policy)                          | Permissive-only dependency policy                           | Accepted (amended 2026-10-13) |
+| [D-014](#d-014-frontend-stack)                                             | Frontend stack                                              | Accepted                      |
+| [D-015](#d-015-fractional-indexing-for-ordering)                           | Fractional indexing for ordering                            | Accepted                      |
+| [D-016](#d-016-internationalization-from-day-one-en-ko)                    | Internationalization from day one (en, ko)                  | Accepted                      |
+| [D-017](#d-017-responsive-web--pwa-for-mobile)                             | Responsive web + PWA for mobile                             | Accepted                      |
+| [D-018](#d-018-languages-for-code-docs-and-readme)                         | Languages for code, docs and README                         | Accepted                      |
+| [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted                      |
+| [D-020](#d-020-better-auth-behind-our-own-auth-module)                     | Better Auth behind our own auth module                      | Accepted                      |
 
 ---
 
@@ -343,6 +344,27 @@ copyleft or restricted third-party code.
   later are no longer under a permissive license. Valkey is protocol-compatible.
 - **MinIO** (AGPL) is not bundled. See D-019.
 - New dependencies are checked for their license during review.
+
+**Amendment (2026-10-13): reviewed weak-copyleft exceptions.** The first run
+of the license checker found two weak-copyleft packages among the production
+dependencies. Weak copyleft (e.g. MPL-2.0, EPL-2.0) applies per file: it puts
+obligations on changes to those files, not on code that merely uses them.
+Packages under such licenses are therefore allowed **only** if all of the
+following hold:
+
+1. They are used unmodified, as separate files, and are not copied into or
+   linked as source into Flowbit's own code.
+2. Their license notices are kept intact.
+3. They were reviewed individually and listed, with the reason, in
+   `REVIEWED_EXCEPTIONS` in `scripts/check-licenses.mjs`.
+
+Strong copyleft (GPL, LGPL, AGPL, SSPL, etc.) and source-available licenses
+remain forbidden without exception. The current exceptions are:
+
+| Package        | License | Reason                                                                                                                                       |
+| -------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `elkjs`        | EPL-2.0 | Graph layout inside Prisma Studio, shipped unmodified with the Prisma CLI that the Docker image uses to run migrations. Studio is never run. |
+| `lightningcss` | MPL-2.0 | CSS build tool, reached through Vite/Vitest peer dependencies. Not used at runtime.                                                          |
 
 ---
 

@@ -50,6 +50,30 @@ personal organization with a first workspace.
 a password or OAuth, and create a workspace. `docker compose up` runs the
 whole stack. CI is green.
 
+### Open items from phase 1
+
+These don't block phase 2, but each must be done by the deadline given.
+
+**Before accepting the first external pull request:**
+
+- [ ] Decide who the licensor is: the person or company that grants
+      `ee/LICENSE` and receives the rights in `CLA.md`. Both currently say "the
+      Flowbit maintainers", which is not a legal entity.
+- [ ] Finalize `CLA.md` (still a draft): legal review, and decide whether it
+      needs a clause that lets the rights be transferred to a successor (e.g. a
+      company founded later).
+- [ ] Replace the placeholder reporting contact `conduct@flowbit.invalid` in
+      `CODE_OF_CONDUCT.md` with a real address.
+- [ ] Enable **Private vulnerability reporting** in the GitHub repository
+      settings, so the link in `SECURITY.md` works.
+- [ ] Confirm the CLA workflow (`.github/workflows/cla.yml`) works on a real
+      pull request.
+
+**Before shipping any code in `ee/` (phase 6):**
+
+- [ ] Legal review of `ee/LICENSE` (still a draft), including how it interacts
+      with the AGPL-licensed core.
+
 ---
 
 ## Phase 2: Boards, lists, cards

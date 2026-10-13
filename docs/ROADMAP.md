@@ -52,7 +52,10 @@ whole stack. CI is green.
 
 ### Open items from phase 1
 
-These don't block phase 2, but each must be done by the deadline given.
+**Priority: low, deferred.** The approach to licensing and the contributor
+agreement hasn't been decided yet, so these items wait until it is. They don't
+block phase 2 or later development. The only hard deadlines are the ones below:
+the first external pull request, and the first code in `ee/`.
 
 **Before accepting the first external pull request:**
 

@@ -57,7 +57,9 @@ export type Env = z.infer<typeof envSchema>;
 export const ENV = Symbol('ENV');
 
 export function parseEnv(source: Record<string, string | undefined> = process.env): Env {
-  const result = envSchema.safeParse(source);
+  // Treat empty variables as unset: Docker Compose passes `${VAR:-}` through as "".
+  const defined = Object.fromEntries(Object.entries(source).filter(([, value]) => value !== ''));
+  const result = envSchema.safeParse(defined);
   if (!result.success) {
     const problems = result.error.issues
       .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)

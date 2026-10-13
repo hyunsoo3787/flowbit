@@ -1,0 +1,65 @@
+# Self-hosted Flowbit: the app, PostgreSQL and Valkey.
+#
+#   cp .env.example .env    # then set AUTH_SECRET and PUBLIC_URL
+#   docker compose up -d
+#
+# See docs/SELF_HOSTING.md for configuration, upgrades and backups.
+
+name: flowbit
+
+services:
+  flowbit:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: flowbit:local
+    restart: unless-stopped
+    ports:
+      - '${FLOWBIT_PORT:-3000}:3000'
+    environment:
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:3000}
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env (generate one with openssl rand -base64 32)}
+      DATABASE_URL: postgresql://flowbit:${POSTGRES_PASSWORD:-flowbit}@postgres:5432/flowbit
+      VALKEY_URL: redis://valkey:6379
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      AUTH_DISABLE_SIGN_UP: ${AUTH_DISABLE_SIGN_UP:-}
+      AUTH_REQUIRE_EMAIL_VERIFICATION: ${AUTH_REQUIRE_EMAIL_VERIFICATION:-}
+      AUTH_RATE_LIMIT: ${AUTH_RATE_LIMIT:-}
+      SMTP_URL: ${SMTP_URL:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: flowbit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-flowbit}
+      POSTGRES_DB: flowbit
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U flowbit -d flowbit']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'valkey-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

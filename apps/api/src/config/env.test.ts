@@ -27,6 +27,13 @@ describe('parseEnv', () => {
     ).toBe(false);
   });
 
+  it('treats empty variables as unset', () => {
+    const env = parseEnv({ ...base, PORT: '', SMTP_URL: '', AUTH_REQUIRE_EMAIL_VERIFICATION: '' });
+    expect(env.PORT).toBe(3000);
+    expect(env.SMTP_URL).toBeUndefined();
+    expect(env.AUTH_REQUIRE_EMAIL_VERIFICATION).toBe(false);
+  });
+
   it('enables auth rate limiting in production', () => {
     expect(parseEnv({ ...base, NODE_ENV: 'production' }).AUTH_RATE_LIMIT).toBe(true);
   });

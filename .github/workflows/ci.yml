@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  TEST_DATABASE_URL: postgresql://flowbit:flowbit@localhost:5432/flowbit_test
+  TEST_VALKEY_URL: redis://localhost:6379
+  E2E_DATABASE_URL: postgresql://flowbit:flowbit@localhost:5432/flowbit_test
+
+jobs:
+  checks:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: flowbit
+          POSTGRES_PASSWORD: flowbit
+          POSTGRES_DB: flowbit_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U flowbit" --health-interval 5s --health-timeout 5s --health-retries 10
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "valkey-cli ping" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Format
+        run: pnpm format:check
+      - name: Build
+        run: pnpm build
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Unit and integration tests
+        run: pnpm test
+      - name: Dependency licenses (D-013)
+        run: pnpm license:check
+      - name: Generated files are up to date
+        run: |
+          pnpm --filter @flowbit/api gen:openapi
+          pnpm --filter @flowbit/web gen:api
+          git diff --exit-code -- apps/api/openapi.json apps/web/src/api/schema.d.ts apps/web/src/routeTree.gen.ts
+
+      - name: Install Playwright browser
+        run: pnpm --filter @flowbit/web exec playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: pnpm --filter @flowbit/web test:e2e
+        env:
+          CI: true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          retention-days: 7
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

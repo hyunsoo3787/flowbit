@@ -2,7 +2,20 @@ import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, type OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import {
   authConfigSchema,
+  boardDetailSchema,
+  boardListSchema,
+  boardSchema,
+  cardSchema,
+  createBoardSchema,
+  createCardSchema,
+  createListSchema,
   createWorkspaceSchema,
+  listSchema,
+  moveCardSchema,
+  moveListSchema,
+  updateBoardSchema,
+  updateCardSchema,
+  updateListSchema,
   ERROR_CODES,
   healthSchema,
   updateProfileSchema,
@@ -22,6 +35,14 @@ const inputSchemas = {
   CreateWorkspaceInput: createWorkspaceSchema,
   UpdateWorkspaceInput: updateWorkspaceSchema,
   UpdateProfileInput: updateProfileSchema,
+  CreateBoardInput: createBoardSchema,
+  UpdateBoardInput: updateBoardSchema,
+  CreateListInput: createListSchema,
+  UpdateListInput: updateListSchema,
+  MoveListInput: moveListSchema,
+  CreateCardInput: createCardSchema,
+  UpdateCardInput: updateCardSchema,
+  MoveCardInput: moveCardSchema,
 } satisfies Record<string, z.ZodType>;
 
 const outputSchemas = {
@@ -37,6 +58,11 @@ const outputSchemas = {
   UserProfile: userProfileSchema,
   Workspace: workspaceSchema,
   WorkspaceList: workspaceListSchema,
+  Board: boardSchema,
+  BoardList: boardListSchema,
+  BoardDetail: boardDetailSchema,
+  List: listSchema,
+  Card: cardSchema,
 } satisfies Record<string, z.ZodType>;
 
 export type SchemaName = keyof typeof inputSchemas | keyof typeof outputSchemas;

@@ -117,6 +117,15 @@ export class WorkspacesService {
     await this.prisma.workspace.delete({ where: { id: workspaceId } });
   }
 
+  /** The caller's effective role in a workspace, or null without access. */
+  async getRole(userId: string, workspaceId: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      include: withCallerMemberships(userId),
+    });
+    return workspace ? roleOf(workspace) : null;
+  }
+
   private async load(userId: string, workspaceId: string) {
     const workspace = await this.prisma.workspace.findUnique({
       where: { id: workspaceId },

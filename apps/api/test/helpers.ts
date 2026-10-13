@@ -72,3 +72,10 @@ export async function signUp(
   const userId = (response.body?.['user'] as { id: string }).id;
   return { cookie, userId };
 }
+
+/** Creates a workspace for the user behind `cookie` and returns its id. */
+export async function createWorkspace(app: NestFastifyApplication, cookie: string, name = 'Team') {
+  const response = await request(app, 'POST', '/api/v1/workspaces', { cookie, body: { name } });
+  if (response.status !== 201) throw new Error(`Workspace creation failed: ${response.status}`);
+  return response.body as { id: string; organizationId: string };
+}

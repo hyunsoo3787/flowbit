@@ -61,37 +61,43 @@ flowchart LR
 
 ## Repository layout
 
-Planned monorepo structure (pnpm workspaces + Turborepo):
+Monorepo structure (pnpm workspaces + Turborepo). Entries marked _(planned)_
+arrive in later phases.
 
 ```
 flowbit/
 ├── apps/
 │   ├── api/                 # NestJS API server (AGPL-3.0)
 │   │   ├── src/
-│   │   │   ├── modules/     # feature modules: auth, orgs, workspaces, boards, cards, ...
-│   │   │   ├── common/      # guards, interceptors, filters, pipes
-│   │   │   ├── realtime/    # Socket.IO gateway, event publishing
-│   │   │   └── jobs/        # background workers and schedulers
-│   │   └── prisma/          # schema.prisma, migrations, seed
+│   │   │   ├── auth/        # Better Auth wrapper, session guard (D-020)
+│   │   │   ├── workspaces/  # one folder per feature: controller, service, policy
+│   │   │   ├── common/      # error format, validation pipes, OpenAPI helpers
+│   │   │   ├── realtime/    # Socket.IO gateway, event publishing (planned)
+│   │   │   └── jobs/        # background workers and schedulers (planned)
+│   │   ├── prisma/          # schema.prisma, migrations
+│   │   └── openapi.json     # generated API contract (committed)
 │   └── web/                 # React SPA (AGPL-3.0)
-│       └── src/
-│           ├── routes/      # TanStack Router route tree
-│           ├── features/    # feature folders: board, card, workspace, auth, ...
-│           ├── components/  # shared UI (shadcn/ui based)
-│           ├── api/         # generated OpenAPI client + query hooks
-│           ├── realtime/    # socket client, cache patchers
-│           └── i18n/        # en/, ko/ message catalogs
+│       ├── src/
+│       │   ├── routes/      # TanStack Router file-based routes
+│       │   ├── features/    # feature folders: auth, workspaces, layout, ...
+│       │   ├── components/  # shared UI (shadcn/ui based)
+│       │   ├── api/         # generated OpenAPI types + client
+│       │   ├── realtime/    # socket client, cache patchers (planned)
+│       │   └── i18n/        # en and ko message catalogs
+│       └── e2e/             # Playwright end-to-end tests
 ├── packages/
-│   ├── shared/              # Zod schemas, domain types, constants, error codes
-│   ├── ui/                  # (optional) shared component library
-│   └── config/              # shared tsconfig, eslint, prettier presets
+│   └── shared/              # Zod schemas, domain types, constants, error codes
 ├── ee/                      # Enterprise features (commercial license)
 │   ├── LICENSE
-│   ├── api/                 # NestJS modules: sso, scim, audit, policies
-│   └── web/                 # enterprise UI screens
-├── docker/                  # Dockerfiles, compose files
+│   ├── api/                 # NestJS modules: sso, scim, audit, policies (planned)
+│   └── web/                 # enterprise UI screens (planned)
+├── docker/                  # Dockerfile, entrypoint
+├── scripts/                 # repository tooling (license check)
 └── docs/
 ```
+
+Shared TypeScript, ESLint and Prettier configuration lives at the repository
+root (`tsconfig.base.json`, `eslint.config.js`, `.prettierrc.json`).
 
 ---
 
@@ -207,7 +213,8 @@ also have `version`.
 
 ```mermaid
 erDiagram
-    User ||--o{ AuthAccount : has
+    User ||--o{ Account : has
+    User ||--o{ Session : has
     User ||--o{ OrganizationMember : "belongs to"
     Organization ||--o{ OrganizationMember : has
     Organization ||--o{ Workspace : owns
@@ -232,16 +239,17 @@ erDiagram
 
 ### Identity and tenancy
 
-| Entity               | Key fields                                                                         | Notes                                                                                                 |
-| -------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `User`               | email (unique), name, avatarUrl, locale, passwordHash?, emailVerifiedAt?           | `passwordHash` is null for OAuth/SSO-only users                                                       |
-| `AuthAccount`        | userId, provider (`github`, `google`, `oidc:<id>`, `saml:<id>`), providerAccountId | Links an external identity to a user                                                                  |
-| `Session`            | userId, tokenHash, expiresAt, userAgent, ip                                        | Server-side sessions                                                                                  |
-| `Organization`       | name, slug, isPersonal                                                             | Created automatically per user ([D-008](DECISIONS.md#d-008-organization--workspace--board-hierarchy)) |
-| `OrganizationMember` | orgId, userId, role: `OWNER` \| `ADMIN` \| `MEMBER`                                |                                                                                                       |
-| `Workspace`          | orgId, name, slug, description                                                     |                                                                                                       |
-| `WorkspaceMember`    | workspaceId, userId, role: `ADMIN` \| `MEMBER` \| `VIEWER`                         |                                                                                                       |
-| `Invitation`         | scope (workspace or board), scopeId, email?, token, role, expiresAt                | Email or link invites (phase 3)                                                                       |
+| Entity               | Key fields                                                                                             | Notes                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `User`               | email (unique), name, image?, emailVerified, locale                                                    | Managed by Better Auth ([D-020](DECISIONS.md#d-020-better-auth-behind-our-own-auth-module)); `locale` is ours   |
+| `Account`            | userId, providerId (`credential`, `github`, `google`, later `sso`), accountId, password?, OAuth tokens | One per sign-in method. The password hash lives on the `credential` account                                     |
+| `Session`            | userId, token (unique), expiresAt, userAgent, ipAddress                                                | Server-side sessions in PostgreSQL                                                                              |
+| `Verification`       | identifier, value, expiresAt                                                                           | Email verification and password reset tokens                                                                    |
+| `Organization`       | name, personalOwnerId? (unique)                                                                        | Each user gets one personal organization ([D-008](DECISIONS.md#d-008-organization--workspace--board-hierarchy)) |
+| `OrganizationMember` | orgId, userId, role: `OWNER` \| `ADMIN` \| `MEMBER`                                                    |                                                                                                                 |
+| `Workspace`          | organizationId, name, description?, createdById?, version                                              |                                                                                                                 |
+| `WorkspaceMember`    | workspaceId, userId, role: `ADMIN` \| `MEMBER` \| `VIEWER`                                             |                                                                                                                 |
+| `Invitation`         | scope (workspace or board), scopeId, email?, token, role, expiresAt                                    | Email or link invites (phase 3)                                                                                 |
 
 ### Boards and cards
 

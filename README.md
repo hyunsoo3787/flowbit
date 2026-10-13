@@ -6,9 +6,10 @@ Flowbit is an open-source, Trello-style work management tool: boards, lists
 and cards with real-time collaboration. You can self-host it or run it as a
 service.
 
-> **Status: planning.** No code yet. The project's foundational decisions,
-> architecture and roadmap are documented. Implementation starts with
-> [Phase 1](docs/ROADMAP.md#phase-1-foundation).
+> **Status: early development.** [Phase 1](docs/ROADMAP.md#phase-1-foundation)
+> is done: accounts (email + password, GitHub, Google), workspaces, English and
+> Korean UI, and a one-command Docker setup. Boards, lists and cards come next
+> in [Phase 2](docs/ROADMAP.md#phase-2-boards-lists-cards).
 
 ## Goals
 
@@ -37,6 +38,21 @@ service.
 | Monorepo   | pnpm + Turborepo                                                         |
 | Testing    | Vitest, Playwright                                                       |
 
+## Quick start
+
+Run Flowbit with Docker Compose:
+
+```sh
+git clone https://github.com/hyunsoo3787/flowbit.git && cd flowbit
+cp .env.example .env    # set AUTH_SECRET (openssl rand -base64 32)
+docker compose up -d
+```
+
+Then open <http://localhost:3000>. See the
+[self-hosting guide](docs/SELF_HOSTING.md) for email, OAuth, HTTPS and backups.
+
+To work on Flowbit itself, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Documentation
 
 - [Roadmap](docs/ROADMAP.md): the phased plan from foundation to extensions
@@ -44,6 +60,8 @@ service.
   authorization, real-time sync, deployment
 - [Decision log](docs/DECISIONS.md): what was decided, why, and what else was
   considered
+- [Self-hosting](docs/SELF_HOSTING.md): configuration, upgrades and backups
+- [Contributing](CONTRIBUTING.md): development setup and conventions
 
 ## License
 
@@ -51,14 +69,14 @@ Flowbit follows an **open-core** model
 ([D-011](docs/DECISIONS.md#d-011-open-core-licensing-agpl-30--commercial-ee)):
 
 - Everything outside the `ee/` directory is licensed under the
-  **GNU AGPL-3.0**.
-- Enterprise features in `ee/` are under a separate **commercial license**.
-
-The license files will be added in Phase 1.
+  [**GNU AGPL-3.0**](LICENSE).
+- Enterprise features in `ee/` are under a separate
+  [**commercial license**](ee/LICENSE).
 
 ## Contributing
 
-Contributions will be welcome once Phase 1 sets up the repository tooling.
-External contributors will be asked to sign a Contributor License Agreement
-([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
-Contribution guidelines will be published in `CONTRIBUTING.md`.
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) to get
+started. External contributors sign a [Contributor License Agreement](CLA.md)
+once ([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)). Please
+follow our [Code of Conduct](CODE_OF_CONDUCT.md), and report security issues as
+described in [SECURITY.md](SECURITY.md).

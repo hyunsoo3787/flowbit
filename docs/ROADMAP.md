@@ -6,8 +6,8 @@ ends with something people can use, plus an exit checklist. Phases are
 sequential, but items from later phases can be picked up early if they don't
 block the current one.
 
-> **Current status:** Planning. The foundational decisions are recorded in
-> [DECISIONS.md](DECISIONS.md), and phase 1 has not started yet.
+> **Current status:** Phase 1 (foundation) is implemented. Phase 2 (boards,
+> lists and cards) is next.
 
 | Phase                                         | Theme                                             | Edition        |
 | --------------------------------------------- | ------------------------------------------------- | -------------- |
@@ -26,24 +26,24 @@ block the current one.
 **Goal:** A deployable skeleton where users can sign up and sign in, and get a
 personal organization with a first workspace.
 
-- [ ] Monorepo: pnpm workspaces + Turborepo (`apps/web`, `apps/api`,
+- [x] Monorepo: pnpm workspaces + Turborepo (`apps/web`, `apps/api`,
       `packages/shared`, `ee/`)
-- [ ] Tooling: TypeScript strict mode, ESLint, Prettier, commit conventions
-- [ ] CI (GitHub Actions): lint, typecheck, unit tests, build, license check
+- [x] Tooling: TypeScript strict mode, ESLint, Prettier, commit conventions
+- [x] CI (GitHub Actions): lint, typecheck, unit tests, build, license check
       ([D-013](DECISIONS.md#d-013-permissive-only-dependency-policy))
-- [ ] Local dev environment: Docker Compose with PostgreSQL and Valkey
-- [ ] API skeleton: NestJS (Fastify adapter), config, health check, error
+- [x] Local dev environment: Docker Compose with PostgreSQL and Valkey
+- [x] API skeleton: NestJS (Fastify adapter), config, health check, error
       format, OpenAPI generation, generated web client
-- [ ] Prisma setup, first migration: users, auth, organizations, workspaces
+- [x] Prisma setup, first migration: users, auth, organizations, workspaces
 - [x] Decide on the auth library and record the decision
       ([D-020](DECISIONS.md#d-020-better-auth-behind-our-own-auth-module))
-- [ ] Auth: email + password (verification, reset), GitHub and Google OAuth,
+- [x] Auth: email + password (verification, reset), GitHub and Google OAuth,
       sessions
-- [ ] A personal organization is created automatically on sign-up; workspace
+- [x] A personal organization is created automatically on sign-up; workspace
       CRUD and workspace switcher
-- [ ] Web shell: routing, layout, theming (light and dark), i18n (en and ko),
+- [x] Web shell: routing, layout, theming (light and dark), i18n (en and ko),
       responsive base
-- [ ] Repository files: `LICENSE` (AGPL-3.0), `ee/LICENSE`, `CONTRIBUTING.md`,
+- [x] Repository files: `LICENSE` (AGPL-3.0), `ee/LICENSE`, `CONTRIBUTING.md`,
       CLA bot, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue and PR templates
 
 **Exit checklist:** A new user can sign up in English or Korean, sign in with

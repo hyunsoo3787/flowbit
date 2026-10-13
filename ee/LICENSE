@@ -1,0 +1,56 @@
+Flowbit Enterprise Edition License
+
+DRAFT: this text has not been reviewed by a lawyer yet. It must be reviewed
+before the first public release that contains code in this directory.
+
+Copyright (c) 2026-present the Flowbit maintainers
+
+1. Scope
+
+This license applies to all files in the "ee/" directory of the Flowbit
+repository and in any subdirectory of it (the "Enterprise Software"). All
+other files in the repository are licensed under the GNU Affero General Public
+License, version 3 (see the LICENSE file in the repository root).
+
+2. Grant for development and testing
+
+You may copy, modify and run the Enterprise Software for the purpose of
+developing, testing and evaluating it, and for contributing changes back to
+the Flowbit project, without a subscription.
+
+3. Production use
+
+You may use the Enterprise Software in production only with a valid Flowbit
+Enterprise license key obtained from the Flowbit maintainers, and only within
+the limits (such as the number of users) of that license key.
+
+4. Restrictions
+
+Except as allowed in sections 2 and 3, you may not:
+  a. use the Enterprise Software in production;
+  b. sell, sublicense, rent or otherwise distribute the Enterprise Software,
+     or modified versions of it, to third parties;
+  c. remove, disable or circumvent the license key check, or any notice in
+     the Enterprise Software.
+
+5. Modifications
+
+You may modify the Enterprise Software subject to this license. The Flowbit
+maintainers retain all rights in the Enterprise Software, including in
+modifications that you contribute back to the project under the Contributor
+License Agreement.
+
+6. Third-party components
+
+Third-party components used by the Enterprise Software remain under their own
+licenses.
+
+7. No warranty
+
+THE ENTERPRISE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE ENTERPRISE SOFTWARE OR THE USE
+OR OTHER DEALINGS IN THE ENTERPRISE SOFTWARE.

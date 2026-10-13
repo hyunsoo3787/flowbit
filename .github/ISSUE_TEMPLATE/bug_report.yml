@@ -1,0 +1,49 @@
+name: Bug report
+description: Something doesn't work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. For security issues, please follow [SECURITY.md](../blob/main/SECURITY.md) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect to see?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: e.g. v0.1.0 or a1b2c3d
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: How do you run Flowbit?
+      options:
+        - Docker Compose (self-hosted)
+        - Local development (pnpm dev)
+        - Other
+  - type: textarea
+    id: environment
+    attributes:
+      label: Browser and OS
+      placeholder: e.g. Chrome 141 on macOS 26
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Server logs (`docker compose logs flowbit`) or browser console output, if relevant.
+      render: shell

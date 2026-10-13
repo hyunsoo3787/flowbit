@@ -1,4 +1,5 @@
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { ESCAPE_HANDLED } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface InlineEditProps {
@@ -75,6 +76,7 @@ export function InlineEdit({
   };
 
   const shared = {
+    ...ESCAPE_HANDLED,
     ref,
     value: draft,
     maxLength,

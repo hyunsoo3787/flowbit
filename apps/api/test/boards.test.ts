@@ -79,7 +79,7 @@ describe('boards', () => {
       name: 'Launch',
       workspaceId,
       visibility: 'WORKSPACE',
-      background: 'blue',
+      background: '#93c5fd',
       role: 'ADMIN',
       version: 1,
     });
@@ -92,7 +92,7 @@ describe('boards', () => {
   it('validates input', async () => {
     const response = await call('POST', `/api/v1/workspaces/${workspaceId}/boards`, {
       name: 'x',
-      background: 'neon',
+      background: 'blue',
     });
     expect(response.status).toBe(400);
     expect(response.body).toMatchObject({ error: { code: 'VALIDATION_FAILED' } });
@@ -102,9 +102,10 @@ describe('boards', () => {
     const board = await createBoard();
     const updated = await call('PATCH', `/api/v1/boards/${board.id}`, {
       name: 'Renamed',
-      background: 'green',
+      background: '#1A7F64',
     });
-    expect(updated.body).toMatchObject({ name: 'Renamed', background: 'green', version: 2 });
+    // Colors are stored in lowercase.
+    expect(updated.body).toMatchObject({ name: 'Renamed', background: '#1a7f64', version: 2 });
 
     expect((await call('DELETE', `/api/v1/boards/${board.id}`)).status).toBe(204);
     expect((await call('GET', `/api/v1/boards/${board.id}`)).status).toBe(404);

@@ -1,11 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { SettingsIcon } from 'lucide-react';
+import { SettingsIcon, UsersIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ApiError } from '@/api/client';
 import { Page } from '@/components/page';
 import { Button } from '@/components/ui/button';
 import { BoardGrid } from '@/features/boards/board-grid';
+import { WorkspaceMembersDialog } from '@/features/members/members-dialogs';
 import { workspaceQuery } from '@/features/workspaces/queries';
 import { WorkspaceSettingsDialog } from '@/features/workspaces/workspace-settings-dialog';
 import { errorMessage } from '@/lib/errors';
@@ -32,17 +33,28 @@ function WorkspacePage() {
               <p className="max-w-prose text-muted-foreground">{workspace.description}</p>
             ) : null}
           </div>
-          {workspace.role === 'ADMIN' ? (
-            <WorkspaceSettingsDialog
+          <div className="flex flex-wrap gap-2">
+            <WorkspaceMembersDialog
               workspace={workspace}
               trigger={
                 <Button variant="outline">
-                  <SettingsIcon />
-                  {t('workspaces.settings.open')}
+                  <UsersIcon />
+                  {t('members.open')}
                 </Button>
               }
             />
-          ) : null}
+            {workspace.role === 'ADMIN' ? (
+              <WorkspaceSettingsDialog
+                workspace={workspace}
+                trigger={
+                  <Button variant="outline">
+                    <SettingsIcon />
+                    {t('workspaces.settings.open')}
+                  </Button>
+                }
+              />
+            ) : null}
+          </div>
         </div>
 
         <section className="grid gap-3">

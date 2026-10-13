@@ -18,13 +18,20 @@ import { currentLocale } from '@/i18n';
 import { authClient } from '@/lib/auth-client';
 import { errorMessage } from '@/lib/errors';
 import { signUpFormSchema } from '@/lib/form-schemas';
+import { safeRedirect } from '@/lib/redirect';
 
 export const Route = createFileRoute('/_auth/sign-up')({
+  validateSearch: (search: Record<string, unknown>): { redirect?: string; email?: string } => {
+    const redirect = safeRedirect(search['redirect']);
+    const email = typeof search['email'] === 'string' ? search['email'].slice(0, 254) : undefined;
+    return { ...(redirect ? { redirect } : {}), ...(email ? { email } : {}) };
+  },
   component: SignUpPage,
 });
 
 function SignUpPage() {
   const { t } = useTranslation();
+  const { redirect, email } = Route.useSearch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: config } = useQuery(authConfigQuery);
@@ -32,7 +39,7 @@ function SignUpPage() {
   const [sentTo, setSentTo] = useState<string | null>(null);
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: email ?? '', password: '' },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
@@ -41,7 +48,7 @@ function SignUpPage() {
       ...values,
       // Extra user field (see apps/api/src/auth/create-auth.ts): the language of this UI.
       locale: currentLocale(),
-      callbackURL: '/',
+      callbackURL: redirect ?? '/',
     } as Parameters<typeof authClient.signUp.email>[0]);
     if (result.error) {
       setError(errorMessage(t, result.error));
@@ -53,7 +60,7 @@ function SignUpPage() {
       return;
     }
     await refreshSession(queryClient);
-    await navigate({ to: '/' });
+    await navigate({ href: redirect ?? '/' });
   });
 
   if (sentTo) {
@@ -76,7 +83,9 @@ function SignUpPage() {
   }
 
   const { errors, isSubmitting } = form.formState;
-  const disabled = config?.signUpEnabled === false;
+  // Invited people may sign up even when sign-up is closed; the server checks.
+  const invited = redirect?.startsWith('/invite/') ?? false;
+  const disabled = config?.signUpEnabled === false && !invited;
 
   return (
     <Card>
@@ -93,7 +102,7 @@ function SignUpPage() {
           </Alert>
         ) : (
           <>
-            <SocialButtons />
+            <SocialButtons callbackURL={redirect ?? '/'} />
             <form className="grid gap-4" onSubmit={onSubmit} noValidate>
               {error ? (
                 <Alert variant="destructive">
@@ -130,7 +139,11 @@ function SignUpPage() {
         )}
         <p className="text-center text-sm text-muted-foreground">
           {t('auth.signUp.haveAccount')}{' '}
-          <Link to="/sign-in" className="text-primary hover:underline">
+          <Link
+            to="/sign-in"
+            search={redirect ? { redirect } : {}}
+            className="text-primary hover:underline"
+          >
             {t('auth.signUp.signInLink')}
           </Link>
         </p>

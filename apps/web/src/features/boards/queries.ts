@@ -3,9 +3,11 @@ import {
   type Card,
   comparePositions,
   type CreateBoardInput,
+  type CreateLabelInput,
   type List,
   type UpdateBoardInput,
   type UpdateCardInput,
+  type UpdateLabelInput,
 } from '@flowbit/shared';
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -17,9 +19,11 @@ import {
   cardsInList,
   positionAtIndex,
   removeCard,
+  removeLabel,
   removeList,
   updateBoardFields,
   upsertCard,
+  upsertLabel,
   upsertList,
 } from './board-cache';
 
@@ -33,6 +37,12 @@ export const boardsQuery = (workspaceId: string) =>
         )
       ).items,
   });
+
+/** Boards someone was invited to without joining their workspace. */
+export const sharedBoardsQuery = queryOptions({
+  queryKey: ['shared-boards'],
+  queryFn: async () => (await unwrap(api.GET('/api/v1/me/shared-boards'))).items,
+});
 
 export const boardQuery = (boardId: string) =>
   queryOptions({
@@ -229,6 +239,13 @@ export function useCreateCard(boardId: string) {
         title,
         description: '',
         position: positionAtIndex(siblings, siblings.length),
+        startAt: null,
+        dueAt: null,
+        dueCompletedAt: null,
+        coverColor: null,
+        assigneeIds: [],
+        labelIds: [],
+        badges: { comments: 0, checklistItems: 0, checklistItemsDone: 0 },
         version: 0,
         createdAt: nowIso(),
         updatedAt: nowIso(),
@@ -242,11 +259,111 @@ export function useUpdateCard(boardId: string) {
   return useBoardMutation(boardId, {
     request: ({ cardId, ...body }: UpdateCardInput & { cardId: string }, headers) =>
       unwrap(api.PATCH('/api/v1/cards/{cardId}', { params: { path: { cardId } }, body, headers })),
-    optimistic: (board, { cardId, ...body }) => ({
+    optimistic: (board, { cardId, dueComplete, ...body }) => ({
       ...board,
-      cards: board.cards.map((card) => (card.id === cardId ? { ...card, ...body } : card)),
+      cards: board.cards.map((card) =>
+        card.id === cardId
+          ? {
+              ...card,
+              ...body,
+              ...(dueComplete === undefined
+                ? {}
+                : { dueCompletedAt: dueComplete ? (card.dueCompletedAt ?? nowIso()) : null }),
+            }
+          : card,
+      ),
     }),
     settle: upsertCard,
+  });
+}
+
+function toggle(ids: string[], id: string, on: boolean) {
+  return on ? (ids.includes(id) ? ids : [...ids, id]) : ids.filter((item) => item !== id);
+}
+
+export function useSetAssignee(boardId: string) {
+  return useBoardMutation(boardId, {
+    request: (
+      { cardId, userId, assigned }: { cardId: string; userId: string; assigned: boolean },
+      headers,
+    ) => {
+      const options = { params: { path: { cardId, userId } }, headers };
+      return unwrap(
+        assigned
+          ? api.PUT('/api/v1/cards/{cardId}/assignees/{userId}', options)
+          : api.DELETE('/api/v1/cards/{cardId}/assignees/{userId}', options),
+      );
+    },
+    optimistic: (board, { cardId, userId, assigned }) => ({
+      ...board,
+      cards: board.cards.map((card) =>
+        card.id === cardId
+          ? { ...card, assigneeIds: toggle(card.assigneeIds, userId, assigned) }
+          : card,
+      ),
+    }),
+    settle: upsertCard,
+  });
+}
+
+export function useSetCardLabel(boardId: string) {
+  return useBoardMutation(boardId, {
+    request: (
+      { cardId, labelId, applied }: { cardId: string; labelId: string; applied: boolean },
+      headers,
+    ) => {
+      const options = { params: { path: { cardId, labelId } }, headers };
+      return unwrap(
+        applied
+          ? api.PUT('/api/v1/cards/{cardId}/labels/{labelId}', options)
+          : api.DELETE('/api/v1/cards/{cardId}/labels/{labelId}', options),
+      );
+    },
+    optimistic: (board, { cardId, labelId, applied }) => ({
+      ...board,
+      cards: board.cards.map((card) =>
+        card.id === cardId ? { ...card, labelIds: toggle(card.labelIds, labelId, applied) } : card,
+      ),
+    }),
+    settle: upsertCard,
+  });
+}
+
+export function useCreateLabel(boardId: string) {
+  return useBoardMutation(boardId, {
+    request: (body: CreateLabelInput & { tempId: string }, headers) =>
+      unwrap(
+        api.POST('/api/v1/boards/{boardId}/labels', {
+          params: { path: { boardId } },
+          body: { name: body.name, color: body.color },
+          headers,
+        }),
+      ),
+    optimistic: (board, { tempId: id, name, color }) =>
+      upsertLabel(board, { id, boardId, name: name ?? '', color, version: 0 }),
+    settle: (board, label, { tempId: id }) => upsertLabel(removeLabel(board, id), label),
+  });
+}
+
+export function useUpdateLabel(boardId: string) {
+  return useBoardMutation(boardId, {
+    request: ({ labelId, ...body }: UpdateLabelInput & { labelId: string }, headers) =>
+      unwrap(
+        api.PATCH('/api/v1/labels/{labelId}', { params: { path: { labelId } }, body, headers }),
+      ),
+    optimistic: (board, { labelId, ...body }) => ({
+      ...board,
+      labels: board.labels.map((label) => (label.id === labelId ? { ...label, ...body } : label)),
+    }),
+    settle: upsertLabel,
+  });
+}
+
+export function useDeleteLabel(boardId: string) {
+  return useBoardMutation(boardId, {
+    request: (labelId: string, headers) =>
+      api.DELETE('/api/v1/labels/{labelId}', { params: { path: { labelId } }, headers }),
+    optimistic: removeLabel,
   });
 }
 
@@ -301,4 +418,37 @@ export function boardColumns(board: BoardDetail): { list: List; cards: Card[] }[
 
 export function newTempId() {
   return tempId();
+}
+
+/** Watching the board, or one of its cards (`cardId`). */
+export function useSetWatch(boardId: string) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const key = boardQuery(boardId).queryKey;
+  return useMutation({
+    mutationFn: ({ cardId, watching }: { cardId?: string; watching: boolean }) => {
+      const request = cardId
+        ? watching
+          ? api.PUT('/api/v1/cards/{cardId}/watch', { params: { path: { cardId } } })
+          : api.DELETE('/api/v1/cards/{cardId}/watch', { params: { path: { cardId } } })
+        : watching
+          ? api.PUT('/api/v1/boards/{boardId}/watch', { params: { path: { boardId } } })
+          : api.DELETE('/api/v1/boards/{boardId}/watch', { params: { path: { boardId } } });
+      return unwrap(request);
+    },
+    onMutate: ({ cardId, watching }) => {
+      const previous = queryClient.getQueryData(key);
+      queryClient.setQueryData(key, (board) => {
+        if (!board) return board;
+        if (!cardId) return { ...board, watching };
+        const others = board.watchedCardIds.filter((id) => id !== cardId);
+        return { ...board, watchedCardIds: watching ? [...others, cardId] : others };
+      });
+      return { previous };
+    },
+    onError: (error, _variables, context) => {
+      if (context?.previous) queryClient.setQueryData(key, context.previous);
+      toast.error(errorMessage(t, error));
+    },
+  });
 }

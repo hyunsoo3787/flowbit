@@ -15,10 +15,17 @@ function DialogClose(props: React.ComponentProps<typeof DialogPrimitive.Close>) 
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
+/**
+ * Marks a field that handles Escape itself (cancel an edit, close a
+ * composer), so Escape there doesn't also close the dialog around it.
+ */
+export const ESCAPE_HANDLED = { 'data-escape-handled': '' } as const;
+
 function DialogContent({
   className,
   children,
   closeLabel,
+  onEscapeKeyDown,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & { closeLabel: string }) {
   return (
@@ -34,6 +41,12 @@ function DialogContent({
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           className,
         )}
+        // Radix listens for Escape before the focused field does.
+        onEscapeKeyDown={(event) => {
+          const target = event.target instanceof Element ? event.target : null;
+          if (target?.closest('[data-escape-handled]')) event.preventDefault();
+          onEscapeKeyDown?.(event);
+        }}
         {...props}
       >
         {children}

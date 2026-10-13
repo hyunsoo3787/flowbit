@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { meQuery } from '@/features/auth/queries';
 import { isOwnMutation } from '@/lib/mutation-ids';
 import { getSocket } from '@/lib/realtime';
 import { applyEvent } from './board-cache';
@@ -10,8 +11,8 @@ import { boardQuery, boardsQuery } from './queries';
 
 /**
  * Keeps a cached board in sync with changes made by others: joins the board's
- * room, applies incoming events, and refetches after reconnecting to catch up
- * on anything missed while offline.
+ * room, applies incoming events, and refetches after joining to catch up on
+ * anything missed before (while loading, or while offline).
  */
 export function useBoardRealtime(boardId: string) {
   const queryClient = useQueryClient();
@@ -24,8 +25,14 @@ export function useBoardRealtime(boardId: string) {
     let joinedBefore = false;
 
     const join = () => {
+      const startedAt = Date.now();
       socket.emit('board:join', boardId, () => {
-        if (joinedBefore) void queryClient.invalidateQueries({ queryKey: key });
+        // Changes made between loading the board and joining its room were
+        // never sent to this tab: catch up if the cached board is older.
+        const loadedAt = queryClient.getQueryState(key)?.dataUpdatedAt ?? 0;
+        if (joinedBefore || loadedAt < startedAt) {
+          void queryClient.invalidateQueries({ queryKey: key });
+        }
         joinedBefore = true;
       });
     };
@@ -44,7 +51,19 @@ export function useBoardRealtime(boardId: string) {
         }
         return;
       }
-      queryClient.setQueryData(key, (board) => (board ? applyEvent(board, event) : board));
+      if (event.type === 'card.content') {
+        void queryClient.invalidateQueries({ queryKey: ['cards', event.cardId, event.part] });
+        return;
+      }
+      queryClient.setQueryData(key, (board) => {
+        if (!board) return board;
+        const next = applyEvent(board, event);
+        if (event.type !== 'members.updated') return next;
+        // The caller's own role may have changed too.
+        const meId = queryClient.getQueryData(meQuery.queryKey)?.id;
+        const mine = event.members.find((member) => member.user.id === meId);
+        return mine ? { ...next, role: mine.role } : next;
+      });
     };
 
     socket.on('connect', join);

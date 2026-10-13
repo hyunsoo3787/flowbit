@@ -11,7 +11,8 @@
     "retry": "다시 시도",
     "saveChanges": "변경 사항 저장",
     "delete": "삭제",
-    "rename": "이름 변경"
+    "rename": "이름 변경",
+    "back": "뒤로"
   },
   "auth": {
     "fields": {
@@ -92,7 +93,19 @@
     "USER_NOT_FOUND": "계정을 찾을 수 없습니다.",
     "BOARD_NOT_FOUND": "보드가 없거나 접근 권한이 없습니다.",
     "LIST_NOT_FOUND": "리스트가 더 이상 없거나 접근 권한이 없습니다.",
-    "CARD_NOT_FOUND": "카드가 더 이상 없거나 접근 권한이 없습니다."
+    "CARD_NOT_FOUND": "카드가 더 이상 없거나 접근 권한이 없습니다.",
+    "LABEL_NOT_FOUND": "이 라벨은 더 이상 존재하지 않습니다.",
+    "CHECKLIST_NOT_FOUND": "이 체크리스트는 더 이상 존재하지 않습니다.",
+    "CHECKLIST_ITEM_NOT_FOUND": "이 체크리스트 항목은 더 이상 존재하지 않습니다.",
+    "COMMENT_NOT_FOUND": "이 댓글은 더 이상 존재하지 않습니다.",
+    "MEMBER_NOT_FOUND": "이곳의 멤버가 아닙니다.",
+    "INVITATION_NOT_FOUND": "잘못되었거나 만료되었거나 취소된 초대입니다.",
+    "INVITATION_EMAIL_MISMATCH": "다른 이메일 주소로 보낸 초대입니다. 그 주소로 로그인해서 수락하세요.",
+    "LAST_ADMIN": "관리자가 최소 한 명은 남아 있어야 합니다.",
+    "ACCOUNT_SUSPENDED": "정지된 계정입니다. 이 서버의 관리자에게 문의하세요.",
+    "SIGN_UP_DISABLED": "이 서버는 가입이 닫혀 있습니다. 초대를 요청하세요.",
+    "SETUP_NOT_AVAILABLE": "잘못되었거나 이미 사용한 설정 링크입니다.",
+    "NOTIFICATION_NOT_FOUND": "이 알림은 더 이상 존재하지 않습니다."
   },
   "nav": {
     "home": "홈",
@@ -105,7 +118,9 @@
     "themeDark": "다크",
     "themeSystem": "시스템 설정",
     "signOut": "로그아웃",
-    "openMenu": "메뉴 열기"
+    "openMenu": "메뉴 열기",
+    "admin": "관리",
+    "notifications": "알림"
   },
   "languages": {
     "en": "English",
@@ -157,6 +172,9 @@
     "name": "보드 이름",
     "namePlaceholder": "예: 제품 로드맵",
     "background": "배경색",
+    "changeBackground": "배경색 변경",
+    "customColor": "직접 선택",
+    "hexColor": "색상 코드",
     "visibility": "공개 범위",
     "visibilityWORKSPACE": "워크스페이스",
     "visibilityWORKSPACEHint": "워크스페이스의 모든 멤버가 볼 수 있습니다.",
@@ -175,14 +193,24 @@
     "deletedElsewhere": "이 보드가 삭제되었습니다.",
     "colors": {
       "blue": "파랑",
+      "sky": "하늘",
+      "teal": "청록",
       "green": "초록",
+      "lime": "연두",
+      "yellow": "노랑",
       "orange": "주황",
       "red": "빨강",
-      "purple": "보라",
       "pink": "분홍",
-      "teal": "청록",
-      "slate": "회색"
-    }
+      "purple": "보라",
+      "gray": "회색",
+      "stone": "베이지"
+    },
+    "roles": {
+      "ADMIN": "관리자",
+      "MEMBER": "멤버",
+      "OBSERVER": "관찰자"
+    },
+    "sharedWithYou": "공유받은 보드"
   },
   "lists": {
     "add": "리스트 추가",
@@ -217,7 +245,45 @@
     "delete": "카드 삭제",
     "deleteConfirm": "이 카드를 삭제할까요? 되돌릴 수 없습니다.",
     "deleted": "카드를 삭제했습니다.",
-    "openCard": "카드 열기: {{title}}"
+    "openCard": "카드 열기: {{title}}",
+    "due": {
+      "complete": "완료",
+      "overdue": "기한 지남",
+      "soon": "곧 마감",
+      "later": "마감 예정"
+    },
+    "hasDescription": "이 카드에는 설명이 있습니다.",
+    "commentCount_one": "댓글 {{count}}개",
+    "commentCount_other": "댓글 {{count}}개",
+    "checklistProgress": "체크리스트 항목 {{total}}개 중 {{done}}개 완료",
+    "members": {
+      "title": "멤버",
+      "search": "멤버 검색",
+      "none": "일치하는 멤버가 없습니다."
+    },
+    "labels": {
+      "title": "라벨",
+      "edit": "{{name}} 라벨 편집",
+      "create": "새 라벨 만들기",
+      "editTitle": "라벨 편집",
+      "name": "이름",
+      "color": "색상",
+      "createSubmit": "만들기",
+      "deleteConfirm": "이 라벨을 삭제할까요? 모든 카드에서 함께 제거됩니다."
+    },
+    "dates": {
+      "title": "날짜",
+      "start": "시작일",
+      "due": "마감일",
+      "remove": "날짜 지우기",
+      "complete": "마감일 완료로 표시"
+    },
+    "cover": {
+      "title": "커버",
+      "remove": "커버 제거"
+    },
+    "actions": "작업",
+    "addToCard": "카드에 추가"
   },
   "dnd": {
     "instructions": "항목을 집으려면 스페이스나 엔터를 누르세요. 화살표 키로 옮긴 뒤 스페이스나 엔터로 놓고, 취소하려면 Esc를 누르세요.",
@@ -225,5 +291,298 @@
     "over": "{{item}}이(가) {{target}} 위에 있습니다.",
     "dropped": "{{item}}을(를) 놓았습니다.",
     "cancelled": "{{item}} 이동을 취소했습니다."
+  },
+  "labels": {
+    "colors": {
+      "green": "초록",
+      "yellow": "노랑",
+      "orange": "주황",
+      "red": "빨강",
+      "purple": "보라",
+      "blue": "파랑",
+      "sky": "하늘",
+      "lime": "연두",
+      "pink": "분홍",
+      "gray": "회색"
+    }
+  },
+  "checklists": {
+    "add": "체크리스트",
+    "title": "제목",
+    "defaultTitle": "체크리스트",
+    "addSubmit": "추가",
+    "rename": "체크리스트 이름 바꾸기",
+    "deleteConfirm": "“{{title}}” 체크리스트를 삭제할까요?",
+    "progress": "{{title}} 진행률",
+    "addItem": "항목 추가",
+    "itemPlaceholder": "항목 추가",
+    "addItemSubmit": "추가",
+    "editItem": "항목 편집",
+    "reorder": "“{{text}}” 순서 바꾸기",
+    "itemOptions": "“{{text}}” 옵션",
+    "itemOptionsTitle": "항목",
+    "assignee": "담당자",
+    "nobody": "없음"
+  },
+  "comments": {
+    "title": "댓글",
+    "placeholder": "댓글을 입력하세요… @를 입력하면 다른 사람을 언급할 수 있습니다.",
+    "write": "댓글 쓰기",
+    "submit": "저장",
+    "hint": "Ctrl+Enter로 저장합니다. 마크다운을 지원합니다.",
+    "loadMore": "이전 댓글 보기",
+    "deletedUser": "삭제된 사용자",
+    "edited": "(수정됨)",
+    "edit": "댓글 수정",
+    "editAction": "수정",
+    "deleteConfirm": "이 댓글을 삭제할까요?",
+    "mentionSuggestions": "언급할 사람"
+  },
+  "filters": {
+    "button": "필터",
+    "buttonActive_one": "필터, {{count}}개 적용 중",
+    "buttonActive_other": "필터, {{count}}개 적용 중",
+    "title": "카드 필터",
+    "keyword": "키워드",
+    "keywordPlaceholder": "제목, 설명, 라벨 검색",
+    "members": "멤버",
+    "noMembers": "담당자 없음",
+    "assignedToMe": "나에게 할당된 카드",
+    "due": "마감일",
+    "dueOptions": {
+      "overdue": "기한 지남",
+      "day": "하루 안에 마감",
+      "week": "일주일 안에 마감",
+      "none": "날짜 없음",
+      "complete": "완료로 표시됨"
+    },
+    "labels": "라벨",
+    "noLabels": "라벨 없음",
+    "clear": "필터 지우기",
+    "hiddenInList_one": "필터로 숨겨진 카드 {{count}}개",
+    "hiddenInList_other": "필터로 숨겨진 카드 {{count}}개"
+  },
+  "members": {
+    "share": "공유",
+    "open": "멤버",
+    "you": "(나)",
+    "roleOf": "{{name}}님의 역할",
+    "leave": "나가기",
+    "remove": "내보내기",
+    "leaveConfirm": "{{name}}에서 나갈까요? 다시 초대받기 전까지 접근할 수 없습니다.",
+    "removeConfirm": "{{name}}님을 이 워크스페이스와 그 보드에서 내보낼까요?",
+    "removeFromBoardConfirm": "{{name}}님을 이 보드에서 내보낼까요?",
+    "workspaceTitle": "{{name}} 멤버",
+    "workspaceHint": "멤버는 워크스페이스의 비공개가 아닌 모든 보드를 볼 수 있습니다.",
+    "boardTitle": "{{name}} 공유",
+    "privateHint": "비공개 보드입니다. 여기 있는 사람만 볼 수 있습니다.",
+    "workspaceBoardHint": "워크스페이스의 모든 멤버가 이 보드를 볼 수 있습니다. 여기서 사람별로 역할을 따로 지정할 수 있습니다.",
+    "tab_one": "멤버 {{count}}명",
+    "tab_other": "멤버 {{count}}명",
+    "viaWorkspace": "워크스페이스를 통한 {{role}}",
+    "inherited": "워크스페이스 역할 따름"
+  },
+  "invitations": {
+    "tab": "초대",
+    "byEmail": "이메일로 초대",
+    "emailsPlaceholder": "name@example.com, another@example.com",
+    "role": "역할",
+    "send": "초대",
+    "sent_one": "초대를 보냈습니다.",
+    "sent_other": "초대 {{count}}건을 보냈습니다.",
+    "invalidEmails": "올바른 이메일 주소를 쉼표로 구분해 최대 {{max}}개까지 입력하세요.",
+    "link": "링크로 초대",
+    "copy": "복사",
+    "linkCopied": "클립보드에 복사했습니다.",
+    "copyManually": "이 링크를 복사하세요:",
+    "linkHint": "이 링크가 있으면 누구나 {{date}}까지 {{role}} 역할로 참여할 수 있습니다.",
+    "disableLink": "링크 비활성화",
+    "createLink": "링크 만들기",
+    "pending": "대기 중인 초대",
+    "revoke": "{{email}} 초대 취소",
+    "page": {
+      "invalidTitle": "사용할 수 없는 초대",
+      "invalidBody": "잘못되었거나 만료되었거나 취소된 초대입니다. 새 초대를 요청하세요.",
+      "title": "{{target}}에 초대받았습니다",
+      "titleFrom": "{{name}}님이 {{target}}에 초대했습니다",
+      "boardIn": "{{workspace}} 워크스페이스의 보드",
+      "workspace": "Flowbit 워크스페이스",
+      "forEmail": "{{email}} 전용 초대",
+      "accept": "초대 수락",
+      "signedInAs": "{{email}} 계정으로 로그인됨",
+      "signUp": "계정을 만들고 수락하기",
+      "signIn": "이미 계정이 있습니다"
+    }
+  },
+  "admin": {
+    "title": "관리",
+    "subtitle": "계정과 서버 설정을 관리합니다. 이 역할로는 다른 사람의 보드를 볼 수 없습니다.",
+    "tabs": {
+      "overview": "개요",
+      "users": "계정",
+      "log": "활동 기록"
+    },
+    "stats": {
+      "title": "이 서버",
+      "users": "계정",
+      "suspendedUsers": "정지됨",
+      "admins": "관리자",
+      "organizations": "조직",
+      "workspaces": "워크스페이스",
+      "boards": "보드",
+      "cards": "카드"
+    },
+    "settings": {
+      "title": "설정",
+      "signUp": "누구나 계정을 만들 수 있음",
+      "signUpHint": "끄면 이메일로 초대받은 사람만 가입할 수 있습니다.",
+      "mailOn": "이메일이 설정되어 있어 사용자가 직접 비밀번호를 재설정할 수 있습니다.",
+      "mailOff": "이메일이 설정되지 않았습니다. 비밀번호를 잊은 사용자를 도우려면 계정 탭에서 재설정 링크를 만드세요."
+    },
+    "users": {
+      "search": "이름이나 이메일로 검색",
+      "admin": "관리자",
+      "suspended": "정지됨",
+      "unverified": "미인증",
+      "details": "로그인: {{methods}} · 워크스페이스: {{workspaces}} · 가입 {{created}} · 최근 활동 {{active}}",
+      "methods": {
+        "credential": "비밀번호",
+        "github": "GitHub",
+        "google": "Google"
+      },
+      "actionsFor": "{{name}}님에 대한 작업",
+      "resetLink": "비밀번호 재설정 링크 만들기",
+      "revokeAdmin": "관리자 역할 해제",
+      "grantAdmin": "관리자로 지정",
+      "reactivate": "다시 활성화",
+      "suspend": "정지",
+      "suspendConfirm": "{{name}}님의 계정을 정지할까요? 로그아웃되며 다시 활성화하기 전까지 로그인할 수 없습니다.",
+      "delete": "계정 삭제",
+      "deleteConfirm": "{{name}}({{email}})님의 계정을 삭제할까요? 다른 사람이 쓰는 워크스페이스는 그 관리자 중 한 명에게 넘어갑니다. 되돌릴 수 없습니다.",
+      "deleted": "계정을 삭제했습니다.",
+      "none": "계정이 없습니다.",
+      "resetLinkTitle": "{{name}}님의 비밀번호 재설정 링크",
+      "resetLinkBody": "이 링크를 당사자에게 직접 전달하세요. 한 번만 쓸 수 있고 1시간 후 만료됩니다. 새 비밀번호는 관리자에게 보이지 않습니다."
+    },
+    "loadMore": "더 보기",
+    "log": {
+      "server": "서버",
+      "on": "켬",
+      "off": "끔",
+      "none": "아직 기록이 없습니다.",
+      "types": {
+        "admin": {
+          "granted": "{{actor}}이(가) {{target}}님을 관리자로 지정했습니다",
+          "revoked": "{{actor}}이(가) {{target}}님의 관리자 역할을 해제했습니다"
+        },
+        "user": {
+          "suspended": "{{actor}}이(가) {{target}}님의 계정을 정지했습니다",
+          "reactivated": "{{actor}}이(가) {{target}}님의 계정을 다시 활성화했습니다",
+          "deleted": "{{actor}}이(가) {{target}}님의 계정을 삭제했습니다",
+          "password_reset_link": "{{actor}}이(가) {{target}}님의 비밀번호 재설정 링크를 만들었습니다"
+        },
+        "settings": {
+          "updated": "{{actor}}이(가) 가입 설정을 바꿨습니다"
+        }
+      }
+    }
+  },
+  "setup": {
+    "title": "Flowbit 설정",
+    "body": "이 서버의 첫 관리자를 만듭니다. 관리자는 계정과 설정을 관리하며, 콘텐츠는 볼 수 없습니다.",
+    "noToken": "서버 로그에 출력된 설정 링크를 열거나, 서버에서 “flowbit admin setup-url”을 실행하세요.",
+    "claim": "내 계정을 관리자로 지정",
+    "create": "관리자 계정 만들기",
+    "doneTitle": "설정이 끝났습니다",
+    "doneBody": "이 서버에는 이미 관리자가 있습니다."
+  },
+  "notifications": {
+    "button": "알림",
+    "buttonUnread_one": "알림, 읽지 않음 {{count}}개",
+    "buttonUnread_other": "알림, 읽지 않음 {{count}}개",
+    "title": "알림",
+    "markAllRead": "모두 읽음으로 표시",
+    "empty": "새 알림이 없습니다.",
+    "loadMore": "이전 알림 보기",
+    "unread": "읽지 않음",
+    "open": "열기",
+    "someone": "누군가",
+    "deletedCard": "삭제된 카드",
+    "types": {
+      "MENTIONED": "{{actor}}님이 {{card}}에서 회원님을 언급했습니다",
+      "ASSIGNED": "{{actor}}님이 회원님을 {{card}} 담당자로 지정했습니다",
+      "COMMENTED": "{{actor}}님이 {{card}}에 댓글을 남겼습니다",
+      "CARD_MOVED": "{{actor}}님이 {{card}}을(를) {{list}}(으)로 옮겼습니다",
+      "CARD_CREATED": "{{actor}}님이 {{list}}에 {{card}}을(를) 추가했습니다",
+      "DUE_SOON": "{{card}} 마감이 다가옵니다"
+    },
+    "preferences": {
+      "title": "알림",
+      "body": "알림은 항상 Flowbit 안에서 볼 수 있습니다. 이메일로도 받을 알림을 고르세요.",
+      "emailMentions": "언급",
+      "emailMentionsHint": "누군가 댓글에서 회원님을 언급할 때",
+      "emailAssignments": "담당자 지정",
+      "emailAssignmentsHint": "누군가 회원님을 카드 담당자로 지정할 때",
+      "emailWatching": "팔로우하는 카드",
+      "emailWatchingHint": "지켜보거나 담당한 카드의 댓글, 이동, 새 카드",
+      "emailDueSoon": "마감일",
+      "emailDueSoonHint": "팔로우하는 카드의 마감이 하루 안으로 다가올 때"
+    }
+  },
+  "watch": {
+    "watch": "지켜보기",
+    "watching": "지켜보는 중",
+    "watchBoard": "보드 지켜보기",
+    "watchingCard": "이 카드를 지켜보는 중입니다"
+  },
+  "live": {
+    "viewing": "지금 보는 사람: {{names}}",
+    "editing": "지금 편집 중: {{names}}",
+    "editingCard_one": "{{names}}님이 이 카드를 편집하고 있습니다",
+    "editingCard_other": "{{names}}님이 이 카드를 편집하고 있습니다"
+  },
+  "activity": {
+    "title": "활동",
+    "show": "자세히 보기",
+    "hide": "숨기기",
+    "empty": "아직 활동이 없습니다.",
+    "loadMore": "이전 활동 보기",
+    "boardHint": "{{name}}에서 일어난 모든 일입니다. 최신순으로 표시합니다.",
+    "someone": "누군가",
+    "thisCard": "이 카드",
+    "aCard": "카드",
+    "aList": "리스트",
+    "aLabel": "라벨",
+    "types": {
+      "boardCreated": "{{actor}}님이 이 보드를 만들었습니다",
+      "boardUpdated": "{{actor}}님이 보드 설정을 바꿨습니다",
+      "listCreated": "{{actor}}님이 {{list}} 리스트를 추가했습니다",
+      "listRenamed": "{{actor}}님이 리스트 이름을 {{list}}(으)로 바꿨습니다",
+      "listMoved": "{{actor}}님이 {{list}} 리스트를 옮겼습니다",
+      "listDeleted": "{{actor}}님이 {{list}} 리스트를 삭제했습니다",
+      "cardCreated": "{{actor}}님이 {{list}}에 {{card}}을(를) 추가했습니다",
+      "cardMoved": "{{actor}}님이 {{card}}을(를) {{from}}에서 {{to}}(으)로 옮겼습니다",
+      "cardDeleted": "{{actor}}님이 {{card}}을(를) 삭제했습니다",
+      "cardUpdated": {
+        "dueComplete": "{{actor}}님이 {{card}}의 완료 상태를 바꿨습니다",
+        "dueAt": "{{actor}}님이 {{card}}의 마감일을 바꿨습니다",
+        "startAt": "{{actor}}님이 {{card}}의 시작일을 바꿨습니다",
+        "title": "{{actor}}님이 {{card}}의 이름을 바꿨습니다",
+        "description": "{{actor}}님이 {{card}}의 설명을 수정했습니다",
+        "coverColor": "{{actor}}님이 {{card}}의 커버를 바꿨습니다",
+        "other": "{{actor}}님이 {{card}}을(를) 수정했습니다"
+      },
+      "cardJoined": "{{actor}}님이 {{card}}에 참여했습니다",
+      "cardAssigned": "{{actor}}님이 {{person}}님을 {{card}}에 추가했습니다",
+      "cardUnassigned": "{{actor}}님이 {{person}}님을 {{card}}에서 뺐습니다",
+      "cardLabeled": "{{actor}}님이 {{card}}에 {{label}} 라벨을 붙였습니다",
+      "cardUnlabeled": "{{actor}}님이 {{card}}에서 {{label}} 라벨을 뗐습니다",
+      "checklistCreated": "{{actor}}님이 {{card}}에 {{checklist}} 체크리스트를 추가했습니다",
+      "checklistDeleted": "{{actor}}님이 {{card}}에서 {{checklist}} 체크리스트를 삭제했습니다",
+      "itemCompleted": "{{actor}}님이 {{card}}의 {{item}} 항목을 완료했습니다",
+      "itemReopened": "{{actor}}님이 {{card}}의 {{item}} 항목을 미완료로 바꿨습니다",
+      "commented": "{{actor}}님이 {{card}}에 댓글을 남겼습니다",
+      "other": "{{actor}}님이 변경했습니다"
+    }
   }
 }

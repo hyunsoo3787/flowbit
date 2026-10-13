@@ -18,6 +18,20 @@ export const ERROR_CODES = [
   'BOARD_NOT_FOUND',
   'LIST_NOT_FOUND',
   'CARD_NOT_FOUND',
+  'LABEL_NOT_FOUND',
+  'CHECKLIST_NOT_FOUND',
+  'CHECKLIST_ITEM_NOT_FOUND',
+  'COMMENT_NOT_FOUND',
+  'USER_NOT_FOUND',
+  'MEMBER_NOT_FOUND',
+  'INVITATION_NOT_FOUND',
+  'INVITATION_EMAIL_MISMATCH',
+  /** The change would leave a workspace, board or instance without an admin. */
+  'LAST_ADMIN',
+  'ACCOUNT_SUSPENDED',
+  'SIGN_UP_DISABLED',
+  'SETUP_NOT_AVAILABLE',
+  'NOTIFICATION_NOT_FOUND',
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];

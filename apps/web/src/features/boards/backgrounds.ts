@@ -1,16 +1,19 @@
-import type { BoardBackground } from '@flowbit/shared';
+import { textToneFor } from '@flowbit/shared';
+import type { CSSProperties } from 'react';
+import { cn } from '@/lib/utils';
 
 /**
- * Tailwind classes for each named board background, light and dark. The
- * shades are dark enough for the white text drawn on them.
+ * Styles for a surface painted in a board's color. Text switches between dark
+ * and white for contrast. In dark mode the color is darkened, so a light pick
+ * doesn't glare, and text is always white there. Children can use
+ * `bg-current/10` for chips and hover states that suit either text color.
  */
-export const BACKGROUND_CLASSES: Record<BoardBackground, string> = {
-  blue: 'bg-blue-700 dark:bg-blue-950',
-  green: 'bg-emerald-700 dark:bg-emerald-950',
-  orange: 'bg-orange-700 dark:bg-orange-950',
-  red: 'bg-rose-700 dark:bg-rose-950',
-  purple: 'bg-violet-700 dark:bg-violet-950',
-  pink: 'bg-pink-700 dark:bg-pink-950',
-  teal: 'bg-teal-700 dark:bg-teal-950',
-  slate: 'bg-slate-700 dark:bg-slate-900',
-};
+export function boardSurface(color: string): { style: CSSProperties; className: string } {
+  return {
+    style: { '--board-bg': color } as CSSProperties,
+    className: cn(
+      'bg-(--board-bg) dark:bg-[color-mix(in_oklab,var(--board-bg)_35%,black)]',
+      textToneFor(color) === 'dark' ? 'text-slate-900 dark:text-white' : 'text-white',
+    ),
+  };
+}

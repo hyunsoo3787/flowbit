@@ -1,5 +1,5 @@
 import {
-  type Board,
+  type BoardDetail,
   type Card,
   CARD_TITLE_MAX_LENGTH,
   type List,
@@ -39,7 +39,7 @@ import {
 
 const END = Number.MAX_SAFE_INTEGER;
 
-function MoveListMenu({ board, list }: { board: Board; list: List }) {
+function MoveListMenu({ board, list }: { board: BoardDetail; list: List }) {
   const { t } = useTranslation();
   const { data: boards = [] } = useQuery(boardsQuery(board.workspaceId));
   const moveList = useMoveList(board.id);
@@ -73,14 +73,25 @@ function MoveListMenu({ board, list }: { board: Board; list: List }) {
 }
 
 interface ListColumnProps {
-  board: Board;
+  board: BoardDetail;
   list: List;
   cards: Card[];
   canEdit: boolean;
+  /** While the board is filtered, positions among hidden cards are ambiguous. */
+  dragDisabled?: boolean;
+  /** How many of the list's cards the filter hides. */
+  hiddenCount?: number;
 }
 
 /** One list: a draggable column whose cards can be reordered and moved. */
-export function ListColumn({ board, list, cards, canEdit }: ListColumnProps) {
+export function ListColumn({
+  board,
+  list,
+  cards,
+  canEdit,
+  dragDisabled = false,
+  hiddenCount = 0,
+}: ListColumnProps) {
   const { t } = useTranslation();
   const renameList = useRenameList(board.id);
   const deleteList = useDeleteList(board.id);
@@ -98,7 +109,7 @@ export function ListColumn({ board, list, cards, canEdit }: ListColumnProps) {
   } = useSortable({
     id: list.id,
     data: { type: 'list', title: list.name },
-    disabled: !canEdit || pending,
+    disabled: !canEdit || pending || dragDisabled,
   });
   // The whole header can be dragged with a pointer; the keyboard uses the grip
   // button, so keys pressed while renaming never start a drag.
@@ -107,7 +118,7 @@ export function ListColumn({ board, list, cards, canEdit }: ListColumnProps) {
   const { setNodeRef: setDropRef } = useDroppable({
     id: `cards:${list.id}`,
     data: { type: 'list-cards', listId: list.id },
-    disabled: !canEdit,
+    disabled: !canEdit || dragDisabled,
   });
 
   return (
@@ -181,10 +192,15 @@ export function ListColumn({ board, list, cards, canEdit }: ListColumnProps) {
       <SortableContext items={cards.map((card) => card.id)} strategy={verticalListSortingStrategy}>
         <ol ref={setDropRef} className="flex min-h-2 flex-col gap-2 overflow-y-auto px-2 pb-1">
           {cards.map((card) => (
-            <CardTile key={card.id} card={card} disabled={!canEdit} />
+            <CardTile key={card.id} card={card} board={board} disabled={!canEdit || dragDisabled} />
           ))}
         </ol>
       </SortableContext>
+      {hiddenCount > 0 ? (
+        <p className="px-4 pt-1 text-xs text-muted-foreground">
+          {t('filters.hiddenInList', { count: hiddenCount })}
+        </p>
+      ) : null}
 
       {canEdit && !pending ? (
         <div className="p-2 pt-1">

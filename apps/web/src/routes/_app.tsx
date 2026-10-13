@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { meQuery, sessionQuery, useMe } from '@/features/auth/queries';
 import { VerifyEmailBanner } from '@/features/auth/verify-email-banner';
 import { AppHeader } from '@/features/layout/app-header';
+import { useNotificationsRealtime } from '@/features/notifications/use-notifications-realtime';
 import i18n from '@/i18n';
 
 /** Layout for signed-in pages. */
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/_app')({
 
 function AppLayout() {
   const { data: me } = useMe();
+  useNotificationsRealtime();
 
   // The account's language wins over the browser's, so it follows the user across devices.
   useEffect(() => {

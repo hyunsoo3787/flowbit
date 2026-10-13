@@ -11,11 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as SetupRouteImport } from './routes/setup'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as AppBBoardIdRouteImport } from './routes/_app/b/$boardId'
 import { Route as AppWWorkspaceIdRouteImport } from './routes/_app/w/$workspaceId'
 import { Route as AppBBoardIdCCardIdRouteImport } from './routes/_app/b/$boardId/c/$cardId'
@@ -28,9 +31,19 @@ const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SetupRoute = SetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
@@ -53,6 +66,11 @@ const AuthSignUpRoute = AuthSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => AuthRoute,
 } as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppBBoardIdRoute = AppBBoardIdRouteImport.update({
   id: '/b/$boardId',
   path: '/b/$boardId',
@@ -71,20 +89,26 @@ const AppBBoardIdCCardIdRoute = AppBBoardIdCCardIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/setup': typeof SetupRoute
+  '/admin': typeof AppAdminRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/b/$boardId': typeof AppBBoardIdRouteWithChildren
   '/w/$workspaceId': typeof AppWWorkspaceIdRoute
   '/b/$boardId/c/$cardId': typeof AppBBoardIdCCardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
+  '/setup': typeof SetupRoute
+  '/admin': typeof AppAdminRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/b/$boardId': typeof AppBBoardIdRouteWithChildren
   '/w/$workspaceId': typeof AppWWorkspaceIdRoute
   '/b/$boardId/c/$cardId': typeof AppBBoardIdCCardIdRoute
@@ -93,10 +117,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/setup': typeof SetupRoute
+  '/_app/admin': typeof AppAdminRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/_app/': typeof AppIndexRoute
   '/_app/b/$boardId': typeof AppBBoardIdRouteWithChildren
   '/_app/w/$workspaceId': typeof AppWWorkspaceIdRoute
@@ -106,20 +133,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/setup'
+    | '/admin'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/invite/$token'
     | '/b/$boardId'
     | '/w/$workspaceId'
     | '/b/$boardId/c/$cardId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/setup'
+    | '/admin'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/invite/$token'
     | '/b/$boardId'
     | '/w/$workspaceId'
     | '/b/$boardId/c/$cardId'
@@ -127,10 +160,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_auth'
+    | '/setup'
+    | '/_app/admin'
     | '/_auth/forgot-password'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
+    | '/invite/$token'
     | '/_app/'
     | '/_app/b/$boardId'
     | '/_app/w/$workspaceId'
@@ -140,6 +176,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  SetupRoute: typeof SetupRoute
+  InviteTokenRoute: typeof InviteTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,11 +196,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/setup': {
+      id: '/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof SetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
     '/_auth/forgot-password': {
@@ -192,6 +244,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sign-up'
       preLoaderRoute: typeof AuthSignUpRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/b/$boardId': {
       id: '/_app/b/$boardId'
@@ -230,12 +289,14 @@ const AppBBoardIdRouteWithChildren = AppBBoardIdRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
   AppIndexRoute: typeof AppIndexRoute
   AppBBoardIdRoute: typeof AppBBoardIdRouteWithChildren
   AppWWorkspaceIdRoute: typeof AppWWorkspaceIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
   AppIndexRoute: AppIndexRoute,
   AppBBoardIdRoute: AppBBoardIdRouteWithChildren,
   AppWWorkspaceIdRoute: AppWWorkspaceIdRoute,
@@ -262,6 +323,8 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  SetupRoute: SetupRoute,
+  InviteTokenRoute: InviteTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

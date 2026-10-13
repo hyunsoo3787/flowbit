@@ -1,12 +1,10 @@
 import {
-  BOARD_BACKGROUNDS,
   BOARD_NAME_MAX_LENGTH,
   BOARD_VISIBILITIES,
-  type BoardBackground,
   type BoardVisibility,
+  DEFAULT_BOARD_BACKGROUND,
 } from '@flowbit/shared';
 import { useNavigate } from '@tanstack/react-router';
-import { CheckIcon } from 'lucide-react';
 import { type FormEvent, type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -23,7 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { errorMessage } from '@/lib/errors';
 import { cn } from '@/lib/utils';
-import { BACKGROUND_CLASSES } from './backgrounds';
+import { BackgroundPicker } from './background-picker';
+import { boardSurface } from './backgrounds';
 import { useCreateBoard } from './queries';
 
 export function CreateBoardDialog({
@@ -38,9 +37,10 @@ export function CreateBoardDialog({
   const createBoard = useCreateBoard(workspaceId);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
-  const [background, setBackground] = useState<BoardBackground>('blue');
+  const [background, setBackground] = useState(DEFAULT_BOARD_BACKGROUND);
   const [visibility, setVisibility] = useState<BoardVisibility>('WORKSPACE');
   const trimmed = name.trim();
+  const surface = boardSurface(background);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -66,9 +66,10 @@ export function CreateBoardDialog({
         <form className="grid gap-5" onSubmit={onSubmit}>
           <div
             className={cn(
-              'grid h-24 place-items-center rounded-lg px-4 text-center font-semibold text-white',
-              BACKGROUND_CLASSES[background],
+              'grid h-24 place-items-center rounded-lg px-4 text-center font-semibold',
+              surface.className,
             )}
+            style={surface.style}
             aria-hidden
           >
             <span className="line-clamp-2">{trimmed || t('boards.namePlaceholder')}</span>
@@ -86,33 +87,7 @@ export function CreateBoardDialog({
             />
           </div>
 
-          <fieldset className="grid gap-2">
-            <legend className="mb-2 text-sm font-medium">{t('boards.background')}</legend>
-            <div className="flex flex-wrap gap-2">
-              {BOARD_BACKGROUNDS.map((color) => (
-                <label key={color} className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="background"
-                    value={color}
-                    checked={background === color}
-                    onChange={() => setBackground(color)}
-                    className="peer sr-only"
-                  />
-                  <span
-                    className={cn(
-                      'grid size-9 place-items-center rounded-md text-white ring-offset-2 ring-offset-background peer-focus-visible:ring-2 peer-focus-visible:ring-ring',
-                      BACKGROUND_CLASSES[color],
-                    )}
-                    title={t(`boards.colors.${color}`)}
-                  >
-                    {background === color ? <CheckIcon className="size-4" aria-hidden /> : null}
-                    <span className="sr-only">{t(`boards.colors.${color}`)}</span>
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <BackgroundPicker value={background} onChange={setBackground} />
 
           <fieldset className="grid gap-2">
             <legend className="mb-2 text-sm font-medium">{t('boards.visibility')}</legend>

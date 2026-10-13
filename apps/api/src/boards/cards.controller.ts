@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   type Card,
@@ -19,6 +19,8 @@ import { CardsService } from './cards.service.js';
 
 const listIdPipe = new IdParamPipe('LIST_NOT_FOUND');
 const cardIdPipe = new IdParamPipe('CARD_NOT_FOUND');
+const userIdPipe = new IdParamPipe('MEMBER_NOT_FOUND');
+const labelIdPipe = new IdParamPipe('LABEL_NOT_FOUND');
 
 @ApiTags('cards')
 @Controller()
@@ -81,5 +83,53 @@ export class CardsController {
     @ClientMutationId() clientMutationId: string | null,
   ): Promise<void> {
     await this.cards.remove(user.id, cardId, clientMutationId);
+  }
+
+  @Put('cards/:cardId/assignees/:userId')
+  @ApiClientMutationId()
+  @ApiJsonResponse(200, 'Card', 401, 403, 404)
+  assign(
+    @CurrentUser() user: AuthUser,
+    @Param('cardId', cardIdPipe) cardId: string,
+    @Param('userId', userIdPipe) assigneeId: string,
+    @ClientMutationId() clientMutationId: string | null,
+  ): Promise<Card> {
+    return this.cards.setAssignee(user.id, cardId, assigneeId, true, clientMutationId);
+  }
+
+  @Delete('cards/:cardId/assignees/:userId')
+  @ApiClientMutationId()
+  @ApiJsonResponse(200, 'Card', 401, 403, 404)
+  unassign(
+    @CurrentUser() user: AuthUser,
+    @Param('cardId', cardIdPipe) cardId: string,
+    @Param('userId', userIdPipe) assigneeId: string,
+    @ClientMutationId() clientMutationId: string | null,
+  ): Promise<Card> {
+    return this.cards.setAssignee(user.id, cardId, assigneeId, false, clientMutationId);
+  }
+
+  @Put('cards/:cardId/labels/:labelId')
+  @ApiClientMutationId()
+  @ApiJsonResponse(200, 'Card', 401, 403, 404)
+  addLabel(
+    @CurrentUser() user: AuthUser,
+    @Param('cardId', cardIdPipe) cardId: string,
+    @Param('labelId', labelIdPipe) labelId: string,
+    @ClientMutationId() clientMutationId: string | null,
+  ): Promise<Card> {
+    return this.cards.setLabel(user.id, cardId, labelId, true, clientMutationId);
+  }
+
+  @Delete('cards/:cardId/labels/:labelId')
+  @ApiClientMutationId()
+  @ApiJsonResponse(200, 'Card', 401, 403, 404)
+  removeLabel(
+    @CurrentUser() user: AuthUser,
+    @Param('cardId', cardIdPipe) cardId: string,
+    @Param('labelId', labelIdPipe) labelId: string,
+    @ClientMutationId() clientMutationId: string | null,
+  ): Promise<Card> {
+    return this.cards.setLabel(user.id, cardId, labelId, false, clientMutationId);
   }
 }

@@ -121,3 +121,23 @@ test('lists boards on the workspace page and deletes a board', async ({ page }) 
   await expect(page.getByRole('link', { name: 'Temporary' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Create board' })).toBeVisible();
 });
+
+test('changes the board background to a custom color', async ({ page }) => {
+  await openNewBoard(page, 'Colors');
+  const surface = page.locator('[style*="--board-bg"]').first();
+  await expect(surface).toHaveAttribute('style', /--board-bg: #93c5fd/);
+
+  await page.getByRole('button', { name: 'Board menu' }).click();
+  await page.getByRole('menuitem', { name: 'Change background' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Hex color').fill('#FFCC00');
+  await dialog.getByRole('button', { name: 'Save changes' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(surface).toHaveAttribute('style', /--board-bg: #ffcc00/);
+
+  await page.reload();
+  await expect(page.locator('[style*="--board-bg"]').first()).toHaveAttribute(
+    'style',
+    /--board-bg: #ffcc00/,
+  );
+});

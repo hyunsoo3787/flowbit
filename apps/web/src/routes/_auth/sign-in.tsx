@@ -94,7 +94,11 @@ function SignInPage() {
         </form>
         <p className="text-center text-sm text-muted-foreground">
           {t('auth.signIn.noAccount')}{' '}
-          <Link to="/sign-up" className="text-primary hover:underline">
+          <Link
+            to="/sign-up"
+            search={redirect ? { redirect } : {}}
+            className="text-primary hover:underline"
+          >
             {t('auth.signIn.signUpLink')}
           </Link>
         </p>

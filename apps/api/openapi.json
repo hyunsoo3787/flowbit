@@ -1518,18 +1518,9 @@
             ]
           },
           "background": {
-            "default": "blue",
+            "default": "#93c5fd",
             "type": "string",
-            "enum": [
-              "blue",
-              "green",
-              "orange",
-              "red",
-              "purple",
-              "pink",
-              "teal",
-              "slate"
-            ]
+            "pattern": "^#[0-9a-fA-F]{6}$"
           }
         },
         "required": [
@@ -1553,16 +1544,7 @@
           },
           "background": {
             "type": "string",
-            "enum": [
-              "blue",
-              "green",
-              "orange",
-              "red",
-              "purple",
-              "pink",
-              "teal",
-              "slate"
-            ]
+            "pattern": "^#[0-9a-fA-F]{6}$"
           }
         }
       },
@@ -1972,16 +1954,7 @@
           },
           "background": {
             "type": "string",
-            "enum": [
-              "blue",
-              "green",
-              "orange",
-              "red",
-              "purple",
-              "pink",
-              "teal",
-              "slate"
-            ]
+            "pattern": "^#[0-9a-fA-F]{6}$"
           },
           "role": {
             "type": "string",
@@ -2050,16 +2023,7 @@
                 },
                 "background": {
                   "type": "string",
-                  "enum": [
-                    "blue",
-                    "green",
-                    "orange",
-                    "red",
-                    "purple",
-                    "pink",
-                    "teal",
-                    "slate"
-                  ]
+                  "pattern": "^#[0-9a-fA-F]{6}$"
                 },
                 "role": {
                   "type": "string",
@@ -2130,16 +2094,7 @@
           },
           "background": {
             "type": "string",
-            "enum": [
-              "blue",
-              "green",
-              "orange",
-              "red",
-              "purple",
-              "pink",
-              "teal",
-              "slate"
-            ]
+            "pattern": "^#[0-9a-fA-F]{6}$"
           },
           "role": {
             "type": "string",

@@ -48,7 +48,8 @@ export class BoardsService {
     if (!workspaceRole) throw AppError.notFound('WORKSPACE_NOT_FOUND');
     if (!canCreateBoardIn(workspaceRole)) throw AppError.forbidden();
 
-    const { name, visibility, background } = input;
+    const { name, visibility } = input;
+    const background = input.background.toLowerCase();
     const board = await this.prisma.$transaction(async (tx) => {
       const created = await tx.board.create({
         data: {
@@ -87,7 +88,11 @@ export class BoardsService {
     const board = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.board.update({
         where: { id: boardId },
-        data: { ...input, version: { increment: 1 } },
+        data: {
+          ...input,
+          ...(input.background ? { background: input.background.toLowerCase() } : {}),
+          version: { increment: 1 },
+        },
       });
       await tx.activity.create({
         data: {

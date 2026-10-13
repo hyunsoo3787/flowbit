@@ -15,7 +15,7 @@ const board: BoardDetail = {
   workspaceId: 'w1',
   name: 'Board',
   visibility: 'WORKSPACE',
-  background: 'blue',
+  background: '#93c5fd',
   role: 'ADMIN',
   version: 1,
   createdAt: now,

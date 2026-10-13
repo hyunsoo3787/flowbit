@@ -14,24 +14,59 @@ export const BOARD_ROLES = ['ADMIN', 'MEMBER', 'OBSERVER'] as const;
 export type BoardRole = (typeof BOARD_ROLES)[number];
 export const boardRoleSchema = z.enum(BOARD_ROLES);
 
-/** Named background colors; the web app maps each to a theme-aware color. */
-export const BOARD_BACKGROUNDS = [
-  'blue',
-  'green',
-  'orange',
-  'red',
-  'purple',
-  'pink',
-  'teal',
-  'slate',
+/** A board background color: any `#rrggbb` hex value. */
+export const boardBackgroundSchema = z
+  .string()
+  .regex(/^#[0-9a-fA-F]{6}$/, 'Expected a #rrggbb color');
+export type BoardBackground = string;
+
+/** Light preset colors offered first in the picker; any other color can be chosen too. */
+export const BOARD_BACKGROUND_PRESETS = [
+  { key: 'blue', color: '#93c5fd' },
+  { key: 'sky', color: '#7dd3fc' },
+  { key: 'teal', color: '#5eead4' },
+  { key: 'green', color: '#86efac' },
+  { key: 'lime', color: '#bef264' },
+  { key: 'yellow', color: '#fde047' },
+  { key: 'orange', color: '#fdba74' },
+  { key: 'red', color: '#fca5a5' },
+  { key: 'pink', color: '#f9a8d4' },
+  { key: 'purple', color: '#c4b5fd' },
+  { key: 'gray', color: '#cbd5e1' },
+  { key: 'stone', color: '#d6d3d1' },
 ] as const;
-export type BoardBackground = (typeof BOARD_BACKGROUNDS)[number];
-export const boardBackgroundSchema = z.enum(BOARD_BACKGROUNDS);
+export type BoardBackgroundPreset = (typeof BOARD_BACKGROUND_PRESETS)[number]['key'];
+export const DEFAULT_BOARD_BACKGROUND = '#93c5fd';
+
+function channel(value: number) {
+  const c = value / 255;
+  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+
+/** WCAG relative luminance of a `#rrggbb` color, from 0 (black) to 1 (white). */
+export function relativeLuminance(hex: string): number {
+  const n = Number.parseInt(hex.slice(1), 16);
+  return (
+    0.2126 * channel((n >> 16) & 255) + 0.7152 * channel((n >> 8) & 255) + 0.0722 * channel(n & 255)
+  );
+}
+
+/**
+ * Whether text on this background should be dark or light: whichever of
+ * near-black (#0f172a) and white has the higher WCAG contrast ratio.
+ */
+export function textToneFor(hex: string): 'dark' | 'light' {
+  const l = relativeLuminance(hex);
+  const darkText = relativeLuminance('#0f172a');
+  const contrastWithDark = (l + 0.05) / (darkText + 0.05);
+  const contrastWithWhite = 1.05 / (l + 0.05);
+  return contrastWithDark >= contrastWithWhite ? 'dark' : 'light';
+}
 
 export const createBoardSchema = z.object({
   name: z.string().trim().min(1).max(BOARD_NAME_MAX_LENGTH),
   visibility: boardVisibilitySchema.default('WORKSPACE'),
-  background: boardBackgroundSchema.default('blue'),
+  background: boardBackgroundSchema.default(DEFAULT_BOARD_BACKGROUND),
 });
 export type CreateBoardInput = z.input<typeof createBoardSchema>;
 

@@ -1,17 +1,15 @@
 import type {
   Board as BoardDto,
-  BoardBackground,
   BoardRole,
   Card as CardDto,
   List as ListDto,
 } from '@flowbit/shared';
-import { BOARD_BACKGROUNDS } from '@flowbit/shared';
+import { boardBackgroundSchema, DEFAULT_BOARD_BACKGROUND } from '@flowbit/shared';
 import type { Board, Card, List } from '../generated/prisma/client.js';
 
-function background(value: string): BoardBackground {
-  return (BOARD_BACKGROUNDS as readonly string[]).includes(value)
-    ? (value as BoardBackground)
-    : 'blue';
+/** The stored color, or the default if a row somehow holds an invalid value. */
+function background(value: string): string {
+  return boardBackgroundSchema.safeParse(value).success ? value : DEFAULT_BOARD_BACKGROUND;
 }
 
 export function toBoardDto(board: Board, role: BoardRole): BoardDto {

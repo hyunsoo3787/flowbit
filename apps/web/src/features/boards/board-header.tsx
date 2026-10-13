@@ -1,8 +1,6 @@
 import {
-  BOARD_BACKGROUNDS,
   BOARD_NAME_MAX_LENGTH,
   BOARD_VISIBILITIES,
-  type BoardBackground,
   type BoardDetail,
   type BoardVisibility,
 } from '@flowbit/shared';
@@ -44,7 +42,8 @@ import {
 import { workspaceQuery } from '@/features/workspaces/queries';
 import { errorMessage } from '@/lib/errors';
 import { cn } from '@/lib/utils';
-import { BACKGROUND_CLASSES } from './backgrounds';
+import { BackgroundPicker } from './background-picker';
+import { boardSurface } from './backgrounds';
 import { useDeleteBoard, useUpdateBoard } from './queries';
 
 export function BoardHeader({ board }: { board: BoardDetail }) {
@@ -54,6 +53,7 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
   const updateBoard = useUpdateBoard(board.id);
   const deleteBoard = useDeleteBoard(board.id);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [changingBackground, setChangingBackground] = useState(false);
   const isAdmin = board.role === 'ADMIN';
   const VisibilityIcon = board.visibility === 'PRIVATE' ? LockIcon : UsersIcon;
 
@@ -68,16 +68,18 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 text-white sm:px-6">
-      <nav className="flex min-w-0 items-center gap-2 text-sm text-white/80">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 sm:px-6">
+      <nav className="flex min-w-0 items-center gap-2 text-sm">
         <Link
           to="/w/$workspaceId"
           params={{ workspaceId: board.workspaceId }}
-          className="max-w-40 truncate rounded-sm hover:text-white hover:underline"
+          className="max-w-40 truncate rounded-sm opacity-80 hover:underline hover:opacity-100"
         >
           {workspace?.name}
         </Link>
-        <span aria-hidden>/</span>
+        <span className="opacity-80" aria-hidden>
+          /
+        </span>
       </nav>
       <h1 className="min-w-0 text-lg font-bold">
         <InlineEdit
@@ -86,19 +88,19 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
           maxLength={BOARD_NAME_MAX_LENGTH}
           disabled={!isAdmin}
           onSave={(name) => updateBoard.mutate({ name })}
-          className="hover:bg-white/15! disabled:hover:bg-transparent"
+          className="hover:bg-current/15! disabled:hover:bg-transparent!"
           inputClassName="text-base"
         />
       </h1>
       <span
-        className="inline-flex items-center gap-1 rounded-md bg-white/15 px-2 py-0.5 text-xs"
+        className="inline-flex items-center gap-1 rounded-md bg-current/10 px-2 py-0.5 text-xs"
         title={t(`boards.visibility${board.visibility}Hint`)}
       >
         <VisibilityIcon className="size-3.5" aria-hidden />
         {t(`boards.visibility${board.visibility}`)}
       </span>
       {board.role === 'OBSERVER' ? (
-        <span className="inline-flex items-center gap-1 rounded-md bg-black/20 px-2 py-0.5 text-xs">
+        <span className="inline-flex items-center gap-1 rounded-md bg-current/15 px-2 py-0.5 text-xs">
           <EyeIcon className="size-3.5" aria-hidden />
           {t('boards.readOnly')}
         </span>
@@ -110,37 +112,17 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
             <Button
               variant="ghost"
               size="icon"
-              className="ml-auto text-white hover:bg-white/15 hover:text-white"
+              className="ml-auto text-inherit hover:bg-current/15 hover:text-inherit dark:hover:bg-current/15"
               aria-label={t('boards.menu')}
             >
               <MoreHorizontalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <PaletteIcon />
-                {t('boards.background')}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={board.background}
-                  onValueChange={(value) =>
-                    updateBoard.mutate({ background: value as BoardBackground })
-                  }
-                >
-                  {BOARD_BACKGROUNDS.map((color) => (
-                    <DropdownMenuRadioItem key={color} value={color}>
-                      <span
-                        className={cn('size-4 rounded-sm', BACKGROUND_CLASSES[color])}
-                        aria-hidden
-                      />
-                      {t(`boards.colors.${color}`)}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
+            <DropdownMenuItem onSelect={() => setChangingBackground(true)}>
+              <PaletteIcon />
+              {t('boards.changeBackground')}
+            </DropdownMenuItem>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <VisibilityIcon />
@@ -170,6 +152,17 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
         </DropdownMenu>
       ) : null}
 
+      {changingBackground ? (
+        <BackgroundDialog
+          board={board}
+          onClose={() => setChangingBackground(false)}
+          onSave={(background) => {
+            updateBoard.mutate({ background });
+            setChangingBackground(false);
+          }}
+        />
+      ) : null}
+
       <Dialog open={confirmingDelete} onOpenChange={setConfirmingDelete}>
         <DialogContent closeLabel={t('common.close')}>
           <DialogHeader>
@@ -187,5 +180,49 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+/** Picks a new background with a live preview; nothing changes until Save. */
+function BackgroundDialog({
+  board,
+  onClose,
+  onSave,
+}: {
+  board: BoardDetail;
+  onClose: () => void;
+  onSave: (background: string) => void;
+}) {
+  const { t } = useTranslation();
+  const [background, setBackground] = useState(board.background);
+  const surface = boardSurface(background);
+
+  return (
+    <Dialog open onOpenChange={(open) => (open ? undefined : onClose())}>
+      <DialogContent closeLabel={t('common.close')}>
+        <DialogHeader>
+          <DialogTitle>{t('boards.changeBackground')}</DialogTitle>
+        </DialogHeader>
+        <div
+          className={cn(
+            'grid h-24 place-items-center rounded-lg px-4 text-center font-semibold',
+            surface.className,
+          )}
+          style={surface.style}
+          aria-hidden
+        >
+          <span className="line-clamp-2">{board.name}</span>
+        </div>
+        <BackgroundPicker value={background} onChange={setBackground} />
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
+          <Button onClick={() => onSave(background)} disabled={background === board.background}>
+            {t('common.saveChanges')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

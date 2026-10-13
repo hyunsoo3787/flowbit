@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { LockIcon, PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { BACKGROUND_CLASSES } from './backgrounds';
+import { boardSurface } from './backgrounds';
 import { CreateBoardDialog } from './create-board-dialog';
 import { boardsQuery } from './queries';
 
@@ -23,27 +23,31 @@ export function BoardGrid({ workspace }: { workspace: Workspace }) {
 
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {boards.map((board) => (
-        <li key={board.id}>
-          <Link
-            to="/b/$boardId"
-            params={{ boardId: board.id }}
-            className={cn(
-              TILE,
-              'items-start justify-between font-semibold text-white transition-[filter] hover:brightness-110',
-              BACKGROUND_CLASSES[board.background],
-            )}
-          >
-            <span className="line-clamp-2 break-words">{board.name}</span>
-            {board.visibility === 'PRIVATE' ? (
-              <LockIcon
-                className="size-4 shrink-0 opacity-80"
-                aria-label={t('boards.visibilityPRIVATE')}
-              />
-            ) : null}
-          </Link>
-        </li>
-      ))}
+      {boards.map((board) => {
+        const surface = boardSurface(board.background);
+        return (
+          <li key={board.id}>
+            <Link
+              to="/b/$boardId"
+              params={{ boardId: board.id }}
+              className={cn(
+                TILE,
+                'items-start justify-between font-semibold transition-[filter] hover:brightness-95 dark:hover:brightness-125',
+                surface.className,
+              )}
+              style={surface.style}
+            >
+              <span className="line-clamp-2 break-words">{board.name}</span>
+              {board.visibility === 'PRIVATE' ? (
+                <LockIcon
+                  className="size-4 shrink-0 opacity-80"
+                  aria-label={t('boards.visibilityPRIVATE')}
+                />
+              ) : null}
+            </Link>
+          </li>
+        );
+      })}
       {canCreate ? (
         <li>
           <CreateBoardDialog

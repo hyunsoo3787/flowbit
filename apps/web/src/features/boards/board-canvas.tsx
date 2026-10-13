@@ -185,7 +185,7 @@ export function BoardCanvas({ board }: { board: BoardDetail }) {
         </SortableContext>
 
         {canEdit ? (
-          <div className="w-72 shrink-0 rounded-xl bg-muted/80 p-2">
+          <div className="w-72 shrink-0 rounded-xl bg-muted/80 p-2 text-foreground">
             <Composer
               openLabel={columns.length === 0 ? t('lists.add') : t('lists.addAnother')}
               placeholder={t('lists.namePlaceholder')}

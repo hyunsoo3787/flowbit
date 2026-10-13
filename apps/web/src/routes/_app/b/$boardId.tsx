@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ApiError } from '@/api/client';
 import { Page } from '@/components/page';
 import { Button } from '@/components/ui/button';
-import { BACKGROUND_CLASSES } from '@/features/boards/backgrounds';
+import { boardSurface } from '@/features/boards/backgrounds';
 import { BoardCanvas } from '@/features/boards/board-canvas';
 import { BoardHeader } from '@/features/boards/board-header';
 import { boardQuery } from '@/features/boards/queries';
@@ -22,13 +22,12 @@ function BoardPage() {
   const { boardId } = Route.useParams();
   const { data: board } = useSuspenseQuery(boardQuery(boardId));
   useBoardRealtime(boardId);
+  const surface = boardSurface(board.background);
 
   return (
     <div
-      className={cn(
-        'flex min-h-0 flex-1 flex-col overflow-hidden',
-        BACKGROUND_CLASSES[board.background],
-      )}
+      className={cn('flex min-h-0 flex-1 flex-col overflow-hidden', surface.className)}
+      style={surface.style}
     >
       <BoardHeader board={board} />
       <div className="min-h-0 flex-1">

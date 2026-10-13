@@ -198,8 +198,8 @@ model Board {
   workspaceId String          @map("workspace_id") @db.Uuid
   name        String
   visibility  BoardVisibility @default(WORKSPACE)
-  /// A named color from BOARD_BACKGROUNDS in @flowbit/shared.
-  background  String          @default("blue")
+  /// A #rrggbb color (lowercase); see BOARD_BACKGROUND_PRESETS in @flowbit/shared.
+  background  String          @default("#93c5fd")
   createdById String?         @map("created_by_id") @db.Uuid
   version     Int             @default(1)
   createdAt   DateTime        @default(now()) @map("created_at")

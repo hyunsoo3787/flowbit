@@ -100,7 +100,7 @@ try {
       data: {
         workspaceId: workspace.id,
         name: BOARD.name,
-        background: 'blue',
+        background: '#93c5fd',
         createdById: users['admin']!,
         members: { create: { userId: users['admin']!, role: 'ADMIN' } },
       },
@@ -128,7 +128,7 @@ try {
         workspaceId: workspace.id,
         name: 'Admin notes (private)',
         visibility: 'PRIVATE',
-        background: 'slate',
+        background: '#cbd5e1',
         createdById: users['admin']!,
         members: { create: { userId: users['admin']!, role: 'ADMIN' } },
       },

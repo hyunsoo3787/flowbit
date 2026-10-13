@@ -157,6 +157,9 @@
     "name": "Board name",
     "namePlaceholder": "e.g. Product roadmap",
     "background": "Background",
+    "changeBackground": "Change background",
+    "customColor": "Custom color",
+    "hexColor": "Hex color",
     "visibility": "Visibility",
     "visibilityWORKSPACE": "Workspace",
     "visibilityWORKSPACEHint": "Everyone in the workspace can see it.",
@@ -175,13 +178,17 @@
     "deletedElsewhere": "This board was deleted.",
     "colors": {
       "blue": "Blue",
+      "sky": "Sky",
+      "teal": "Teal",
       "green": "Green",
+      "lime": "Lime",
+      "yellow": "Yellow",
       "orange": "Orange",
       "red": "Red",
-      "purple": "Purple",
       "pink": "Pink",
-      "teal": "Teal",
-      "slate": "Slate"
+      "purple": "Purple",
+      "gray": "Gray",
+      "stone": "Stone"
     }
   },
   "lists": {

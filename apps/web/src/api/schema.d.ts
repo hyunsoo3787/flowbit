@@ -238,18 +238,14 @@ export interface components {
              * @enum {string}
              */
             visibility?: "PRIVATE" | "WORKSPACE";
-            /**
-             * @default blue
-             * @enum {string}
-             */
-            background?: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
+            /** @default #93c5fd */
+            background?: string;
         };
         UpdateBoardInput: {
             name?: string;
             /** @enum {string} */
             visibility?: "PRIVATE" | "WORKSPACE";
-            /** @enum {string} */
-            background?: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
+            background?: string;
         };
         CreateListInput: {
             name: string;
@@ -352,8 +348,7 @@ export interface components {
             name: string;
             /** @enum {string} */
             visibility: "PRIVATE" | "WORKSPACE";
-            /** @enum {string} */
-            background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
+            background: string;
             /** @enum {string} */
             role: "ADMIN" | "MEMBER" | "OBSERVER";
             version: number;
@@ -371,8 +366,7 @@ export interface components {
                 name: string;
                 /** @enum {string} */
                 visibility: "PRIVATE" | "WORKSPACE";
-                /** @enum {string} */
-                background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
+                background: string;
                 /** @enum {string} */
                 role: "ADMIN" | "MEMBER" | "OBSERVER";
                 version: number;
@@ -390,8 +384,7 @@ export interface components {
             name: string;
             /** @enum {string} */
             visibility: "PRIVATE" | "WORKSPACE";
-            /** @enum {string} */
-            background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
+            background: string;
             /** @enum {string} */
             role: "ADMIN" | "MEMBER" | "OBSERVER";
             version: number;

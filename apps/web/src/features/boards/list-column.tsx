@@ -9,7 +9,8 @@ import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRightLeftIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
+import { ArrowRightLeftIcon, GripVerticalIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
+import type { KeyboardEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { InlineEdit } from '@/components/inline-edit';
@@ -99,6 +100,9 @@ export function ListColumn({ board, list, cards, canEdit }: ListColumnProps) {
     data: { type: 'list', title: list.name },
     disabled: !canEdit || pending,
   });
+  // The whole header can be dragged with a pointer; the keyboard uses the grip
+  // button, so keys pressed while renaming never start a drag.
+  const { onKeyDown: onDragKeyDown, ...pointerListeners } = listeners ?? {};
   // Lets cards be dropped into an empty list.
   const { setNodeRef: setDropRef } = useDroppable({
     id: `cards:${list.id}`,
@@ -116,13 +120,23 @@ export function ListColumn({ board, list, cards, canEdit }: ListColumnProps) {
         isDragging && 'opacity-40',
       )}
     >
-      <header className="flex items-center gap-1 p-2 pb-1">
-        <h2
-          ref={setActivatorNodeRef}
-          {...attributes}
-          {...listeners}
-          className={cn('min-w-0 flex-1 font-semibold', canEdit && 'cursor-grab')}
-        >
+      <header
+        className={cn('flex items-center gap-1 p-2 pb-1', canEdit && !pending && 'cursor-grab')}
+        {...pointerListeners}
+      >
+        {canEdit && !pending ? (
+          <button
+            ref={setActivatorNodeRef}
+            type="button"
+            {...attributes}
+            onKeyDown={onDragKeyDown as KeyboardEventHandler | undefined}
+            aria-label={t('lists.dragHandle', { name: list.name })}
+            className="grid size-6 shrink-0 place-items-center rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <GripVerticalIcon className="size-4" aria-hidden />
+          </button>
+        ) : null}
+        <h2 className="min-w-0 flex-1 font-semibold">
           <InlineEdit
             value={list.name}
             label={t('lists.rename')}

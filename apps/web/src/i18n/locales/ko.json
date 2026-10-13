@@ -195,7 +195,8 @@
     "deleteConfirm": "“{{name}}” 리스트와 그 안의 모든 카드를 삭제할까요? 되돌릴 수 없습니다.",
     "moveToBoard": "다른 보드로 이동",
     "moved": "리스트를 “{{board}}” 보드로 옮겼습니다.",
-    "noOtherBoards": "다른 보드가 없습니다"
+    "noOtherBoards": "다른 보드가 없습니다",
+    "dragHandle": "{{name}} 리스트 옮기기"
   },
   "cards": {
     "add": "카드 추가",

@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 interface InlineEditProps {
   value: string;
   onSave: (value: string) => void;
-  /** Accessible name of the field, e.g. "Rename list". */
+  /** Names the action (tooltip) and the input while editing, e.g. "Rename list". */
   label: string;
   maxLength: number;
   disabled?: boolean;
@@ -40,7 +40,9 @@ export function InlineEdit({
       <button
         type="button"
         disabled={disabled}
-        aria-label={disabled ? undefined : label}
+        // The visible text stays the accessible name (so a heading keeps its
+        // name); the action is exposed as the description.
+        title={disabled ? undefined : label}
         onClick={() => {
           setDraft(value);
           setEditing(true);
@@ -80,6 +82,8 @@ export function InlineEdit({
     onChange: (event: { target: { value: string } }) => setDraft(event.target.value),
     onBlur: () => finish(true),
     onKeyDown,
+    // Selecting text with the mouse must not start dragging a parent item.
+    onPointerDown: (event: { stopPropagation: () => void }) => event.stopPropagation(),
     className: cn(
       'w-full rounded-sm border border-ring bg-card px-1 text-foreground outline-none ring-2 ring-ring/40',
       inputClassName,

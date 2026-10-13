@@ -78,8 +78,9 @@ export function BoardCanvas({ board }: { board: BoardDetail }) {
   const announcements: Announcements = {
     onDragStart: ({ active: item }) =>
       t('dnd.pickedUp', { item: nameOf(item.id, item.data.current) }),
+    // Right after pick-up the item is "over" itself; keep the pick-up message.
     onDragOver: ({ active: item, over }) =>
-      over
+      over && over.id !== item.id
         ? t('dnd.over', {
             item: nameOf(item.id, item.data.current),
             target: nameOf(over.id, over.data.current),

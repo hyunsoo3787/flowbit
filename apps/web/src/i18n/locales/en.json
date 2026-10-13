@@ -195,7 +195,8 @@
     "deleteConfirm": "Delete the list “{{name}}” and all its cards? This can't be undone.",
     "moveToBoard": "Move to another board",
     "moved": "List moved to “{{board}}”.",
-    "noOtherBoards": "No other boards"
+    "noOtherBoards": "No other boards",
+    "dragHandle": "Move list {{name}}"
   },
   "cards": {
     "add": "Add a card",

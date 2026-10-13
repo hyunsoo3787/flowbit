@@ -1,11 +1,14 @@
 import type { Workspace } from '@flowbit/shared';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { LayoutGridIcon, PlusIcon } from 'lucide-react';
+import { LayoutGridIcon, LockIcon, PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Page } from '@/components/page';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { boardSurface } from '@/features/boards/backgrounds';
+import { sharedBoardsQuery } from '@/features/boards/queries';
+import { cn } from '@/lib/utils';
 import {
   CreateWorkspaceDialog,
   useCreateWorkspaceAndOpen,
@@ -22,8 +25,49 @@ function HomePage() {
   const { data: workspaces } = useSuspenseQuery(workspacesQuery);
   return (
     <Page>
-      {workspaces.length === 0 ? <FirstWorkspace /> : <WorkspaceGrid workspaces={workspaces} />}
+      <div className="grid gap-10">
+        {workspaces.length === 0 ? <FirstWorkspace /> : <WorkspaceGrid workspaces={workspaces} />}
+        <SharedBoards />
+      </div>
     </Page>
+  );
+}
+
+/** Boards the user was invited to without joining their workspace. */
+function SharedBoards() {
+  const { t } = useTranslation();
+  const { data: boards = [] } = useQuery(sharedBoardsQuery);
+  if (boards.length === 0) return null;
+  return (
+    <section className="grid gap-3">
+      <h2 className="text-sm font-medium text-muted-foreground">{t('boards.sharedWithYou')}</h2>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        {boards.map((board) => {
+          const surface = boardSurface(board.background);
+          return (
+            <li key={board.id}>
+              <Link
+                to="/b/$boardId"
+                params={{ boardId: board.id }}
+                className={cn(
+                  'flex h-24 items-start justify-between rounded-lg p-3 font-semibold outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                  surface.className,
+                )}
+                style={surface.style}
+              >
+                <span className="line-clamp-2 break-words">{board.name}</span>
+                {board.visibility === 'PRIVATE' ? (
+                  <LockIcon
+                    className="size-4 shrink-0 opacity-80"
+                    aria-label={t('boards.visibilityPRIVATE')}
+                  />
+                ) : null}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 

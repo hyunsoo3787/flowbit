@@ -1,6 +1,7 @@
 import { Global, Inject, Module, type OnModuleInit } from '@nestjs/common';
 import { APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import type { FastifyInstance } from 'fastify';
+import { InstanceSettingsService } from '../admin/instance-settings.service.js';
 import { ENV, type Env } from '../config/env.js';
 import { MailService } from '../mail/mail.service.js';
 import { OrganizationsService } from '../organizations/organizations.service.js';
@@ -16,20 +17,29 @@ import { mountAuthHandler } from './mount-auth-handler.js';
 @Module({
   controllers: [AuthConfigController],
   providers: [
+    InstanceSettingsService,
     {
       provide: AUTH,
-      inject: [ENV, PrismaService, MailService, OrganizationsService, ValkeyService],
+      inject: [
+        ENV,
+        PrismaService,
+        MailService,
+        OrganizationsService,
+        ValkeyService,
+        InstanceSettingsService,
+      ],
       useFactory: (
         env: Env,
         prisma: PrismaService,
         mail: MailService,
         organizations: OrganizationsService,
         valkey: ValkeyService,
-      ) => createAuth({ env, prisma, mail, organizations, valkey }),
+        settings: InstanceSettingsService,
+      ) => createAuth({ env, prisma, mail, organizations, valkey, settings }),
     },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
-  exports: [AUTH],
+  exports: [AUTH, InstanceSettingsService],
 })
 export class AuthModule implements OnModuleInit {
   constructor(

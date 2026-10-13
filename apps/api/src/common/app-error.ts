@@ -30,6 +30,14 @@ export class AppError extends HttpException {
     return new AppError('FORBIDDEN', HttpStatus.FORBIDDEN, message);
   }
 
+  static conflict(code: ErrorCode = 'CONFLICT', message?: string) {
+    return new AppError(code, HttpStatus.CONFLICT, message);
+  }
+
+  static badRequest(code: ErrorCode = 'BAD_REQUEST', message?: string) {
+    return new AppError(code, HttpStatus.BAD_REQUEST, message);
+  }
+
   static unauthenticated() {
     return new AppError('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED);
   }

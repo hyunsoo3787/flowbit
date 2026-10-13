@@ -93,6 +93,69 @@ async function setUpBoard() {
 }
 
 describe('real-time board events', () => {
+  it('broadcasts labels, card content and member changes', async () => {
+    const { ann, workspaceId, boardId, listId } = await setUpBoard();
+    const card = await request(ctx.app, 'POST', `/api/v1/lists/${listId}/cards`, {
+      cookie: ann.cookie,
+      body: { title: 'Hello' },
+    });
+    const cardId = (card.body as { id: string }).id;
+    const viewer = connect(ann.cookie);
+    await connected(viewer);
+    await join(viewer, boardId);
+    const events = collect(viewer);
+
+    const label = await request(ctx.app, 'POST', `/api/v1/boards/${boardId}/labels`, {
+      cookie: ann.cookie,
+      body: { name: 'Bug', color: 'red' },
+    });
+    await waitFor(() => events.some((event) => event.type === 'label.upserted'));
+    expect(events.at(-1)).toMatchObject({ type: 'label.upserted', label: { name: 'Bug' } });
+
+    await request(ctx.app, 'POST', `/api/v1/cards/${cardId}/comments`, {
+      cookie: ann.cookie,
+      body: { body: 'Hi' },
+      headers: { [CLIENT_MUTATION_ID_HEADER]: 'comment-1' },
+    });
+    await waitFor(() => events.some((event) => event.type === 'card.content'));
+    await waitFor(() =>
+      events.some((event) => event.type === 'card.upserted' && event.card.badges.comments === 1),
+    );
+    expect(events.find((event) => event.type === 'card.content')).toMatchObject({
+      cardId,
+      part: 'comments',
+      clientMutationId: 'comment-1',
+    });
+    // The new count isn't applied optimistically, so it isn't marked as the caller's echo.
+    expect(
+      events.find((event) => event.type === 'card.upserted' && event.card.badges.comments === 1),
+    ).toMatchObject({ clientMutationId: null });
+
+    const bob = await signUp(ctx.app, { name: 'Bob', email: 'bob@example.com' });
+    const link = await request(
+      ctx.app,
+      'POST',
+      `/api/v1/workspaces/${workspaceId}/invitation-link`,
+      {
+        cookie: ann.cookie,
+        body: {},
+      },
+    );
+    const token = String((link.body as { url: string }).url).split('/invite/')[1];
+    await request(ctx.app, 'POST', `/api/v1/invitations/${token}/accept`, { cookie: bob.cookie });
+    await waitFor(() => events.some((event) => event.type === 'members.updated'));
+    const members = events.find((event) => event.type === 'members.updated');
+    expect(members?.type === 'members.updated' && members.members.map((m) => m.user.name)).toEqual([
+      'Ann',
+      'Bob',
+    ]);
+
+    await request(ctx.app, 'DELETE', `/api/v1/labels/${(label.body as { id: string }).id}`, {
+      cookie: ann.cookie,
+    });
+    await waitFor(() => events.some((event) => event.type === 'label.deleted'));
+  });
+
   it('broadcasts changes to every viewer, echoing the client mutation id', async () => {
     const { ann, boardId, listId } = await setUpBoard();
     const viewer = connect(ann.cookie);

@@ -11,7 +11,8 @@
     "retry": "Try again",
     "saveChanges": "Save changes",
     "delete": "Delete",
-    "rename": "Rename"
+    "rename": "Rename",
+    "back": "Back"
   },
   "auth": {
     "fields": {
@@ -92,7 +93,18 @@
     "USER_NOT_FOUND": "No account was found.",
     "BOARD_NOT_FOUND": "This board doesn't exist, or you don't have access to it.",
     "LIST_NOT_FOUND": "This list doesn't exist anymore, or you don't have access to it.",
-    "CARD_NOT_FOUND": "This card doesn't exist anymore, or you don't have access to it."
+    "CARD_NOT_FOUND": "This card doesn't exist anymore, or you don't have access to it.",
+    "LABEL_NOT_FOUND": "This label doesn’t exist anymore.",
+    "CHECKLIST_NOT_FOUND": "This checklist doesn’t exist anymore.",
+    "CHECKLIST_ITEM_NOT_FOUND": "This checklist item doesn’t exist anymore.",
+    "COMMENT_NOT_FOUND": "This comment doesn’t exist anymore.",
+    "MEMBER_NOT_FOUND": "This person isn’t a member here.",
+    "INVITATION_NOT_FOUND": "This invitation is invalid, has expired or was revoked.",
+    "INVITATION_EMAIL_MISMATCH": "This invitation is for a different email address. Sign in with that address to accept it.",
+    "LAST_ADMIN": "There must be at least one administrator left.",
+    "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server.",
+    "SIGN_UP_DISABLED": "Sign-up is closed on this server. Ask for an invitation.",
+    "SETUP_NOT_AVAILABLE": "This setup link is invalid or was already used."
   },
   "nav": {
     "home": "Home",
@@ -105,7 +117,8 @@
     "themeDark": "Dark",
     "themeSystem": "System",
     "signOut": "Sign out",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "admin": "Administration"
   },
   "languages": {
     "en": "English",
@@ -189,7 +202,13 @@
       "purple": "Purple",
       "gray": "Gray",
       "stone": "Stone"
-    }
+    },
+    "roles": {
+      "ADMIN": "Admin",
+      "MEMBER": "Member",
+      "OBSERVER": "Observer"
+    },
+    "sharedWithYou": "Boards shared with you"
   },
   "lists": {
     "add": "Add a list",
@@ -224,7 +243,45 @@
     "delete": "Delete card",
     "deleteConfirm": "Delete this card? This can't be undone.",
     "deleted": "Card deleted.",
-    "openCard": "Open card: {{title}}"
+    "openCard": "Open card: {{title}}",
+    "due": {
+      "complete": "Complete",
+      "overdue": "Overdue",
+      "soon": "Due soon",
+      "later": "Due later"
+    },
+    "hasDescription": "This card has a description.",
+    "commentCount_one": "{{count}} comment",
+    "commentCount_other": "{{count}} comments",
+    "checklistProgress": "Checklist items: {{done}} of {{total}} done",
+    "members": {
+      "title": "Members",
+      "search": "Search members",
+      "none": "No matching members."
+    },
+    "labels": {
+      "title": "Labels",
+      "edit": "Edit label {{name}}",
+      "create": "Create a new label",
+      "editTitle": "Edit label",
+      "name": "Title",
+      "color": "Color",
+      "createSubmit": "Create",
+      "deleteConfirm": "Delete this label? It will be removed from every card."
+    },
+    "dates": {
+      "title": "Dates",
+      "start": "Start date",
+      "due": "Due date",
+      "remove": "Remove dates",
+      "complete": "Mark the due date complete"
+    },
+    "cover": {
+      "title": "Cover",
+      "remove": "Remove cover"
+    },
+    "actions": "Actions",
+    "addToCard": "Add to card"
   },
   "dnd": {
     "instructions": "To pick up an item, press space or enter. Use the arrow keys to move it, then press space or enter again to drop it, or press escape to cancel.",
@@ -232,5 +289,209 @@
     "over": "{{item}} is over {{target}}.",
     "dropped": "Dropped {{item}}.",
     "cancelled": "Moving {{item}} was cancelled."
+  },
+  "labels": {
+    "colors": {
+      "green": "Green",
+      "yellow": "Yellow",
+      "orange": "Orange",
+      "red": "Red",
+      "purple": "Purple",
+      "blue": "Blue",
+      "sky": "Sky",
+      "lime": "Lime",
+      "pink": "Pink",
+      "gray": "Gray"
+    }
+  },
+  "checklists": {
+    "add": "Checklist",
+    "title": "Title",
+    "defaultTitle": "Checklist",
+    "addSubmit": "Add",
+    "rename": "Rename checklist",
+    "deleteConfirm": "Delete the checklist “{{title}}”?",
+    "progress": "Progress of {{title}}",
+    "addItem": "Add an item",
+    "itemPlaceholder": "Add an item",
+    "addItemSubmit": "Add",
+    "editItem": "Edit item",
+    "reorder": "Reorder “{{text}}”",
+    "itemOptions": "Options for “{{text}}”",
+    "itemOptionsTitle": "Item",
+    "assignee": "Assigned to",
+    "nobody": "Nobody"
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Write a comment… Type @ to mention someone.",
+    "write": "Write a comment",
+    "submit": "Save",
+    "hint": "Ctrl+Enter to save. Markdown is supported.",
+    "loadMore": "Show older comments",
+    "deletedUser": "Deleted user",
+    "edited": "(edited)",
+    "edit": "Edit comment",
+    "editAction": "Edit",
+    "deleteConfirm": "Delete this comment?",
+    "mentionSuggestions": "People to mention"
+  },
+  "filters": {
+    "button": "Filter",
+    "buttonActive_one": "Filter, {{count}} active",
+    "buttonActive_other": "Filter, {{count}} active",
+    "title": "Filter cards",
+    "keyword": "Keyword",
+    "keywordPlaceholder": "Search titles, descriptions, labels",
+    "members": "Members",
+    "noMembers": "No members",
+    "assignedToMe": "Cards assigned to me",
+    "due": "Due date",
+    "dueOptions": {
+      "overdue": "Overdue",
+      "day": "Due in the next day",
+      "week": "Due in the next week",
+      "none": "No dates",
+      "complete": "Marked as complete"
+    },
+    "labels": "Labels",
+    "noLabels": "No labels",
+    "clear": "Clear filters",
+    "hiddenInList_one": "{{count}} card hidden by the filter",
+    "hiddenInList_other": "{{count}} cards hidden by the filter"
+  },
+  "members": {
+    "share": "Share",
+    "open": "Members",
+    "you": "(you)",
+    "roleOf": "Role of {{name}}",
+    "leave": "Leave",
+    "remove": "Remove",
+    "leaveConfirm": "Leave {{name}}? You will lose access unless someone invites you again.",
+    "removeConfirm": "Remove {{name}} from this workspace and its boards?",
+    "removeFromBoardConfirm": "Remove {{name}} from this board?",
+    "workspaceTitle": "Members of {{name}}",
+    "workspaceHint": "Members see every board in the workspace that isn’t private.",
+    "boardTitle": "Share {{name}}",
+    "privateHint": "This board is private: only the people listed here can see it.",
+    "workspaceBoardHint": "Everyone in the workspace can see this board. Give people a role of their own here.",
+    "tab_one": "{{count}} member",
+    "tab_other": "{{count}} members",
+    "viaWorkspace": "{{role}} through the workspace",
+    "inherited": "From the workspace"
+  },
+  "invitations": {
+    "tab": "Invite",
+    "byEmail": "Invite by email",
+    "emailsPlaceholder": "name@example.com, another@example.com",
+    "role": "Role",
+    "send": "Invite",
+    "sent_one": "Invitation sent.",
+    "sent_other": "{{count}} invitations sent.",
+    "invalidEmails": "Enter up to {{max}} valid email addresses, separated by commas.",
+    "link": "Invite with a link",
+    "copy": "Copy",
+    "linkCopied": "Copied to the clipboard.",
+    "copyManually": "Copy this link:",
+    "linkHint": "Anyone with this link can join as {{role}} until {{date}}.",
+    "disableLink": "Disable link",
+    "createLink": "Create link",
+    "pending": "Pending invitations",
+    "revoke": "Revoke the invitation for {{email}}",
+    "page": {
+      "invalidTitle": "Invitation not available",
+      "invalidBody": "This invitation is invalid, has expired or was revoked. Ask for a new one.",
+      "title": "You’re invited to {{target}}",
+      "titleFrom": "{{name}} invited you to {{target}}",
+      "boardIn": "A board in the workspace {{workspace}}",
+      "workspace": "A workspace on Flowbit",
+      "forEmail": "For {{email}}",
+      "accept": "Accept invitation",
+      "signedInAs": "Signed in as {{email}}",
+      "signUp": "Create an account to accept",
+      "signIn": "I already have an account"
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "subtitle": "Manage accounts and server settings. This role never gives access to anyone’s boards.",
+    "tabs": {
+      "overview": "Overview",
+      "users": "Accounts",
+      "log": "Activity log"
+    },
+    "stats": {
+      "title": "This server",
+      "users": "Accounts",
+      "suspendedUsers": "Suspended",
+      "admins": "Administrators",
+      "organizations": "Organizations",
+      "workspaces": "Workspaces",
+      "boards": "Boards",
+      "cards": "Cards"
+    },
+    "settings": {
+      "title": "Settings",
+      "signUp": "Anyone can create an account",
+      "signUpHint": "When off, only people with an email invitation can sign up.",
+      "mailOn": "Email is configured: users can reset their passwords themselves.",
+      "mailOff": "Email isn’t configured. To help someone who forgot their password, create a reset link from Accounts."
+    },
+    "users": {
+      "search": "Search by name or email",
+      "admin": "Administrator",
+      "suspended": "Suspended",
+      "unverified": "Unverified",
+      "details": "Sign-in: {{methods}} · Workspaces: {{workspaces}} · Joined {{created}} · Last active {{active}}",
+      "methods": {
+        "credential": "Password",
+        "github": "GitHub",
+        "google": "Google"
+      },
+      "actionsFor": "Actions for {{name}}",
+      "resetLink": "Create password reset link",
+      "revokeAdmin": "Remove administrator role",
+      "grantAdmin": "Make administrator",
+      "reactivate": "Reactivate",
+      "suspend": "Suspend",
+      "suspendConfirm": "Suspend {{name}}? They will be signed out and can’t sign in until reactivated.",
+      "delete": "Delete account",
+      "deleteConfirm": "Delete the account of {{name}} ({{email}})? Workspaces that others still use are handed over to one of their admins. This can’t be undone.",
+      "deleted": "Account deleted.",
+      "none": "No accounts found.",
+      "resetLinkTitle": "Password reset link for {{name}}",
+      "resetLinkBody": "Give this link to the person directly. It works once and expires in one hour. You never see their new password."
+    },
+    "loadMore": "Load more",
+    "log": {
+      "server": "The server",
+      "on": "on",
+      "off": "off",
+      "none": "Nothing has happened yet.",
+      "types": {
+        "admin": {
+          "granted": "{{actor}} made {{target}} an administrator",
+          "revoked": "{{actor}} removed the administrator role from {{target}}"
+        },
+        "user": {
+          "suspended": "{{actor}} suspended {{target}}",
+          "reactivated": "{{actor}} reactivated {{target}}",
+          "deleted": "{{actor}} deleted the account of {{target}}",
+          "password_reset_link": "{{actor}} created a password reset link for {{target}}"
+        },
+        "settings": {
+          "updated": "{{actor}} changed the sign-up setting"
+        }
+      }
+    }
+  },
+  "setup": {
+    "title": "Set up Flowbit",
+    "body": "Create the first administrator of this server. Administrators manage accounts and settings, not content.",
+    "noToken": "Open the setup link printed in the server log, or run “flowbit admin setup-url” on the server.",
+    "claim": "Make my account the administrator",
+    "create": "Create administrator account",
+    "doneTitle": "Setup is complete",
+    "doneBody": "This server already has an administrator."
   }
 }

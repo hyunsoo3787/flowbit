@@ -1,7 +1,14 @@
 import { type Locale, SUPPORTED_LOCALES } from '@flowbit/shared';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from '@tanstack/react-router';
-import { CheckIcon, ChevronsUpDownIcon, LanguagesIcon, LogOutIcon, PlusIcon } from 'lucide-react';
+import {
+  CheckIcon,
+  ChevronsUpDownIcon,
+  LanguagesIcon,
+  LogOutIcon,
+  PlusIcon,
+  ShieldIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Logo, LogoMark } from '@/components/logo';
@@ -143,6 +150,14 @@ function UserMenu() {
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
+        {me?.isAdmin ? (
+          <DropdownMenuItem asChild>
+            <Link to="/admin">
+              <ShieldIcon />
+              {t('nav.admin')}
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem
           onSelect={async () => {
             await signOut();

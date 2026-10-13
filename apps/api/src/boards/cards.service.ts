@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import type {
+  BoardRole,
   Card as CardDto,
   CreateCardInput,
   MoveCardInput,
   UpdateCardInput,
 } from '@flowbit/shared';
 import { AppError } from '../common/app-error.js';
-import type { Card } from '../generated/prisma/client.js';
+import type { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RealtimeService } from '../realtime/realtime.service.js';
 import { BoardAccessService } from './board-access.service.js';
+import { BoardMembersService } from './board-members.service.js';
 import { canEditContent } from './board-policy.js';
-import { toCardDto } from './mappers.js';
-import { cardPosition, lockList } from './ordering.js';
+import { CARD_INCLUDE, type CardWithRelations, toCardDto } from './mappers.js';
+import { cardPosition, dropForeignLabels, lockList } from './ordering.js';
 
 const END = Number.MAX_SAFE_INTEGER;
 
@@ -21,6 +23,7 @@ export class CardsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: BoardAccessService,
+    private readonly boardMembers: BoardMembersService,
     private readonly realtime: RealtimeService,
   ) {}
 
@@ -42,6 +45,7 @@ export class CardsService {
       const { position, rebalanced } = await cardPosition(tx, listId, input.toIndex ?? END);
       const card = await tx.card.create({
         data: { boardId: list.boardId, listId, title: input.title, position, createdById: userId },
+        include: CARD_INCLUDE,
       });
       await tx.activity.create({
         data: {
@@ -60,7 +64,10 @@ export class CardsService {
   }
 
   async get(userId: string, cardId: string): Promise<CardDto> {
-    const card = await this.prisma.card.findUnique({ where: { id: cardId } });
+    const card = await this.prisma.card.findUnique({
+      where: { id: cardId },
+      include: CARD_INCLUDE,
+    });
     if (!card) throw AppError.notFound('CARD_NOT_FOUND');
     await this.access.require(userId, card.boardId, () => true, { notFound: 'CARD_NOT_FOUND' });
     return toCardDto(card);
@@ -73,10 +80,20 @@ export class CardsService {
     clientMutationId: string | null,
   ): Promise<CardDto> {
     const existing = await this.requireEditable(userId, cardId);
+    const { dueComplete, startAt, dueAt, ...fields } = input;
     const card = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.card.update({
         where: { id: cardId },
-        data: { ...input, version: { increment: 1 } },
+        data: {
+          ...fields,
+          ...(startAt === undefined ? {} : { startAt: startAt ? new Date(startAt) : null }),
+          ...(dueAt === undefined ? {} : { dueAt: dueAt ? new Date(dueAt) : null }),
+          ...(dueComplete === undefined
+            ? {}
+            : { dueCompletedAt: dueComplete ? (existing.dueCompletedAt ?? new Date()) : null }),
+          version: { increment: 1 },
+        },
+        include: CARD_INCLUDE,
       });
       await tx.activity.create({
         data: {
@@ -110,9 +127,13 @@ export class CardsService {
       });
       await lockList(tx, target.id);
       const { position, rebalanced } = await cardPosition(tx, target.id, input.toIndex, cardId);
+      if (target.boardId !== existing.boardId) {
+        await dropForeignLabels(tx, [cardId], target.boardId);
+      }
       const card = await tx.card.update({
         where: { id: cardId },
         data: { listId: target.id, boardId: target.boardId, position, version: { increment: 1 } },
+        include: CARD_INCLUDE,
       });
       await tx.activity.create({
         data: {
@@ -167,14 +188,113 @@ export class CardsService {
     });
   }
 
-  private async requireEditable(userId: string, cardId: string) {
-    const card = await this.prisma.card.findUnique({ where: { id: cardId } });
-    if (!card) throw AppError.notFound('CARD_NOT_FOUND');
-    await this.access.require(userId, card.boardId, canEditContent, { notFound: 'CARD_NOT_FOUND' });
-    return card;
+  async setAssignee(
+    userId: string,
+    cardId: string,
+    assigneeId: string,
+    assigned: boolean,
+    clientMutationId: string | null,
+  ): Promise<CardDto> {
+    const existing = await this.requireEditable(userId, cardId);
+    if (assigned && !(await this.boardMembers.roleOf(existing.boardId, assigneeId))) {
+      throw AppError.notFound('MEMBER_NOT_FOUND');
+    }
+    return this.changeRelation(existing, userId, clientMutationId, async (tx) => {
+      if (assigned) {
+        const { count } = await tx.cardAssignee.createMany({
+          data: [{ cardId, userId: assigneeId }],
+          skipDuplicates: true,
+        });
+        return count > 0 ? { type: 'card.assigned', payload: { userId: assigneeId } } : null;
+      }
+      const { count } = await tx.cardAssignee.deleteMany({ where: { cardId, userId: assigneeId } });
+      return count > 0 ? { type: 'card.unassigned', payload: { userId: assigneeId } } : null;
+    });
   }
 
-  private publishCard(card: Card, actorId: string, clientMutationId: string | null) {
+  async setLabel(
+    userId: string,
+    cardId: string,
+    labelId: string,
+    applied: boolean,
+    clientMutationId: string | null,
+  ): Promise<CardDto> {
+    const existing = await this.requireEditable(userId, cardId);
+    const label = await this.prisma.label.findUnique({ where: { id: labelId } });
+    if (!label || label.boardId !== existing.boardId) throw AppError.notFound('LABEL_NOT_FOUND');
+    return this.changeRelation(existing, userId, clientMutationId, async (tx) => {
+      if (applied) {
+        const { count } = await tx.cardLabel.createMany({
+          data: [{ cardId, labelId }],
+          skipDuplicates: true,
+        });
+        return count > 0 ? { type: 'card.labeled', payload: { labelId } } : null;
+      }
+      const { count } = await tx.cardLabel.deleteMany({ where: { cardId, labelId } });
+      return count > 0 ? { type: 'card.unlabeled', payload: { labelId } } : null;
+    });
+  }
+
+  /**
+   * Applies a change to a card's assignees or labels. When it changed anything,
+   * bumps the card's version, records the activity and broadcasts the card.
+   */
+  private async changeRelation(
+    existing: { id: string; boardId: string },
+    userId: string,
+    clientMutationId: string | null,
+    change: (
+      tx: Prisma.TransactionClient,
+    ) => Promise<{ type: string; payload: Prisma.InputJsonObject } | null>,
+  ): Promise<CardDto> {
+    const { card, changed } = await this.prisma.$transaction(async (tx) => {
+      const activity = await change(tx);
+      if (!activity) {
+        const card = await tx.card.findUniqueOrThrow({
+          where: { id: existing.id },
+          include: CARD_INCLUDE,
+        });
+        return { card, changed: false };
+      }
+      const card = await tx.card.update({
+        where: { id: existing.id },
+        data: { version: { increment: 1 } },
+        include: CARD_INCLUDE,
+      });
+      await tx.activity.create({
+        data: { boardId: existing.boardId, cardId: existing.id, actorId: userId, ...activity },
+      });
+      return { card, changed: true };
+    });
+    if (changed) this.publishCard(card, userId, clientMutationId);
+    return toCardDto(card);
+  }
+
+  /** Re-reads a card and broadcasts it, e.g. after its counters changed. */
+  async republish(cardId: string, actorId: string, clientMutationId: string | null) {
+    const card = await this.prisma.card.findUnique({
+      where: { id: cardId },
+      include: CARD_INCLUDE,
+    });
+    if (card) this.publishCard(card, actorId, clientMutationId);
+  }
+
+  /** The card, if the caller may edit it. Used by the card's checklists and comments too. */
+  async requireEditable(userId: string, cardId: string) {
+    return this.requireCard(userId, cardId, canEditContent);
+  }
+
+  /** The card and the caller's role, if the caller can see it. */
+  async requireCard(userId: string, cardId: string, allowed: (role: BoardRole) => boolean) {
+    const card = await this.prisma.card.findUnique({ where: { id: cardId } });
+    if (!card) throw AppError.notFound('CARD_NOT_FOUND');
+    const { role } = await this.access.require(userId, card.boardId, allowed, {
+      notFound: 'CARD_NOT_FOUND',
+    });
+    return Object.assign(card, { role });
+  }
+
+  publishCard(card: CardWithRelations, actorId: string, clientMutationId: string | null) {
     this.realtime.publish({
       type: 'card.upserted',
       boardId: card.boardId,
@@ -186,7 +306,10 @@ export class CardsService {
 
   private async publishCards(ids: string[], actorId: string, clientMutationId: string | null) {
     if (ids.length === 0) return;
-    const cards = await this.prisma.card.findMany({ where: { id: { in: ids } } });
+    const cards = await this.prisma.card.findMany({
+      where: { id: { in: ids } },
+      include: CARD_INCLUDE,
+    });
     for (const card of cards) this.publishCard(card, actorId, clientMutationId);
   }
 }

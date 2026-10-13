@@ -50,6 +50,7 @@ COPY --from=build /app/apps/api/prisma ./apps/api/prisma
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/web/dist ./apps/web/dist
 COPY docker/entrypoint.sh /usr/local/bin/flowbit-entrypoint
+COPY docker/flowbit.sh /usr/local/bin/flowbit
 
 USER node
 WORKDIR /app/apps/api

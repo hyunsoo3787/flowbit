@@ -48,6 +48,52 @@ const resetPassword: Record<Locale, ActionMail> = {
   },
 };
 
+interface InvitationMail {
+  subject: (inviter: string, target: string) => string;
+  body: (inviter: string, target: string, days: number) => string;
+  action: string;
+  footer: string;
+}
+
+const invitation: Record<Locale, InvitationMail> = {
+  en: {
+    subject: (inviter, target) => `${inviter} invited you to ${target} on Flowbit`,
+    body: (inviter, target, days) =>
+      `${inviter} invited you to collaborate on ${target} in Flowbit. The invitation expires in ${days} days.`,
+    action: 'Accept invitation',
+    footer: "If you weren't expecting this invitation, you can ignore this email.",
+  },
+  ko: {
+    subject: (inviter, target) => `${inviter}님이 Flowbit의 ${target}에 초대했습니다`,
+    body: (inviter, target, days) =>
+      `${inviter}님이 Flowbit에서 ${target}에 함께하자고 초대했습니다. 초대는 ${days}일 후 만료됩니다.`,
+    action: '초대 수락하기',
+    footer: '예상하지 못한 초대라면 이 메일을 무시하셔도 됩니다.',
+  },
+};
+
+interface NoticeMail {
+  subject: string;
+  greeting: (name: string) => string;
+  body: string;
+  footer: string;
+}
+
+const passwordResetIssued: Record<Locale, NoticeMail> = {
+  en: {
+    subject: 'A password reset link was created for your account',
+    greeting: (name) => `Hi ${name},`,
+    body: 'An administrator of this Flowbit server created a one-time link to reset your password. They will give it to you directly. The link expires in one hour.',
+    footer: "If you didn't ask for help with your password, contact your Flowbit administrator.",
+  },
+  ko: {
+    subject: '계정의 비밀번호 재설정 링크가 생성되었습니다',
+    greeting: (name) => `${name}님, 안녕하세요.`,
+    body: '이 Flowbit 서버의 관리자가 비밀번호를 재설정할 수 있는 일회용 링크를 만들었습니다. 관리자가 직접 전달해 드릴 예정이며, 링크는 1시간 후 만료됩니다.',
+    footer: '비밀번호 관련 도움을 요청한 적이 없다면 Flowbit 관리자에게 문의해 주세요.',
+  },
+};
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll('&', '&amp;')
@@ -58,14 +104,48 @@ function escapeHtml(value: string): string {
 }
 
 function render(mail: ActionMail, name: string, url: string): MailContent {
+  return renderAction(mail.subject, mail.greeting(name), mail.body, mail.action, url, mail.footer);
+}
+
+function renderNotice(mail: NoticeMail, name: string): MailContent {
   const greeting = mail.greeting(name);
   return {
     subject: mail.subject,
-    text: [greeting, '', mail.body, '', `${mail.action}: ${url}`, '', mail.footer].join('\n'),
+    text: [greeting, '', mail.body, '', mail.footer].join('\n'),
     html: `<!doctype html>
 <html>
   <body style="font-family: system-ui, sans-serif; line-height: 1.5; color: #1f2328;">
     <p>${escapeHtml(greeting)}</p>
+    <p>${escapeHtml(mail.body)}</p>
+    <p style="color: #59636e; font-size: 13px;">${escapeHtml(mail.footer)}</p>
+  </body>
+</html>`,
+  };
+}
+
+function renderAction(
+  subject: string,
+  greeting: string | null,
+  body: string,
+  action: string,
+  url: string,
+  footer: string,
+): MailContent {
+  const mail = { subject, body, action, footer };
+  return {
+    subject: mail.subject,
+    text: [
+      ...(greeting ? [greeting, ''] : []),
+      mail.body,
+      '',
+      `${mail.action}: ${url}`,
+      '',
+      mail.footer,
+    ].join('\n'),
+    html: `<!doctype html>
+<html>
+  <body style="font-family: system-ui, sans-serif; line-height: 1.5; color: #1f2328;">
+    ${greeting ? `<p>${escapeHtml(greeting)}</p>` : ''}
     <p>${escapeHtml(mail.body)}</p>
     <p>
       <a href="${escapeHtml(url)}"
@@ -84,4 +164,17 @@ export const mailTemplates = {
     render(verifyEmail[locale], name, url),
   resetPassword: (locale: Locale, name: string, url: string) =>
     render(resetPassword[locale], name, url),
+  invitation: (locale: Locale, inviter: string, target: string, days: number, url: string) => {
+    const mail = invitation[locale];
+    return renderAction(
+      mail.subject(inviter, target),
+      null,
+      mail.body(inviter, target, days),
+      mail.action,
+      url,
+      mail.footer,
+    );
+  },
+  passwordResetIssued: (locale: Locale, name: string) =>
+    renderNotice(passwordResetIssued[locale], name),
 };

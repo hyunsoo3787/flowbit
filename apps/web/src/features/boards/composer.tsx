@@ -2,6 +2,7 @@ import { PlusIcon, XIcon } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { ESCAPE_HANDLED } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface ComposerProps {
@@ -68,6 +69,7 @@ export function Composer({
     <form className={cn('grid gap-2', className)} onSubmit={submit}>
       {multiline ? (
         <textarea
+          {...ESCAPE_HANDLED}
           autoFocus
           rows={3}
           value={value}
@@ -80,6 +82,7 @@ export function Composer({
         />
       ) : (
         <input
+          {...ESCAPE_HANDLED}
           autoFocus
           value={value}
           maxLength={maxLength}

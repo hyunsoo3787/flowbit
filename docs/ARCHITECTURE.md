@@ -200,10 +200,16 @@ and the phase each one lands in.
   is deleted, the room is closed. User-level events (notifications, phase 4)
   will go to `user:{userId}`.
 - **Events:** `board.updated`, `board.deleted`, `list.upserted`,
-  `list.deleted`, `card.upserted` and `card.deleted`. Each carries `boardId`,
-  `actorId`, `clientMutationId` and the full entity (or its id when deleted);
-  see `packages/shared/src/realtime.ts`. A card or list that moves to another
-  board is announced as deleted on the old board and upserted on the new one.
+  `list.deleted`, `card.upserted`, `card.deleted`, `label.upserted`,
+  `label.deleted` and `members.updated` (the full list of people with access).
+  Each carries `boardId`, `actorId`, `clientMutationId` and the full entity (or
+  its id when deleted); see `packages/shared/src/realtime.ts`. A card or list
+  that moves to another board is announced as deleted on the old board and
+  upserted on the new one.
+- **Card content:** Checklists and comments are loaded with the card dialog,
+  not with the board. A `card.content` event (`part: checklists | comments`)
+  tells clients showing that card to refetch the part; the card's badge counts
+  arrive as a `card.upserted` event.
 - **Echo suppression:** Mutations send a client-generated id in the
   `x-client-mutation-id` header. A client ignores events that carry an id it
   generated itself, because it already applied that change optimistically.
@@ -263,24 +269,24 @@ erDiagram
 | `OrganizationMember` | orgId, userId, role: `OWNER` \| `ADMIN` \| `MEMBER`                                                    |                                                                                                                 |
 | `Workspace`          | organizationId, name, description?, createdById?, version                                              |                                                                                                                 |
 | `WorkspaceMember`    | workspaceId, userId, role: `ADMIN` \| `MEMBER` \| `VIEWER`                                             |                                                                                                                 |
-| `Invitation`         | scope (workspace or board), scopeId, email?, token, role, expiresAt                                    | Email or link invites (phase 3)                                                                                 |
+| `Invitation`         | workspaceId, boardId?, email?, token, workspaceRole? or boardRole?, expiresAt, acceptedAt?, revokedAt? | Email invites are used once; a link (no email) works for anyone until it expires or is replaced                 |
 
 ### Boards and cards
 
-| Entity          | Key fields                                                                                                                      | Notes                                                                                                     |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` (`PUBLIC` later), background, archivedAt? (phase 5)                     |                                                                                                           |
-| `BoardMember`   | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER`                                                                        |                                                                                                           |
-| `List`          | boardId, name, position, archivedAt?                                                                                            | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))           |
-| `Card`          | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverId?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing                                     |
-| `CardAssignee`  | cardId, userId                                                                                                                  |                                                                                                           |
-| `Label`         | boardId, name?, color                                                                                                           |                                                                                                           |
-| `CardLabel`     | cardId, labelId                                                                                                                 |                                                                                                           |
-| `Checklist`     | cardId, title, position                                                                                                         |                                                                                                           |
-| `ChecklistItem` | checklistId, text, position, completedAt?, assigneeId?, dueAt?                                                                  |                                                                                                           |
-| `Comment`       | cardId, authorId, body (Markdown), editedAt?, deletedAt?                                                                        |                                                                                                           |
-| `Attachment`    | cardId, uploaderId, storageKey, fileName, mimeType, size                                                                        | Storage driver per [D-019](DECISIONS.md#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) |
-| `Watch`         | userId, boardId? or cardId?                                                                                                     | For notifications (phase 4)                                                                               |
+| Entity          | Key fields                                                                                                                         | Notes                                                                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` (`PUBLIC` later), background, archivedAt? (phase 5)                        |                                                                                                                                         |
+| `BoardMember`   | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER`                                                                           |                                                                                                                                         |
+| `List`          | boardId, name, position, archivedAt?                                                                                               | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))                                         |
+| `Card`          | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverColor?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing; comment and checklist counts are kept on the card for the badges |
+| `CardAssignee`  | cardId, userId                                                                                                                     |                                                                                                                                         |
+| `Label`         | boardId, name (may be empty), color (a palette key)                                                                                | New boards get six unnamed labels; labels are taken off cards that move to another board                                                |
+| `CardLabel`     | cardId, labelId                                                                                                                    |                                                                                                                                         |
+| `Checklist`     | cardId, title, position                                                                                                            |                                                                                                                                         |
+| `ChecklistItem` | checklistId, text, position, completedAt?, assigneeId?, dueAt?                                                                     |                                                                                                                                         |
+| `Comment`       | cardId, authorId, body (Markdown, mentions as `<@userId>`), editedAt?                                                              | Deleted comments are removed                                                                                                            |
+| `Attachment`    | cardId, uploaderId, storageKey, fileName, mimeType, size                                                                           | Storage driver per [D-019](DECISIONS.md#d-019-attachment-storage-local-disk-or-any-s3-compatible-service)                               |
+| `Watch`         | userId, boardId? or cardId?                                                                                                        | For notifications (phase 4)                                                                                                             |
 
 ### Activity and notifications
 

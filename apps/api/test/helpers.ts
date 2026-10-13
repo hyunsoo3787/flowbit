@@ -33,7 +33,7 @@ interface RequestOptions {
 
 export async function request(
   app: NestFastifyApplication,
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   url: string,
   { cookie, body, headers }: RequestOptions = {},
 ) {
@@ -78,4 +78,12 @@ export async function createWorkspace(app: NestFastifyApplication, cookie: strin
   const response = await request(app, 'POST', '/api/v1/workspaces', { cookie, body: { name } });
   if (response.status !== 201) throw new Error(`Workspace creation failed: ${response.status}`);
   return response.body as { id: string; organizationId: string };
+}
+
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+/** Signs up a user and returns their session cookie, user id and email. */
+export async function signUpAs(app: NestFastifyApplication, name: string) {
+  const email = `${name.toLowerCase()}@example.com`;
+  return { ...(await signUp(app, { name, email })), email };
 }

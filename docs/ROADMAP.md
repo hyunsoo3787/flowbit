@@ -6,8 +6,9 @@ ends with something people can use, plus an exit checklist. Phases are
 sequential, but items from later phases can be picked up early if they don't
 block the current one.
 
-> **Current status:** Phases 1 (foundation) and 2 (boards, lists, cards and
-> real-time updates) are implemented. Phase 3 (collaboration basics) is next.
+> **Current status:** Phases 1 (foundation), 2 (boards, lists, cards and
+> real-time updates) and 3 (collaboration basics) are implemented. Phase 4
+> (presence, notifications, activity) is next.
 
 | Phase                                         | Theme                                             | Edition        |
 | --------------------------------------------- | ------------------------------------------------- | -------------- |
@@ -112,17 +113,18 @@ a phone.
 
 **Goal:** A team can actually run its work on Flowbit.
 
-- [ ] Invite members to a workspace or board (email invite and link invite),
+- [x] Invite members to a workspace or board (email invite and link invite),
       manage roles
-- [ ] Card assignees
-- [ ] Labels (per board, with color and name)
-- [ ] Start and due dates, due-complete toggle
-- [ ] Checklists with items (reorder, complete, assign, due date per item)
-- [ ] Comments (Markdown, edit, delete, @mentions)
-- [ ] Card covers, plus card badges on the board (due date, checklist
-      progress, comment count)
-- [ ] Board filters (by label, member, due date)
-- [ ] Instance administration
+- [x] Card assignees
+- [x] Labels (per board, with color and name)
+- [x] Start and due dates, due-complete toggle
+- [x] Checklists with items (reorder, complete, assign, due date per item)
+- [x] Comments (Markdown, edit, delete, @mentions)
+- [x] Card covers (colors; image covers come with attachments in phase 5),
+      plus card badges on the board (due date, checklist progress, comment
+      count)
+- [x] Board filters (by keyword, label, member, due date), kept in the URL
+- [x] Instance administration
       ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content)):
       a one-time setup URL in the server log creates the first admin, and a
       `flowbit admin grant/revoke` command adds or recovers admins

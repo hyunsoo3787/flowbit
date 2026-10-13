@@ -9,6 +9,8 @@ export const userProfileSchema = z.object({
   emailVerified: z.boolean(),
   image: z.string().nullable(),
   locale: localeSchema,
+  /** Instance administrator (D-021). */
+  isAdmin: z.boolean(),
   createdAt: z.iso.datetime(),
 });
 export type UserProfile = z.infer<typeof userProfileSchema>;

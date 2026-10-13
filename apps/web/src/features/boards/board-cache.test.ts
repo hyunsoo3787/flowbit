@@ -22,6 +22,8 @@ const board: BoardDetail = {
   updatedAt: now,
   lists: [],
   cards: [],
+  labels: [],
+  members: [],
 };
 
 const list = (id: string, position: string, extra: Partial<List> = {}): List => ({
@@ -42,6 +44,13 @@ const card = (id: string, listId: string, position: string, extra: Partial<Card>
   title: id,
   description: '',
   position,
+  startAt: null,
+  dueAt: null,
+  dueCompletedAt: null,
+  coverColor: null,
+  assigneeIds: [],
+  labelIds: [],
+  badges: { comments: 0, checklistItems: 0, checklistItemsDone: 0 },
   version: 1,
   createdAt: now,
   updatedAt: now,
@@ -107,5 +116,44 @@ describe('positionAtIndex', () => {
 
   it('still returns a usable key when neighbours share a position', () => {
     expect(positionAtIndex([{ position: 'a0' }, { position: 'a0' }], 1) > 'a0').toBe(true);
+  });
+});
+
+describe('labels and members', () => {
+  const label = { id: 'l-red', boardId: 'b1', name: 'Bug', color: 'red' as const, version: 1 };
+
+  it('adds labels and strips deleted ones from cards', () => {
+    let next = applyEvent(
+      { ...board, cards: [card('c1', 'l1', 'a0', { labelIds: ['l-red'] })] },
+      { type: 'label.upserted', boardId: 'b1', actorId: 'u', clientMutationId: null, label },
+    );
+    expect(next.labels).toEqual([label]);
+    next = applyEvent(next, {
+      type: 'label.deleted',
+      boardId: 'b1',
+      actorId: 'u',
+      clientMutationId: null,
+      labelId: 'l-red',
+    });
+    expect(next.labels).toEqual([]);
+    expect(next.cards[0]!.labelIds).toEqual([]);
+  });
+
+  it('replaces the member list', () => {
+    const members = [
+      {
+        user: { id: 'u1', name: 'Ann', email: 'ann@example.com', image: null },
+        role: 'ADMIN' as const,
+        boardRole: 'ADMIN' as const,
+      },
+    ];
+    const next = applyEvent(board, {
+      type: 'members.updated',
+      boardId: 'b1',
+      actorId: 'u',
+      clientMutationId: null,
+      members,
+    });
+    expect(next.members).toEqual(members);
   });
 });

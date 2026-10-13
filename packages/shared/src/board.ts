@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { boardMemberSchema } from './members.js';
+import { boardRoleSchema } from './roles.js';
 
 // ---------------------------------------------------------------------------
 // Boards
@@ -9,10 +11,6 @@ export const BOARD_NAME_MAX_LENGTH = 100;
 export const BOARD_VISIBILITIES = ['PRIVATE', 'WORKSPACE'] as const;
 export type BoardVisibility = (typeof BOARD_VISIBILITIES)[number];
 export const boardVisibilitySchema = z.enum(BOARD_VISIBILITIES);
-
-export const BOARD_ROLES = ['ADMIN', 'MEMBER', 'OBSERVER'] as const;
-export type BoardRole = (typeof BOARD_ROLES)[number];
-export const boardRoleSchema = z.enum(BOARD_ROLES);
 
 /** A board background color: any `#rrggbb` hex value. */
 export const boardBackgroundSchema = z
@@ -138,6 +136,54 @@ export const moveListSchema = z.object({
 });
 export type MoveListInput = z.infer<typeof moveListSchema>;
 
+// ---------------------------------------------------------------------------
+// Labels. Colors are keys of a fixed palette, so they look right in light and
+// dark mode; the web app maps each key to its shades.
+// ---------------------------------------------------------------------------
+
+export const LABEL_COLORS = [
+  'green',
+  'yellow',
+  'orange',
+  'red',
+  'purple',
+  'blue',
+  'sky',
+  'lime',
+  'pink',
+  'gray',
+] as const;
+export type LabelColor = (typeof LABEL_COLORS)[number];
+export const labelColorSchema = z.enum(LABEL_COLORS);
+
+/** Every new board starts with one unnamed label in each of these colors. */
+export const DEFAULT_LABEL_COLORS: readonly LabelColor[] = LABEL_COLORS.slice(0, 6);
+
+export const LABEL_NAME_MAX_LENGTH = 50;
+
+export const labelSchema = z.object({
+  id: z.uuid(),
+  boardId: z.uuid(),
+  name: z.string(),
+  color: labelColorSchema,
+  version: z.int(),
+});
+export type Label = z.infer<typeof labelSchema>;
+
+export const createLabelSchema = z.object({
+  name: z.string().trim().max(LABEL_NAME_MAX_LENGTH).default(''),
+  color: labelColorSchema,
+});
+export type CreateLabelInput = z.input<typeof createLabelSchema>;
+
+export const updateLabelSchema = z
+  .object({
+    name: z.string().trim().max(LABEL_NAME_MAX_LENGTH),
+    color: labelColorSchema,
+  })
+  .partial();
+export type UpdateLabelInput = z.infer<typeof updateLabelSchema>;
+
 export const cardSchema = z.object({
   id: z.uuid(),
   boardId: z.uuid(),
@@ -145,6 +191,19 @@ export const cardSchema = z.object({
   title: z.string(),
   description: z.string(),
   position: z.string(),
+  startAt: z.iso.datetime().nullable(),
+  dueAt: z.iso.datetime().nullable(),
+  /** When the due date was marked complete; null while open. */
+  dueCompletedAt: z.iso.datetime().nullable(),
+  coverColor: labelColorSchema.nullable(),
+  assigneeIds: z.array(z.uuid()),
+  labelIds: z.array(z.uuid()),
+  /** Counts shown as badges on the board. */
+  badges: z.object({
+    comments: z.int(),
+    checklistItems: z.int(),
+    checklistItemsDone: z.int(),
+  }),
   version: z.int(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
@@ -162,6 +221,11 @@ export const updateCardSchema = z
   .object({
     title: z.string().trim().min(1).max(CARD_TITLE_MAX_LENGTH),
     description: z.string().max(CARD_DESCRIPTION_MAX_LENGTH),
+    startAt: z.iso.datetime().nullable(),
+    dueAt: z.iso.datetime().nullable(),
+    /** Marks the due date complete (true) or open again (false). */
+    dueComplete: z.boolean(),
+    coverColor: labelColorSchema.nullable(),
   })
   .partial();
 export type UpdateCardInput = z.infer<typeof updateCardSchema>;
@@ -177,6 +241,9 @@ export type MoveCardInput = z.infer<typeof moveCardSchema>;
 export const boardDetailSchema = boardSchema.extend({
   lists: z.array(listSchema),
   cards: z.array(cardSchema),
+  labels: z.array(labelSchema),
+  /** Everyone with access to the board: candidates for assignments and mentions. */
+  members: z.array(boardMemberSchema),
 });
 export type BoardDetail = z.infer<typeof boardDetailSchema>;
 

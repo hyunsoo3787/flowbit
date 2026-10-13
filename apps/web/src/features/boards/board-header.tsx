@@ -12,12 +12,14 @@ import {
   MoreHorizontalIcon,
   PaletteIcon,
   Trash2Icon,
+  UserPlusIcon,
   UsersIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { InlineEdit } from '@/components/inline-edit';
+import { AvatarStack } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -39,14 +41,27 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { BoardShareDialog } from '@/features/members/members-dialogs';
 import { workspaceQuery } from '@/features/workspaces/queries';
 import { errorMessage } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import { BackgroundPicker } from './background-picker';
 import { boardSurface } from './backgrounds';
+import { BoardFilterButton } from './board-filter';
+import type { BoardFilter } from './filters';
 import { useDeleteBoard, useUpdateBoard } from './queries';
 
-export function BoardHeader({ board }: { board: BoardDetail }) {
+const ON_BOARD = 'text-inherit hover:bg-current/15 hover:text-inherit dark:hover:bg-current/15';
+
+export function BoardHeader({
+  board,
+  filter,
+  onFilterChange,
+}: {
+  board: BoardDetail;
+  filter: BoardFilter;
+  onFilterChange: (filter: BoardFilter) => void;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: workspace } = useQuery(workspaceQuery(board.workspaceId));
@@ -106,51 +121,77 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
         </span>
       ) : null}
 
-      {isAdmin ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto text-inherit hover:bg-current/15 hover:text-inherit dark:hover:bg-current/15"
-              aria-label={t('boards.menu')}
+      <div className="ml-auto flex items-center gap-1">
+        <BoardShareDialog
+          board={board}
+          trigger={
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-md px-1.5 py-1 outline-none hover:bg-current/15 focus-visible:ring-2 focus-visible:ring-current"
+              aria-label={t('members.share')}
             >
-              <MoreHorizontalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onSelect={() => setChangingBackground(true)}>
-              <PaletteIcon />
-              {t('boards.changeBackground')}
-            </DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <VisibilityIcon />
-                {t('boards.visibility')}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={board.visibility}
-                  onValueChange={(value) =>
-                    updateBoard.mutate({ visibility: value as BoardVisibility })
-                  }
-                >
-                  {BOARD_VISIBILITIES.map((option) => (
-                    <DropdownMenuRadioItem key={option} value={option}>
-                      {t(`boards.visibility${option}`)}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onSelect={() => setConfirmingDelete(true)}>
-              <Trash2Icon />
-              {t('boards.delete')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : null}
+              <AvatarStack users={board.members.map((member) => member.user)} max={5} />
+              {isAdmin ? (
+                <span className="hidden items-center gap-1 text-sm font-medium sm:flex">
+                  <UserPlusIcon className="size-4" aria-hidden />
+                  {t('members.share')}
+                </span>
+              ) : null}
+            </button>
+          }
+        />
+        <BoardFilterButton
+          board={board}
+          filter={filter}
+          onChange={onFilterChange}
+          className={ON_BOARD}
+        />
+        {isAdmin ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={ON_BOARD}
+                aria-label={t('boards.menu')}
+              >
+                <MoreHorizontalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onSelect={() => setChangingBackground(true)}>
+                <PaletteIcon />
+                {t('boards.changeBackground')}
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <VisibilityIcon />
+                  {t('boards.visibility')}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup
+                    value={board.visibility}
+                    onValueChange={(value) =>
+                      updateBoard.mutate({ visibility: value as BoardVisibility })
+                    }
+                  >
+                    {BOARD_VISIBILITIES.map((option) => (
+                      <DropdownMenuRadioItem key={option} value={option}>
+                        {t(`boards.visibility${option}`)}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive" onSelect={() => setConfirmingDelete(true)}>
+                <Trash2Icon />
+                {t('boards.delete')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+      </div>
 
       {changingBackground ? (
         <BackgroundDialog

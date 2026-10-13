@@ -34,6 +34,12 @@ export class BoardsController {
     return { items: await this.boards.listForWorkspace(user.id, workspaceId) };
   }
 
+  @Get('me/shared-boards')
+  @ApiJsonResponse(200, 'BoardList', 401)
+  async listShared(@CurrentUser() user: AuthUser): Promise<BoardList> {
+    return { items: await this.boards.listShared(user.id) };
+  }
+
   @Post('workspaces/:workspaceId/boards')
   @ApiJsonBody('CreateBoardInput')
   @ApiJsonResponse(201, 'Board', 400, 401, 403, 404)

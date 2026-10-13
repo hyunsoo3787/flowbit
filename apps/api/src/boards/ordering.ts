@@ -67,3 +67,54 @@ export async function cardPosition(
     tx.card.update({ where: { id }, data: { position, version: { increment: 1 } } }),
   );
 }
+
+/** Locks a card, serializing changes to its checklists and their items. */
+export async function lockCard(tx: Prisma.TransactionClient, cardId: string) {
+  await tx.$executeRaw`SELECT 1 FROM "cards" WHERE "id" = ${cardId}::uuid FOR UPDATE`;
+}
+
+export async function checklistPosition(
+  tx: Prisma.TransactionClient,
+  cardId: string,
+  toIndex: number,
+) {
+  const siblings = await tx.checklist.findMany({
+    where: { cardId },
+    orderBy: [...POSITION_ORDER],
+    select: { id: true, position: true },
+  });
+  return place(siblings, toIndex, (id, position) =>
+    tx.checklist.update({ where: { id }, data: { position } }),
+  );
+}
+
+export async function checklistItemPosition(
+  tx: Prisma.TransactionClient,
+  checklistId: string,
+  toIndex: number,
+  excludeId?: string,
+) {
+  const siblings = await tx.checklistItem.findMany({
+    where: { checklistId, ...(excludeId ? { id: { not: excludeId } } : {}) },
+    orderBy: [...POSITION_ORDER],
+    select: { id: true, position: true },
+  });
+  return place(siblings, toIndex, (id, position) =>
+    tx.checklistItem.update({ where: { id }, data: { position } }),
+  );
+}
+
+/**
+ * Labels belong to a board. When cards move to another board, the labels of
+ * their old board are taken off them.
+ */
+export async function dropForeignLabels(
+  tx: Prisma.TransactionClient,
+  cardIds: string[],
+  boardId: string,
+) {
+  if (cardIds.length === 0) return;
+  await tx.cardLabel.deleteMany({
+    where: { cardId: { in: cardIds }, label: { boardId: { not: boardId } } },
+  });
+}

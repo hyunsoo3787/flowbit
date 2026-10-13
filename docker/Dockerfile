@@ -27,11 +27,13 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod --filter=@flowbit/api...
 
 # ---- Runtime ----------------------------------------------------------------
+# Same base image as the stages above, deliberately without extra packages:
+# Prisma picks its migration engine by the OpenSSL it detects, so the runtime
+# must look exactly like the stage that installed the engine. (Installing
+# OpenSSL here made Prisma try to download a different engine at startup.)
+# The engine doesn't link OpenSSL, so the "failed to detect libssl" warning
+# printed at startup is harmless.
 FROM node:${NODE_VERSION}-bookworm-slim AS runtime
-# Prisma's migration engine needs OpenSSL.
-RUN apt-get update \
- && apt-get install -y --no-install-recommends openssl \
- && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
     PORT=3000 \

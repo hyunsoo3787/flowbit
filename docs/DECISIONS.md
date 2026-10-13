@@ -29,6 +29,7 @@ that keeps a decision in force is appended to its entry as a dated **Amendment**
 | [D-018](#d-018-languages-for-code-docs-and-readme)                         | Languages for code, docs and README                         | Accepted                      |
 | [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted                      |
 | [D-020](#d-020-better-auth-behind-our-own-auth-module)                     | Better Auth behind our own auth module                      | Accepted                      |
+| [D-021](#d-021-instance-administrators-manage-accounts-not-content)        | Instance administrators manage accounts, not content        | Accepted                      |
 
 ---
 
@@ -528,3 +529,87 @@ decorator), never on Better Auth directly.
 **Consequences.** If Better Auth ever has to be replaced, the change is
 contained in `apps/api/src/auth/` and the web app's auth client, plus a data
 migration of the four auth tables.
+
+---
+
+## D-021: Instance administrators manage accounts, not content
+
+**Status:** Accepted
+
+**Decision.** Flowbit gets an **instance administrator** role: the people who
+run a Flowbit server (the operator of a self-hosted install, or the SaaS
+operator's staff). It is separate from the organization and workspace roles of
+[D-008](#d-008-organization--workspace--board-hierarchy) and does **not** grant
+access to anyone's content.
+
+| Admin level           | Who                                      | Manages                                                             |
+| --------------------- | ---------------------------------------- | ------------------------------------------------------------------- |
+| Workspace admin       | Workspace `ADMIN`                        | One workspace: settings, members, deletion                          |
+| Organization admin    | Organization `OWNER` / `ADMIN`           | Every workspace in the organization; org UI and policies in phase 6 |
+| Instance admin (this) | Users flagged as administrators globally | Accounts and server settings only                                   |
+
+Instance administrators can:
+
+- list and search user accounts (name, email, sign-in methods, created and last
+  active dates, number of organizations and workspaces they belong to);
+- suspend and reactivate accounts, which also ends their sessions;
+- delete accounts;
+- set a new password for a user, which is needed on installs without SMTP,
+  where users cannot reset a forgotten password themselves;
+- change server settings that today need an environment variable and a
+  restart, starting with whether sign-up is open;
+- see basic instance statistics (counts of users, organizations, workspaces).
+
+Instance administrators **cannot** see workspace, board or card content
+through this role. To see content they need an ordinary organization or
+workspace membership, like anyone else. Signing in as another user
+("impersonation") for support cases is deferred to phase 6 as an `ee/` feature,
+and must write to the audit log.
+
+**Who becomes an instance admin.**
+
+1. The **first account created on a server** becomes an instance admin
+   automatically. This can be turned off, and must be for SaaS deployments.
+2. Accounts whose email is listed in the `ADMIN_EMAILS` environment variable
+   are instance admins.
+3. Instance admins can grant and revoke the role for other accounts in the UI,
+   but cannot revoke it from the last remaining admin.
+
+**Why.**
+
+- Self-hosters need a way to manage accounts without database access: a lost
+  password on an install without email, an employee who left, spam sign-ups.
+- Separating account management from content access limits the damage of a
+  compromised admin account, and lets a hosted service credibly promise that
+  operators don't read customer data. Plane, Mattermost and similar tools draw
+  the same line.
+- Basic account management is essential for running any instance, so it
+  belongs to the AGPL core, not to `ee/`
+  ([D-011](#d-011-open-core-licensing-agpl-30--commercial-ee)).
+
+**Alternatives considered.**
+
+- **Instance admins can read all content:** convenient for support, but a
+  single compromised account would expose every organization's data.
+- **Admins only via `ADMIN_EMAILS`:** explicit, but adds a mandatory step to
+  every install.
+- **First sign-up only:** simplest, but on a server that is reachable before
+  its owner signs up, a stranger could claim the admin role.
+
+**Consequences.**
+
+- The first-account rule must be race-free (two sign-ups at the same moment
+  must not both become admin).
+- `ADMIN_EMAILS` grants the role only to accounts whose email address is
+  verified, when email verification is enabled. Without SMTP, verification is
+  impossible, so the self-hosting guide must tell operators to create their own
+  account first, or to keep sign-up disabled until they have.
+- Implementation will evaluate Better Auth's admin plugin for the account
+  operations (role flag, suspension, session revocation, setting passwords),
+  wrapped by our own module as in
+  [D-020](#d-020-better-auth-behind-our-own-auth-module). Its impersonation
+  feature stays disabled until phase 6.
+- Open design question for phase 3: what happens to organizations and
+  workspaces whose only owner is deleted.
+- Planned for [phase 3](ROADMAP.md#phase-3-collaboration-basics), together
+  with invitations, when several people start sharing an instance.

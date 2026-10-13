@@ -120,9 +120,16 @@ a phone.
 - [ ] Card covers, plus card badges on the board (due date, checklist
       progress, comment count)
 - [ ] Board filters (by label, member, due date)
+- [ ] Instance administration
+      ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content)):
+      first account and `ADMIN_EMAILS` become instance admins; admin pages
+      to list, suspend, reactivate and delete accounts, set a user's password,
+      grant or revoke the admin role, toggle sign-up, and see instance
+      statistics. No access to workspace content through this role.
 
 **Exit checklist:** A small team can plan and track a project end to end
-without leaving Flowbit.
+without leaving Flowbit. The person who runs the server can manage accounts
+from the UI, including recovering a lost password without email.
 
 ---
 
@@ -176,6 +183,9 @@ commercial license
 - [ ] Security policies (allowed sign-in methods, invite restrictions, session
       lifetime)
 - [ ] License-key mechanism for activating `ee/` features
+- [ ] Support impersonation: an instance admin signs in as a user to
+      investigate a problem, always recorded in the audit log
+      ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content))
 - [ ] SaaS concerns: billing integration, plan limits, tenant administration
 
 **Exit checklist:** An organization can enforce SSO for its domain, see a full

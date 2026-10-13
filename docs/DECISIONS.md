@@ -27,6 +27,7 @@ Status values: **Accepted**, **Proposed**, **Superseded by D-XXX**.
 | [D-017](#d-017-responsive-web--pwa-for-mobile) | Responsive web + PWA for mobile | Accepted |
 | [D-018](#d-018-languages-for-code-docs-and-readme) | Languages for code, docs and README | Accepted |
 | [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted |
+| [D-020](#d-020-better-auth-behind-our-own-auth-module) | Better Auth behind our own auth module | Accepted |
 
 ---
 
@@ -231,9 +232,8 @@ chain. See [ARCHITECTURE.md](ARCHITECTURE.md#authorization).
 2. OAuth with GitHub and Google. Phase 1.
 3. SSO with OIDC and SAML, configured per organization. Phase 6, in `ee/`.
 
-**Open point.** Whether to use an auth library (e.g. Better Auth, MIT) or
-build on Passport strategies inside NestJS will be decided at the start of
-phase 1 and recorded as a new entry.
+**Implementation.** Better Auth, wrapped in our own auth module. See
+[D-020](#d-020-better-auth-behind-our-own-auth-module).
 
 ---
 
@@ -420,3 +420,68 @@ server in our Compose setup.
 **Why.** This keeps the default install simple and avoids bundling AGPL
 software (MinIO) in our distribution (D-013). Self-hosters can still point the
 S3 driver at any compatible service they run themselves.
+
+---
+
+## D-020: Better Auth behind our own auth module
+
+**Status:** Accepted
+
+**Decision.** Authentication is implemented with
+[Better Auth](https://github.com/better-auth/better-auth) (MIT). It is wrapped
+in our own NestJS auth module, so the rest of the codebase depends only on our
+interfaces (the current user, the session check, and a public-route
+decorator), never on Better Auth directly.
+
+**Scope of responsibility.**
+- Better Auth answers **who the user is**. It handles email + password
+  sign-up and sign-in, password hashing, email verification, password reset,
+  GitHub and Google OAuth with account linking, sessions, CSRF and origin
+  checks, and rate limiting on auth endpoints.
+- Flowbit handles **what the user may do**. Organizations, workspaces, roles
+  and permission checks stay in our own models and policy code
+  ([D-008](#d-008-organization--workspace--board-hierarchy)). Better Auth's
+  organization plugin is **not** used.
+
+**Integration rules.**
+- Better Auth's handler is mounted directly on the Fastify instance at
+  `/api/auth/*`. Our own guard resolves the session for every other route via
+  `auth.api.getSession()`, and routes are protected by default. We don't use a
+  community NestJS adapter: the glue code is small, and owning it keeps us
+  independent of a single-maintainer package.
+- Better Auth's tables (`user`, `session`, `account`, `verification`) are part
+  of our Prisma schema, which stays the single source of truth for migrations.
+  IDs are UUIDv7, like everywhere else.
+- Sessions are stored in PostgreSQL. Valkey is used only as the rate-limit
+  store, so it never holds durable state
+  ([D-002](#d-002-support-both-self-hosting-and-saas)).
+- After a user is created, a database hook creates their personal
+  organization.
+- Auth endpoints are not part of our OpenAPI spec. The web app calls them
+  through Better Auth's client, and auth errors are mapped to localized
+  messages in the web app.
+
+**Why.**
+- Authentication is security-critical. A maintained library handles token
+  expiry, timing-safe comparisons, session fixation, CSRF and rate limiting,
+  which leaves much less security-sensitive code for us to write and review.
+  With Passport, all of that would be ours to build.
+- It covers the whole roadmap. Everything in phase 1 is built in. Two-factor
+  auth and passkeys are available as plugins, and OIDC/SAML SSO for phase 6 is
+  available as `@better-auth/sso` (MIT).
+- It is TypeScript-first and has an official Prisma adapter.
+- It was verified as actively maintained at the time of this decision
+  (`better-auth` 1.7.x, latest release in September 2026).
+
+**Alternatives considered.**
+- **Passport via `@nestjs/passport`:** mature and officially supported by
+  NestJS, but it only covers the "verify this credential" step. Sessions,
+  email verification, password reset, account linking and rate limiting would
+  all be custom code.
+- **`@thallesp/nestjs-better-auth` adapter:** convenient, but it installs a
+  global guard and changes the body parser, and it depends on a single
+  maintainer. We write a thin adapter ourselves instead.
+
+**Consequences.** If Better Auth ever has to be replaced, the change is
+contained in `apps/api/src/auth/` and the web app's auth client, plus a data
+migration of the four auth tables.

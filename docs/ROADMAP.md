@@ -35,8 +35,8 @@ personal organization with a first workspace.
 - [ ] API skeleton: NestJS (Fastify adapter), config, health check, error
       format, OpenAPI generation, generated web client
 - [ ] Prisma setup, first migration: users, auth, organizations, workspaces
-- [ ] Decide on the auth library and record the decision
-      ([D-009](DECISIONS.md#d-009-authentication-methods))
+- [x] Decide on the auth library and record the decision
+      ([D-020](DECISIONS.md#d-020-better-auth-behind-our-own-auth-module))
 - [ ] Auth: email + password (verification, reset), GitHub and Google OAuth,
       sessions
 - [ ] A personal organization is created automatically on sign-up; workspace

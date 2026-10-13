@@ -24,6 +24,8 @@ const board: BoardDetail = {
   cards: [],
   labels: [],
   members: [],
+  watching: false,
+  watchedCardIds: [],
 };
 
 const list = (id: string, position: string, extra: Partial<List> = {}): List => ({

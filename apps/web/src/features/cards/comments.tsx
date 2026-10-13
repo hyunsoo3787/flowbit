@@ -6,27 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useMe } from '@/features/auth/queries';
+import { useEditingSignal } from '@/features/boards/board-live';
 import { Markdown } from '@/features/boards/markdown';
+import { relativeTime } from '@/lib/time';
 import { MentionTextarea } from './mention-textarea';
 import { toEditable, toStored } from './mentions';
 import { commentsQuery, useCommentMutations } from './queries';
-
-function relativeTime(iso: string, locale: string) {
-  const seconds = (Date.parse(iso) - Date.now()) / 1000;
-  const format = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-  const steps: [Intl.RelativeTimeFormatUnit, number][] = [
-    ['second', 60],
-    ['minute', 60],
-    ['hour', 24],
-    ['day', 7],
-  ];
-  let value = seconds;
-  for (const [unit, size] of steps) {
-    if (Math.abs(value) < size) return format.format(Math.round(value), unit);
-    value /= size;
-  }
-  return new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(iso));
-}
 
 export function Comments({
   cardId,
@@ -44,6 +29,8 @@ export function Comments({
   );
   const { create, update, remove } = useCommentMutations(cardId);
   const [draft, setDraft] = useState('');
+  const [editingComment, setEditingComment] = useState(false);
+  useEditingSignal(board.id, cardId, draft.trim().length > 0 || editingComment);
   const people = board.members.map((member) => member.user);
   const comments = data?.pages.flatMap((page) => page.items) ?? [];
 
@@ -104,6 +91,7 @@ export function Comments({
               update.mutate({ commentId: comment.id, body: toStored(body, people) })
             }
             onDelete={() => remove.mutate(comment.id)}
+            onEditingChange={setEditingComment}
           />
         ))}
       </ol>
@@ -129,6 +117,7 @@ function CommentItem({
   canDelete,
   onEdit,
   onDelete,
+  onEditingChange,
 }: {
   comment: Comment;
   board: BoardDetail;
@@ -136,9 +125,14 @@ function CommentItem({
   canDelete: boolean;
   onEdit: (body: string) => void;
   onDelete: () => void;
+  onEditingChange: (editing: boolean) => void;
 }) {
   const { t, i18n } = useTranslation();
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditingState] = useState(false);
+  const setEditing = (next: boolean) => {
+    setEditingState(next);
+    onEditingChange(next);
+  };
   const [draft, setDraft] = useState('');
   const people = board.members.map((member) => member.user);
   const author = comment.author ?? { id: 'deleted', name: t('comments.deletedUser'), image: null };

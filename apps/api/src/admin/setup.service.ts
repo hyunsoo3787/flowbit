@@ -74,18 +74,25 @@ export class SetupService implements OnApplicationBootstrap {
     if (!(await this.required()) || !expected || !sameToken(expected, input.token)) {
       throw AppError.notFound('SETUP_NOT_AVAILABLE');
     }
-
-    let userId = callerId;
-    if (!userId) {
-      if (!input.account) throw AppError.badRequest('VALIDATION_FAILED', 'account is required');
-      userId = await this.createAccount(input.account);
+    if (!callerId && !input.account) {
+      throw AppError.badRequest('VALIDATION_FAILED', 'account is required');
     }
-    await this.prisma.$transaction(async (tx) => {
-      await tx.user.update({ where: { id: userId }, data: { isAdmin: true } });
-      await this.admin.log(tx, null, userId, 'admin.granted', { via: 'setup' });
-    });
-    await this.settings.saveSetupToken(null);
-    return userId;
+    if (!(await this.settings.consumeSetupToken(expected))) {
+      throw AppError.notFound('SETUP_NOT_AVAILABLE');
+    }
+
+    try {
+      const userId = callerId ?? (await this.createAccount(input.account!));
+      await this.prisma.$transaction(async (tx) => {
+        await tx.user.update({ where: { id: userId }, data: { isAdmin: true } });
+        await this.admin.log(tx, null, userId, 'admin.granted', { via: 'setup' });
+      });
+      return userId;
+    } catch (error) {
+      // Nothing was claimed: put the token back so setup can be retried.
+      await this.settings.saveSetupToken(expected);
+      throw error;
+    }
   }
 
   /** An administrator proved access to the server, so their address counts as verified. */

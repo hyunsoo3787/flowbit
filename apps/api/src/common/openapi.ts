@@ -37,6 +37,7 @@ const inputSchemas = {
   BoardInvitationLinkInput: shared.boardInvitationLinkSchema,
   UpdateInstanceSettingsInput: shared.updateInstanceSettingsSchema,
   CompleteSetupInput: shared.completeSetupSchema,
+  UpdateNotificationPreferencesInput: shared.updateNotificationPreferencesSchema,
 } satisfies Record<string, z.ZodType>;
 
 const outputSchemas = {
@@ -78,6 +79,12 @@ const outputSchemas = {
   InstanceSettings: shared.instanceSettingsSchema,
   PasswordResetLink: shared.passwordResetLinkSchema,
   SetupStatus: shared.setupStatusSchema,
+  Notification: shared.notificationSchema,
+  NotificationPage: shared.notificationPageSchema,
+  NotificationPreferences: shared.notificationPreferencesSchema,
+  WatchState: shared.watchStateSchema,
+  ActivityPage: shared.activityPageSchema,
+  Activity: shared.activitySchema,
 } satisfies Record<string, z.ZodType>;
 
 export type SchemaName = keyof typeof inputSchemas | keyof typeof outputSchemas;

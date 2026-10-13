@@ -62,6 +62,17 @@ export class InstanceSettingsService {
     return typeof setting?.value === 'string' ? setting.value : null;
   }
 
+  /**
+   * Deletes the setup token if it matches. Only one caller can succeed, so a
+   * token used twice at the same moment still creates one administrator.
+   */
+  async consumeSetupToken(token: string): Promise<boolean> {
+    const { count } = await this.prisma.instanceSetting.deleteMany({
+      where: { key: SETUP_TOKEN, value: { equals: token } },
+    });
+    return count === 1;
+  }
+
   async saveSetupToken(token: string | null) {
     if (token === null) {
       await this.prisma.instanceSetting.deleteMany({ where: { key: SETUP_TOKEN } });

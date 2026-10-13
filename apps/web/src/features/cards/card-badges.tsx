@@ -1,7 +1,15 @@
 import type { BoardDetail, Card } from '@flowbit/shared';
-import { AlignLeftIcon, CheckSquareIcon, ClockIcon, MessageSquareIcon } from 'lucide-react';
+import {
+  AlignLeftIcon,
+  CheckSquareIcon,
+  ClockIcon,
+  EyeIcon,
+  MessageSquareIcon,
+  PencilIcon,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AvatarStack } from '@/components/ui/avatar';
+import { Avatar, AvatarStack } from '@/components/ui/avatar';
+import { useBoardLive } from '@/features/boards/board-live';
 import { cn } from '@/lib/utils';
 import { type DueStatus, dueStatus, formatDate } from './due';
 import { LABEL_STYLES } from './label-colors';
@@ -37,8 +45,17 @@ export function CardLabels({ card, labels }: { card: Card; labels: BoardDetail['
 }
 
 /** Small indicators at the bottom of a card on the board. */
-export function CardBadges({ card, members }: { card: Card; members: BoardDetail['members'] }) {
+export function CardBadges({
+  card,
+  board,
+}: {
+  card: Card;
+  board: Pick<BoardDetail, 'members' | 'watchedCardIds'>;
+}) {
   const { t, i18n } = useTranslation();
+  const members = board.members;
+  const editors = useBoardLive().editing.get(card.id) ?? [];
+  const watched = board.watchedCardIds.includes(card.id);
   const status = dueStatus(card);
   const assignees = card.assigneeIds.flatMap((id) => {
     const member = members.find((candidate) => candidate.user.id === id);
@@ -46,11 +63,30 @@ export function CardBadges({ card, members }: { card: Card; members: BoardDetail
   });
   const { comments, checklistItems, checklistItemsDone } = card.badges;
   const hasBadges =
-    status || card.description || comments > 0 || checklistItems > 0 || assignees.length > 0;
+    status ||
+    card.description ||
+    comments > 0 ||
+    checklistItems > 0 ||
+    assignees.length > 0 ||
+    watched ||
+    editors.length > 0;
   if (!hasBadges) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+      {editors.length > 0 ? (
+        <span
+          className="inline-flex items-center gap-1 rounded-sm bg-primary/10 px-1 py-0.5 text-primary"
+          title={t('live.editing', { names: editors.map((user) => user.name).join(', ') })}
+        >
+          <PencilIcon className="size-3" aria-hidden />
+          <Avatar user={editors[0]!} size="xs" />
+          <span className="sr-only">
+            {t('live.editing', { names: editors.map((user) => user.name).join(', ') })}
+          </span>
+        </span>
+      ) : null}
+      {watched ? <EyeIcon className="size-3.5" aria-label={t('watch.watchingCard')} /> : null}
       {status && card.dueAt ? (
         <span
           className={cn(

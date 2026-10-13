@@ -11,8 +11,8 @@ import { boardQuery, boardsQuery } from './queries';
 
 /**
  * Keeps a cached board in sync with changes made by others: joins the board's
- * room, applies incoming events, and refetches after reconnecting to catch up
- * on anything missed while offline.
+ * room, applies incoming events, and refetches after joining to catch up on
+ * anything missed before (while loading, or while offline).
  */
 export function useBoardRealtime(boardId: string) {
   const queryClient = useQueryClient();
@@ -25,8 +25,14 @@ export function useBoardRealtime(boardId: string) {
     let joinedBefore = false;
 
     const join = () => {
+      const startedAt = Date.now();
       socket.emit('board:join', boardId, () => {
-        if (joinedBefore) void queryClient.invalidateQueries({ queryKey: key });
+        // Changes made between loading the board and joining its room were
+        // never sent to this tab: catch up if the cached board is older.
+        const loadedAt = queryClient.getQueryState(key)?.dataUpdatedAt ?? 0;
+        if (joinedBefore || loadedAt < startedAt) {
+          void queryClient.invalidateQueries({ queryKey: key });
+        }
         joinedBefore = true;
       });
     };

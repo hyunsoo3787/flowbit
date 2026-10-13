@@ -30,6 +30,7 @@ that keeps a decision in force is appended to its entry as a dated **Amendment**
 | [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted                      |
 | [D-020](#d-020-better-auth-behind-our-own-auth-module)                     | Better Auth behind our own auth module                      | Accepted                      |
 | [D-021](#d-021-instance-administrators-manage-accounts-not-content)        | Instance administrators manage accounts, not content        | Accepted                      |
+| [D-022](#d-022-a-small-job-queue-on-valkey-lists)                          | A small job queue on Valkey lists                           | Accepted                      |
 
 ---
 
@@ -628,11 +629,65 @@ server itself (its logs or its shell) can create the first administrator:
   command, and that `ADMIN_EMAILS` requires email verification.
 - The admin action log starts as a small core table. It can later feed the
   organization audit log of phase 6.
-- Implementation will evaluate Better Auth's admin plugin for the account
-  operations (role flag, suspension, session revocation), wrapped by our own
-  module as in [D-020](#d-020-better-auth-behind-our-own-auth-module). Its
-  impersonation feature stays disabled until phase 6.
-- Open design question for phase 3: what happens to organizations and
-  workspaces whose only owner is deleted.
-- Planned for [phase 3](ROADMAP.md#phase-3-collaboration-basics), together
-  with invitations, when several people start sharing an instance.
+- Implemented in [phase 3](ROADMAP.md#phase-3-collaboration-basics). Better
+  Auth's admin plugin was evaluated and not used: its role model is per user
+  and grants itself broad session powers, while D-021 needs a narrow flag
+  plus `ADMIN_EMAILS` and the setup token. The flag, suspension (a database
+  hook refuses new sessions; existing ones are deleted) and reset links
+  (Better Auth's own verification tokens) are a few lines in our module.
+- Deleting an account deletes its personal organization, except workspaces
+  that other people still use: those stay, the organization loses its
+  personal owner, and one of the workspace's admins (or its oldest member,
+  promoted) takes over.
+- Closing sign-up doesn't lock out invited people: an address with a pending
+  email invitation can still create an account.
+
+---
+
+## D-022: A small job queue on Valkey lists
+
+**Status:** Accepted
+
+**Decision.** Background jobs (notification emails now; webhooks and
+automation later) and recurring tasks (due date reminders) run on a small
+queue in `apps/api/src/jobs`, built on Valkey lists:
+
+- A job is a JSON entry pushed onto a list; every replica runs a worker that
+  pops entries with a blocking read.
+- A failing job is retried up to five times with exponential backoff, through
+  a sorted set of delayed jobs that is moved back onto the list when due.
+- A recurring task runs on whichever replica takes a short Valkey lock for
+  the period, so it runs once per period however many replicas there are.
+- Without Valkey (a single self-hosted instance), jobs run in-process with
+  the same retries. In tests they run immediately.
+
+Jobs must be idempotent: a job can run again after a crash between doing its
+work and finishing.
+
+**Why.**
+
+- The work is small (a handful of job types) and must also run without
+  Valkey for the simplest self-hosted setup. A library built around Redis
+  doesn't cover that case.
+- About 150 lines that we fully understand and test against a real Valkey are
+  easier to keep correct than a large dependency with its own data layout.
+- Valkey is already required for multi-replica deployments
+  ([D-002](#d-002-support-both-self-hosting-and-saas)), so no new service is needed.
+
+**Alternatives considered.**
+
+- **BullMQ:** mature, with priorities, rate limits and a dashboard. It needs
+  Redis or Valkey, so the single-instance mode would need a second
+  implementation anyway; and its Lua scripts and key layout are a large
+  surface for a few job types. A good candidate if the job needs grow
+  (phase 7 automation).
+- **PostgreSQL as the queue** (`SELECT … FOR UPDATE SKIP LOCKED`, e.g.
+  pg-boss): durable and transactional with the data, but adds polling load
+  to the primary database, which we want to keep for user requests.
+
+**Consequences.**
+
+- Jobs queued only in the in-process mode are lost if the process stops
+  before running them; for notification emails that is acceptable.
+- Revisit when automation (phase 7) needs scheduling per user, priorities or
+  visibility into failed jobs.

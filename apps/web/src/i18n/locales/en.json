@@ -104,7 +104,8 @@
     "LAST_ADMIN": "There must be at least one administrator left.",
     "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server.",
     "SIGN_UP_DISABLED": "Sign-up is closed on this server. Ask for an invitation.",
-    "SETUP_NOT_AVAILABLE": "This setup link is invalid or was already used."
+    "SETUP_NOT_AVAILABLE": "This setup link is invalid or was already used.",
+    "NOTIFICATION_NOT_FOUND": "This notification doesn’t exist anymore."
   },
   "nav": {
     "home": "Home",
@@ -118,7 +119,8 @@
     "themeSystem": "System",
     "signOut": "Sign out",
     "openMenu": "Open menu",
-    "admin": "Administration"
+    "admin": "Administration",
+    "notifications": "Notifications"
   },
   "languages": {
     "en": "English",
@@ -493,5 +495,94 @@
     "create": "Create administrator account",
     "doneTitle": "Setup is complete",
     "doneBody": "This server already has an administrator."
+  },
+  "notifications": {
+    "button": "Notifications",
+    "buttonUnread_one": "Notifications, {{count}} unread",
+    "buttonUnread_other": "Notifications, {{count}} unread",
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "You’re all caught up.",
+    "loadMore": "Show older",
+    "unread": "Unread",
+    "open": "Open",
+    "someone": "Someone",
+    "deletedCard": "a deleted card",
+    "types": {
+      "MENTIONED": "{{actor}} mentioned you on {{card}}",
+      "ASSIGNED": "{{actor}} assigned you to {{card}}",
+      "COMMENTED": "{{actor}} commented on {{card}}",
+      "CARD_MOVED": "{{actor}} moved {{card}} to {{list}}",
+      "CARD_CREATED": "{{actor}} added {{card}} to {{list}}",
+      "DUE_SOON": "{{card}} is due soon"
+    },
+    "preferences": {
+      "title": "Notifications",
+      "body": "You always see notifications in Flowbit. Choose which ones also arrive by email.",
+      "emailMentions": "Mentions",
+      "emailMentionsHint": "Someone mentions you in a comment.",
+      "emailAssignments": "Assignments",
+      "emailAssignmentsHint": "Someone assigns a card to you.",
+      "emailWatching": "Cards you follow",
+      "emailWatchingHint": "Comments, moves and new cards on what you watch or are assigned to.",
+      "emailDueSoon": "Due dates",
+      "emailDueSoonHint": "A card you follow is due within a day."
+    }
+  },
+  "watch": {
+    "watch": "Watch",
+    "watching": "Watching",
+    "watchBoard": "Watch board",
+    "watchingCard": "You are watching this card"
+  },
+  "live": {
+    "viewing": "Viewing now: {{names}}",
+    "editing": "Editing now: {{names}}",
+    "editingCard_one": "{{names}} is editing this card",
+    "editingCard_other": "{{names}} are editing this card"
+  },
+  "activity": {
+    "title": "Activity",
+    "show": "Show details",
+    "hide": "Hide details",
+    "empty": "No activity yet.",
+    "loadMore": "Show older activity",
+    "boardHint": "Everything that happened on {{name}}, newest first.",
+    "someone": "Someone",
+    "thisCard": "this card",
+    "aCard": "a card",
+    "aList": "a list",
+    "aLabel": "a label",
+    "types": {
+      "boardCreated": "{{actor}} created this board",
+      "boardUpdated": "{{actor}} changed the board’s settings",
+      "listCreated": "{{actor}} added the list {{list}}",
+      "listRenamed": "{{actor}} renamed a list to {{list}}",
+      "listMoved": "{{actor}} moved the list {{list}}",
+      "listDeleted": "{{actor}} deleted the list {{list}}",
+      "cardCreated": "{{actor}} added {{card}} to {{list}}",
+      "cardMoved": "{{actor}} moved {{card}} from {{from}} to {{to}}",
+      "cardDeleted": "{{actor}} deleted {{card}}",
+      "cardUpdated": {
+        "dueComplete": "{{actor}} changed whether {{card}} is complete",
+        "dueAt": "{{actor}} changed the due date of {{card}}",
+        "startAt": "{{actor}} changed the start date of {{card}}",
+        "title": "{{actor}} renamed {{card}}",
+        "description": "{{actor}} edited the description of {{card}}",
+        "coverColor": "{{actor}} changed the cover of {{card}}",
+        "other": "{{actor}} updated {{card}}"
+      },
+      "cardJoined": "{{actor}} joined {{card}}",
+      "cardAssigned": "{{actor}} added {{person}} to {{card}}",
+      "cardUnassigned": "{{actor}} removed {{person}} from {{card}}",
+      "cardLabeled": "{{actor}} added the label {{label}} to {{card}}",
+      "cardUnlabeled": "{{actor}} removed the label {{label}} from {{card}}",
+      "checklistCreated": "{{actor}} added the checklist {{checklist}} to {{card}}",
+      "checklistDeleted": "{{actor}} removed the checklist {{checklist}} from {{card}}",
+      "itemCompleted": "{{actor}} completed {{item}} on {{card}}",
+      "itemReopened": "{{actor}} marked {{item}} incomplete on {{card}}",
+      "commented": "{{actor}} commented on {{card}}",
+      "other": "{{actor}} made a change"
+    }
   }
 }

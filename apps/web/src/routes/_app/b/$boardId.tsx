@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useMe } from '@/features/auth/queries';
 import { boardSurface } from '@/features/boards/backgrounds';
 import { BoardCanvas } from '@/features/boards/board-canvas';
+import { BoardLiveProvider } from '@/features/boards/board-live';
 import { BoardHeader } from '@/features/boards/board-header';
 import {
   activeFilterCount,
@@ -51,20 +52,22 @@ function BoardPage() {
   );
 
   return (
-    <div
-      className={cn('flex min-h-0 flex-1 flex-col overflow-hidden', surface.className)}
-      style={surface.style}
-    >
-      <BoardHeader
-        board={board}
-        filter={filter}
-        onFilterChange={(next) => void navigate({ search: toSearch(next), replace: true })}
-      />
-      <div className="min-h-0 flex-1">
-        <BoardCanvas board={board} visibleCardIds={visibleCardIds} />
+    <BoardLiveProvider boardId={boardId}>
+      <div
+        className={cn('flex min-h-0 flex-1 flex-col overflow-hidden', surface.className)}
+        style={surface.style}
+      >
+        <BoardHeader
+          board={board}
+          filter={filter}
+          onFilterChange={(next) => void navigate({ search: toSearch(next), replace: true })}
+        />
+        <div className="min-h-0 flex-1">
+          <BoardCanvas board={board} visibleCardIds={visibleCardIds} />
+        </div>
+        <Outlet />
       </div>
-      <Outlet />
-    </div>
+    </BoardLiveProvider>
   );
 }
 

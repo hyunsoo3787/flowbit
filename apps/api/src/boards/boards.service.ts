@@ -112,7 +112,7 @@ export class BoardsService {
 
   async getDetail(userId: string, boardId: string): Promise<BoardDetail> {
     const { board, role } = await this.access.require(userId, boardId, () => true);
-    const [lists, cards, labels, members] = await Promise.all([
+    const [lists, cards, labels, members, watches] = await Promise.all([
       this.prisma.list.findMany({ where: { boardId }, orderBy: [...POSITION_ORDER] }),
       this.prisma.card.findMany({
         where: { boardId },
@@ -124,6 +124,10 @@ export class BoardsService {
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
       }),
       this.boardMembers.list(boardId),
+      this.prisma.watch.findMany({
+        where: { userId, OR: [{ boardId }, { card: { boardId } }] },
+        select: { boardId: true, cardId: true },
+      }),
     ]);
     return {
       ...toBoardDto(board, role),
@@ -131,6 +135,8 @@ export class BoardsService {
       cards: cards.map(toCardDto),
       labels: labels.map(toLabelDto),
       members,
+      watching: watches.some((watch) => watch.boardId === boardId),
+      watchedCardIds: watches.flatMap((watch) => (watch.cardId ? [watch.cardId] : [])),
     };
   }
 

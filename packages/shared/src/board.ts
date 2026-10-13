@@ -244,6 +244,9 @@ export const boardDetailSchema = boardSchema.extend({
   labels: z.array(labelSchema),
   /** Everyone with access to the board: candidates for assignments and mentions. */
   members: z.array(boardMemberSchema),
+  /** Whether the caller watches the board, and which of its cards. */
+  watching: z.boolean(),
+  watchedCardIds: z.array(z.uuid()),
 });
 export type BoardDetail = z.infer<typeof boardDetailSchema>;
 

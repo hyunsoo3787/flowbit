@@ -7,13 +7,14 @@ and cards with real-time collaboration. You can self-host it or run it as a
 service.
 
 > **Status: early development.** Phases [1](docs/ROADMAP.md#phase-1-foundation)
-> to [3](docs/ROADMAP.md#phase-3-collaboration-basics) are done: accounts (email +
-> password, GitHub, Google), workspaces, boards with lists and cards, drag and
-> drop, live updates for everyone on a board, invitations and roles, labels,
-> due dates, checklists, comments with @mentions, board filters, server
+> to [4](docs/ROADMAP.md#phase-4-presence-notifications-activity) are done: accounts
+> (email + password, GitHub, Google), workspaces, boards with lists and cards,
+> drag and drop, live updates and presence for everyone on a board, invitations
+> and roles, labels, due dates, checklists, comments with @mentions, board
+> filters, notifications in the app and by email, activity feeds, server
 > administration, an English and Korean UI, and a one-command Docker setup.
-> Presence, notifications and activity feeds come next in
-> [phase 4](docs/ROADMAP.md#phase-4-presence-notifications-activity).
+> Attachments, search and archiving come next in
+> [phase 5](docs/ROADMAP.md#phase-5-attachments-search-archive).
 
 ## Goals
 

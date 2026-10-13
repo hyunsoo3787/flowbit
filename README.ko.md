@@ -7,13 +7,13 @@ Flowbit은 Trello 스타일의 오픈소스 업무 관리 도구입니다. 보�
 운영할 수 있습니다.
 
 > **현재 상태: 초기 개발 단계.** [1단계](docs/ROADMAP.md#phase-1-foundation)부터
-> [3단계](docs/ROADMAP.md#phase-3-collaboration-basics)까지 마쳤습니다. 계정(이메일·비밀번호,
+> [4단계](docs/ROADMAP.md#phase-4-presence-notifications-activity)까지 마쳤습니다. 계정(이메일·비밀번호,
 > GitHub, Google), 워크스페이스, 리스트와 카드로 구성된 보드, 드래그 앤 드롭,
-> 같은 보드를 보는 모두에게 즉시 반영되는 실시간 업데이트, 초대와 역할 관리,
-> 라벨, 마감일, 체크리스트, @멘션이 되는 댓글, 보드 필터, 서버 관리 기능,
-> 영어·한국어 UI, 명령 한 줄로 실행되는 Docker 구성이 갖춰져 있습니다. 접속자 표시,
-> 알림, 활동 기록은 다음 [4단계](docs/ROADMAP.md#phase-4-presence-notifications-activity)에서
-> 추가됩니다.
+> 같은 보드를 보는 모두에게 즉시 반영되는 실시간 업데이트와 접속자 표시, 초대와
+> 역할 관리, 라벨, 마감일, 체크리스트, @멘션이 되는 댓글, 보드 필터, 앱·이메일
+> 알림, 활동 기록, 서버 관리 기능, 영어·한국어 UI, 명령 한 줄로 실행되는 Docker
+> 구성이 갖춰져 있습니다. 첨부파일, 검색, 보관 기능은 다음
+> [5단계](docs/ROADMAP.md#phase-5-attachments-search-archive)에서 추가됩니다.
 
 ## 목표
 

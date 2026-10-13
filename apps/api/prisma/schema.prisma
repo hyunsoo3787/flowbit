@@ -36,18 +36,22 @@ model User {
   accounts                Account[]
   organizationMemberships OrganizationMember[]
   workspaceMemberships    WorkspaceMember[]
-  personalOrganization    Organization?        @relation("PersonalOrganization")
-  createdWorkspaces       Workspace[]          @relation("WorkspaceCreator")
+  personalOrganization    Organization?           @relation("PersonalOrganization")
+  createdWorkspaces       Workspace[]             @relation("WorkspaceCreator")
   boardMemberships        BoardMember[]
-  createdBoards           Board[]              @relation("BoardCreator")
-  createdCards            Card[]               @relation("CardCreator")
+  createdBoards           Board[]                 @relation("BoardCreator")
+  createdCards            Card[]                  @relation("CardCreator")
   activities              Activity[]
-  sentInvitations         Invitation[]         @relation("InvitationSender")
+  sentInvitations         Invitation[]            @relation("InvitationSender")
   cardAssignments         CardAssignee[]
-  checklistItems          ChecklistItem[]      @relation("ChecklistItemAssignee")
+  checklistItems          ChecklistItem[]         @relation("ChecklistItemAssignee")
   comments                Comment[]
-  adminActions            AdminAction[]        @relation("AdminActionActor")
-  adminActionsReceived    AdminAction[]        @relation("AdminActionTarget")
+  adminActions            AdminAction[]           @relation("AdminActionActor")
+  adminActionsReceived    AdminAction[]           @relation("AdminActionTarget")
+  watches                 Watch[]
+  notifications           Notification[]          @relation("NotificationRecipient")
+  notificationsCaused     Notification[]          @relation("NotificationActor")
+  notificationPreference  NotificationPreference?
 
   @@map("users")
 }
@@ -216,14 +220,16 @@ model Board {
   createdAt   DateTime        @default(now()) @map("created_at")
   updatedAt   DateTime        @updatedAt @map("updated_at")
 
-  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  createdBy   User?         @relation("BoardCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  members     BoardMember[]
-  lists       List[]
-  cards       Card[]
-  labels      Label[]
-  activities  Activity[]
-  invitations Invitation[]
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdBy     User?          @relation("BoardCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  members       BoardMember[]
+  lists         List[]
+  cards         Card[]
+  labels        Label[]
+  activities    Activity[]
+  invitations   Invitation[]
+  watches       Watch[]
+  notifications Notification[]
 
   @@index([workspaceId])
   @@map("boards")
@@ -277,6 +283,8 @@ model Card {
   dueCompletedAt DateTime? @map("due_completed_at")
   /// A cover color key from LABEL_COLORS; image covers arrive with attachments.
   coverColor     String?   @map("cover_color")
+  /// The due date a "due soon" reminder was sent for; a new due date gets a new reminder.
+  dueReminderAt  DateTime? @map("due_reminder_at")
   /// Denormalized counters for the badges on the board, kept in step by the services.
   commentCount   Int       @default(0) @map("comment_count")
   checklistTotal Int       @default(0) @map("checklist_total")
@@ -286,14 +294,16 @@ model Card {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
-  board      Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  list       List           @relation(fields: [listId], references: [id], onDelete: Cascade)
-  createdBy  User?          @relation("CardCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  activities Activity[]
-  assignees  CardAssignee[]
-  labels     CardLabel[]
-  checklists Checklist[]
-  comments   Comment[]
+  board         Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  list          List           @relation(fields: [listId], references: [id], onDelete: Cascade)
+  createdBy     User?          @relation("CardCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  activities    Activity[]
+  assignees     CardAssignee[]
+  labels        CardLabel[]
+  checklists    Checklist[]
+  comments      Comment[]
+  watches       Watch[]
+  notifications Notification[]
 
   @@index([listId, position])
   @@index([boardId])
@@ -314,6 +324,8 @@ model Activity {
   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
   card  Card? @relation(fields: [cardId], references: [id], onDelete: SetNull)
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  notifications Notification[]
 
   @@index([boardId, createdAt])
   @@index([cardId])
@@ -471,4 +483,68 @@ model AdminAction {
 
   @@index([createdAt])
   @@map("admin_actions")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4: watching and notifications
+// ---------------------------------------------------------------------------
+
+/// Someone following a board or a card (exactly one of the two is set).
+model Watch {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  boardId   String?  @map("board_id") @db.Uuid
+  cardId    String?  @map("card_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  board Board? @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  card  Card?  @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, boardId])
+  @@unique([userId, cardId])
+  @@index([boardId])
+  @@index([cardId])
+  @@map("watches")
+}
+
+/// Something a user should know about. Shown in the app; also emailed,
+/// depending on the user's preferences.
+model Notification {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  /// One of NOTIFICATION_TYPES in @flowbit/shared.
+  type       String
+  actorId    String?   @map("actor_id") @db.Uuid
+  boardId    String    @map("board_id") @db.Uuid
+  cardId     String?   @map("card_id") @db.Uuid
+  activityId String?   @map("activity_id") @db.Uuid
+  payload    Json      @default("{}")
+  readAt     DateTime? @map("read_at")
+  emailedAt  DateTime? @map("emailed_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  user     User      @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  actor    User?     @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  board    Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  card     Card?     @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  activity Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+
+  @@index([userId, id])
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+/// Which notifications a user also gets by email. In-app notifications are always on.
+model NotificationPreference {
+  userId           String   @id @map("user_id") @db.Uuid
+  emailMentions    Boolean  @default(true) @map("email_mentions")
+  emailAssignments Boolean  @default(true) @map("email_assignments")
+  emailWatching    Boolean  @default(true) @map("email_watching")
+  emailDueSoon     Boolean  @default(true) @map("email_due_soon")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }

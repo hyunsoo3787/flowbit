@@ -6,9 +6,9 @@ ends with something people can use, plus an exit checklist. Phases are
 sequential, but items from later phases can be picked up early if they don't
 block the current one.
 
-> **Current status:** Phases 1 (foundation), 2 (boards, lists, cards and
-> real-time updates) and 3 (collaboration basics) are implemented. Phase 4
-> (presence, notifications, activity) is next.
+> **Current status:** Phases 1 to 4 are implemented: foundation; boards,
+> lists, cards and real-time updates; collaboration basics; presence,
+> notifications and activity. Phase 5 (attachments, search, archive) is next.
 
 | Phase                                         | Theme                                             | Edition        |
 | --------------------------------------------- | ------------------------------------------------- | -------------- |
@@ -145,14 +145,15 @@ recover a lost password without email.
 
 **Goal:** People always know what changed and who is around.
 
-- [ ] **Real-time level 2:** board presence (avatars of viewers), "editing"
+- [x] **Real-time level 2:** board presence (avatars of viewers), "editing"
       indicators
-- [ ] Activity log for boards and cards (who did what, when)
-- [ ] In-app notifications (mentions, assignments, due soon, comments on
+- [x] Activity log for boards and cards (who did what, when)
+- [x] In-app notifications (mentions, assignments, due soon, comments on
       watched cards)
-- [ ] Watch / unwatch cards and boards
-- [ ] Email notifications (SMTP, localized), with per-user preferences
-- [ ] Background job infrastructure (queue and scheduler on Valkey)
+- [x] Watch / unwatch cards and boards
+- [x] Email notifications (SMTP, localized), with per-user preferences
+- [x] Background job infrastructure (queue and scheduler on Valkey,
+      [D-022](DECISIONS.md#d-022-a-small-job-queue-on-valkey-lists))
 
 **Exit checklist:** A mention or assignment reaches the user in the app and
 by email. Every change on a card shows up in its activity feed.

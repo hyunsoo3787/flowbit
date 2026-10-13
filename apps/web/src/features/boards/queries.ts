@@ -419,3 +419,36 @@ export function boardColumns(board: BoardDetail): { list: List; cards: Card[] }[
 export function newTempId() {
   return tempId();
 }
+
+/** Watching the board, or one of its cards (`cardId`). */
+export function useSetWatch(boardId: string) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const key = boardQuery(boardId).queryKey;
+  return useMutation({
+    mutationFn: ({ cardId, watching }: { cardId?: string; watching: boolean }) => {
+      const request = cardId
+        ? watching
+          ? api.PUT('/api/v1/cards/{cardId}/watch', { params: { path: { cardId } } })
+          : api.DELETE('/api/v1/cards/{cardId}/watch', { params: { path: { cardId } } })
+        : watching
+          ? api.PUT('/api/v1/boards/{boardId}/watch', { params: { path: { boardId } } })
+          : api.DELETE('/api/v1/boards/{boardId}/watch', { params: { path: { boardId } } });
+      return unwrap(request);
+    },
+    onMutate: ({ cardId, watching }) => {
+      const previous = queryClient.getQueryData(key);
+      queryClient.setQueryData(key, (board) => {
+        if (!board) return board;
+        if (!cardId) return { ...board, watching };
+        const others = board.watchedCardIds.filter((id) => id !== cardId);
+        return { ...board, watchedCardIds: watching ? [...others, cardId] : others };
+      });
+      return { previous };
+    },
+    onError: (error, _variables, context) => {
+      if (context?.previous) queryClient.setQueryData(key, context.previous);
+      toast.error(errorMessage(t, error));
+    },
+  });
+}

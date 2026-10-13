@@ -31,6 +31,7 @@ export const ERROR_CODES = [
   'ACCOUNT_SUSPENDED',
   'SIGN_UP_DISABLED',
   'SETUP_NOT_AVAILABLE',
+  'NOTIFICATION_NOT_FOUND',
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];

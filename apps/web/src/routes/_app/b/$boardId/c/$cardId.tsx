@@ -9,8 +9,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   AlignLeftIcon,
   ArrowRightLeftIcon,
+  ActivityIcon,
   CheckSquareIcon,
   ClockIcon,
+  EyeIcon,
+  PencilIcon,
   PanelTopIcon,
   PlusIcon,
   TagIcon,
@@ -23,7 +26,7 @@ import { toast } from 'sonner';
 import { InlineEdit } from '@/components/inline-edit';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarStack } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from '@/components/ui/popover';
@@ -32,9 +35,12 @@ import {
   boardQuery,
   boardsQuery,
   useDeleteCard,
+  useSetWatch,
   useMoveCard,
   useUpdateCard,
 } from '@/features/boards/queries';
+import { ActivityList } from '@/features/activity/activity-list';
+import { useBoardLive, useEditingSignal } from '@/features/boards/board-live';
 import { DUE_STYLES } from '@/features/cards/card-badges';
 import {
   CoverPopover,
@@ -102,6 +108,11 @@ function CardDetails({ board, card, listName, canEdit, onDeleted }: CardDetailsP
   const deleteCard = useDeleteCard(board.id);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(card.description);
+  const [showActivity, setShowActivity] = useState(false);
+  const setWatch = useSetWatch(board.id);
+  const watching = board.watchedCardIds.includes(card.id);
+  const editors = useBoardLive().editing.get(card.id) ?? [];
+  useEditingSignal(board.id, card.id, editing);
   const assignees = board.members.filter((member) => card.assigneeIds.includes(member.user.id));
   const labels = board.labels.filter((label) => card.labelIds.includes(label.id));
   const status = dueStatus(card);
@@ -143,9 +154,31 @@ function CardDetails({ board, card, listName, canEdit, onDeleted }: CardDetailsP
                 inputClassName="resize-none text-lg"
               />
             </DialogTitle>
-            <DialogDescription className="px-1">
-              {t('cards.inList', { list: listName })}
-            </DialogDescription>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <DialogDescription className="px-1">
+                {t('cards.inList', { list: listName })}
+              </DialogDescription>
+              <Button
+                variant={watching ? 'secondary' : 'ghost'}
+                size="sm"
+                className="h-7"
+                aria-pressed={watching}
+                onClick={() => setWatch.mutate({ cardId: card.id, watching: !watching })}
+              >
+                <EyeIcon />
+                {watching ? t('watch.watching') : t('watch.watch')}
+              </Button>
+            </div>
+            {editors.length > 0 ? (
+              <p className="flex items-center gap-2 px-1 text-xs text-primary" role="status">
+                <PencilIcon className="size-3.5" aria-hidden />
+                <AvatarStack users={editors} size="xs" />
+                {t('live.editingCard', {
+                  names: editors.map((user) => user.name).join(', '),
+                  count: editors.length,
+                })}
+              </p>
+            ) : null}
           </div>
 
           {assignees.length > 0 || labels.length > 0 || card.dueAt || card.startAt ? (
@@ -299,6 +332,26 @@ function CardDetails({ board, card, listName, canEdit, onDeleted }: CardDetailsP
 
           <Checklists cardId={card.id} board={board} canEdit={canEdit} />
           <Comments cardId={card.id} board={board} canComment={canEdit} />
+
+          <section className="grid gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="flex items-center gap-2 font-semibold">
+                <ActivityIcon className="size-4" aria-hidden />
+                {t('activity.title')}
+              </h3>
+              <Button
+                variant="secondary"
+                size="sm"
+                aria-expanded={showActivity}
+                onClick={() => setShowActivity((shown) => !shown)}
+              >
+                {showActivity ? t('activity.hide') : t('activity.show')}
+              </Button>
+            </div>
+            {showActivity ? (
+              <ActivityList source={{ kind: 'card', id: card.id }} board={board} />
+            ) : null}
+          </section>
         </div>
 
         {canEdit ? (

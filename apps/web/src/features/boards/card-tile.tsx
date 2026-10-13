@@ -13,7 +13,7 @@ export function CardTileContent({
   dragging,
 }: {
   card: Card;
-  board: Pick<BoardDetail, 'labels' | 'members'>;
+  board: Pick<BoardDetail, 'labels' | 'members' | 'watchedCardIds'>;
   dragging?: boolean;
 }) {
   return (
@@ -29,7 +29,7 @@ export function CardTileContent({
       <div className="grid gap-1.5 px-3 py-2">
         <CardLabels card={card} labels={board.labels} />
         <span className="break-words">{card.title}</span>
-        <CardBadges card={card} members={board.members} />
+        <CardBadges card={card} board={board} />
       </div>
     </div>
   );
@@ -45,7 +45,7 @@ export function CardTile({
   disabled,
 }: {
   card: Card;
-  board: Pick<BoardDetail, 'labels' | 'members'>;
+  board: Pick<BoardDetail, 'labels' | 'members' | 'watchedCardIds'>;
   disabled: boolean;
 }) {
   const { t } = useTranslation();

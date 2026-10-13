@@ -78,6 +78,27 @@ describe('setup', () => {
     expect(me).toMatchObject({ email: 'root@example.com', isAdmin: true, emailVerified: true });
   });
 
+  it('creates only one administrator when the token is used twice at once', async () => {
+    const token = await ctx.app.get(SetupService).ensureToken();
+    const results = await Promise.all(
+      [ann, bob].map((user) => call('POST', '/api/v1/setup', { token }, user.cookie)),
+    );
+    expect(results.map((result) => result.status).sort()).toEqual([200, 404]);
+    expect(await ctx.prisma.user.count({ where: { isAdmin: true } })).toBe(1);
+  });
+
+  it('keeps the token when creating the account fails', async () => {
+    const token = await ctx.app.get(SetupService).ensureToken();
+    const taken = await request(ctx.app, 'POST', '/api/v1/setup', {
+      body: {
+        token,
+        account: { name: 'Ann', email: 'ann@example.com', password: 'correct-horse-battery' },
+      },
+    });
+    expect(taken.status).toBe(409);
+    expect((await call('POST', '/api/v1/setup', { token })).status).toBe(200);
+  });
+
   it('works even when sign-up is closed', async () => {
     await ctx.prisma.instanceSetting.create({ data: { key: 'signUpEnabled', value: false } });
     const token = await ctx.app.get(SetupService).ensureToken();

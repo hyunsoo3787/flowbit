@@ -7,6 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
+  ActivityIcon,
   EyeIcon,
   LockIcon,
   MoreHorizontalIcon,
@@ -31,6 +32,7 @@ import {
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuRadioGroup,
@@ -41,6 +43,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ActivityList } from '@/features/activity/activity-list';
 import { BoardShareDialog } from '@/features/members/members-dialogs';
 import { workspaceQuery } from '@/features/workspaces/queries';
 import { errorMessage } from '@/lib/errors';
@@ -49,7 +52,8 @@ import { BackgroundPicker } from './background-picker';
 import { boardSurface } from './backgrounds';
 import { BoardFilterButton } from './board-filter';
 import type { BoardFilter } from './filters';
-import { useDeleteBoard, useUpdateBoard } from './queries';
+import { useBoardLive } from './board-live';
+import { useDeleteBoard, useSetWatch, useUpdateBoard } from './queries';
 
 const ON_BOARD = 'text-inherit hover:bg-current/15 hover:text-inherit dark:hover:bg-current/15';
 
@@ -69,6 +73,9 @@ export function BoardHeader({
   const deleteBoard = useDeleteBoard(board.id);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [changingBackground, setChangingBackground] = useState(false);
+  const [showingActivity, setShowingActivity] = useState(false);
+  const setWatch = useSetWatch(board.id);
+  const { viewers } = useBoardLive();
   const isAdmin = board.role === 'ADMIN';
   const VisibilityIcon = board.visibility === 'PRIVATE' ? LockIcon : UsersIcon;
 
@@ -122,6 +129,18 @@ export function BoardHeader({
       ) : null}
 
       <div className="ml-auto flex items-center gap-1">
+        {viewers.length > 1 ? (
+          <span
+            className="hidden items-center gap-1.5 pr-1 text-xs opacity-80 sm:flex"
+            title={t('live.viewing', { names: viewers.map((user) => user.name).join(', ') })}
+          >
+            <span className="size-2 rounded-full bg-green-500" aria-hidden />
+            <AvatarStack users={viewers} max={4} />
+            <span className="sr-only">
+              {t('live.viewing', { names: viewers.map((user) => user.name).join(', ') })}
+            </span>
+          </span>
+        ) : null}
         <BoardShareDialog
           board={board}
           trigger={
@@ -146,52 +165,76 @@ export function BoardHeader({
           onChange={onFilterChange}
           className={ON_BOARD}
         />
-        {isAdmin ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={ON_BOARD}
-                aria-label={t('boards.menu')}
-              >
-                <MoreHorizontalIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem onSelect={() => setChangingBackground(true)}>
-                <PaletteIcon />
-                {t('boards.changeBackground')}
-              </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <VisibilityIcon />
-                  {t('boards.visibility')}
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuRadioGroup
-                    value={board.visibility}
-                    onValueChange={(value) =>
-                      updateBoard.mutate({ visibility: value as BoardVisibility })
-                    }
-                  >
-                    {BOARD_VISIBILITIES.map((option) => (
-                      <DropdownMenuRadioItem key={option} value={option}>
-                        {t(`boards.visibility${option}`)}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onSelect={() => setConfirmingDelete(true)}>
-                <Trash2Icon />
-                {t('boards.delete')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className={ON_BOARD} aria-label={t('boards.menu')}>
+              <MoreHorizontalIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuCheckboxItem
+              checked={board.watching}
+              onCheckedChange={(checked) => setWatch.mutate({ watching: checked === true })}
+            >
+              <EyeIcon />
+              {t('watch.watchBoard')}
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuItem onSelect={() => setShowingActivity(true)}>
+              <ActivityIcon />
+              {t('activity.title')}
+            </DropdownMenuItem>
+            {isAdmin ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setChangingBackground(true)}>
+                  <PaletteIcon />
+                  {t('boards.changeBackground')}
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <VisibilityIcon />
+                    {t('boards.visibility')}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup
+                      value={board.visibility}
+                      onValueChange={(value) =>
+                        updateBoard.mutate({ visibility: value as BoardVisibility })
+                      }
+                    >
+                      {BOARD_VISIBILITIES.map((option) => (
+                        <DropdownMenuRadioItem key={option} value={option}>
+                          {t(`boards.visibility${option}`)}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onSelect={() => setConfirmingDelete(true)}>
+                  <Trash2Icon />
+                  {t('boards.delete')}
+                </DropdownMenuItem>
+              </>
+            ) : null}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
+      <Dialog open={showingActivity} onOpenChange={setShowingActivity}>
+        <DialogContent
+          closeLabel={t('common.close')}
+          className="max-h-[85svh] overflow-y-auto sm:max-w-lg"
+        >
+          <DialogHeader>
+            <DialogTitle>{t('activity.title')}</DialogTitle>
+            <DialogDescription>{t('activity.boardHint', { name: board.name })}</DialogDescription>
+          </DialogHeader>
+          {showingActivity ? (
+            <ActivityList source={{ kind: 'board', id: board.id }} board={board} />
+          ) : null}
+        </DialogContent>
+      </Dialog>
 
       {changingBackground ? (
         <BackgroundDialog

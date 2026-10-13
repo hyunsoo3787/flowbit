@@ -94,6 +94,69 @@ const passwordResetIssued: Record<Locale, NoticeMail> = {
   },
 };
 
+export interface NotificationMailInput {
+  type: 'MENTIONED' | 'ASSIGNED' | 'COMMENTED' | 'CARD_MOVED' | 'CARD_CREATED' | 'DUE_SOON';
+  actor: string | null;
+  card: string;
+  board: string;
+  excerpt?: string;
+  toList?: string;
+  dueAt?: string;
+  url: string;
+  settingsUrl: string;
+}
+
+interface NotificationMail {
+  subject: (input: NotificationMailInput) => string;
+  action: string;
+  footer: string;
+}
+
+const notification: Record<Locale, NotificationMail> = {
+  en: {
+    subject: ({ type, actor, card, toList }) => {
+      const who = actor ?? 'Someone';
+      switch (type) {
+        case 'MENTIONED':
+          return `${who} mentioned you on “${card}”`;
+        case 'ASSIGNED':
+          return `${who} assigned you to “${card}”`;
+        case 'COMMENTED':
+          return `${who} commented on “${card}”`;
+        case 'CARD_MOVED':
+          return `${who} moved “${card}” to ${toList ?? 'another list'}`;
+        case 'CARD_CREATED':
+          return `${who} added “${card}”`;
+        case 'DUE_SOON':
+          return `“${card}” is due soon`;
+      }
+    },
+    action: 'Open the card',
+    footer: 'You can choose which emails you get in Flowbit: account menu → Notifications.',
+  },
+  ko: {
+    subject: ({ type, actor, card, toList }) => {
+      const who = actor ? `${actor}님` : '누군가';
+      switch (type) {
+        case 'MENTIONED':
+          return `${who}이 “${card}”에서 회원님을 언급했습니다`;
+        case 'ASSIGNED':
+          return `${who}이 회원님을 “${card}” 담당자로 지정했습니다`;
+        case 'COMMENTED':
+          return `${who}이 “${card}”에 댓글을 남겼습니다`;
+        case 'CARD_MOVED':
+          return `${who}이 “${card}”을(를) ${toList ?? '다른 리스트'}(으)로 옮겼습니다`;
+        case 'CARD_CREATED':
+          return `${who}이 “${card}”을(를) 추가했습니다`;
+        case 'DUE_SOON':
+          return `“${card}” 마감이 다가옵니다`;
+      }
+    },
+    action: '카드 열기',
+    footer: '받을 이메일은 Flowbit의 계정 메뉴 → 알림에서 고를 수 있습니다.',
+  },
+};
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll('&', '&amp;')
@@ -177,4 +240,18 @@ export const mailTemplates = {
   },
   passwordResetIssued: (locale: Locale, name: string) =>
     renderNotice(passwordResetIssued[locale], name),
+  notification: (locale: Locale, input: NotificationMailInput) => {
+    const mail = notification[locale];
+    const subject = mail.subject(input);
+    const lines = [input.board, ...(input.excerpt ? [`“${input.excerpt}”`] : [])];
+    if (input.dueAt) lines.push(input.dueAt);
+    return renderAction(
+      subject,
+      null,
+      lines.join('\n'),
+      mail.action,
+      input.url,
+      `${mail.footer} ${input.settingsUrl}`,
+    );
+  },
 };

@@ -62,6 +62,11 @@ All settings are environment variables, set in `.env`:
 
 ### Email
 
+Flowbit sends account emails (verification, password reset), invitations and
+notifications: mentions, assignments, activity on cards people watch, and
+due date reminders. Everyone chooses which notifications they also get by
+email in their account menu → Notifications.
+
 Configure `SMTP_URL` for production. Without it, verification and password
 reset links are only printed in the logs (`docker compose logs flowbit`), and
 email verification isn't required.

@@ -580,6 +580,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationsController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notifications/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["NotificationsController_readAll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notifications/{notificationId}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["NotificationsController_read"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notification-preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationsController_preferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["NotificationsController_updatePreferences"];
+        trace?: never;
+    };
+    "/api/v1/boards/{boardId}/watch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["NotificationsController_watchBoard"];
+        post?: never;
+        delete: operations["NotificationsController_unwatchBoard"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cards/{cardId}/watch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["NotificationsController_watchCard"];
+        post?: never;
+        delete: operations["NotificationsController_unwatchCard"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boards/{boardId}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationsController_boardActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cards/{cardId}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NotificationsController_cardActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/stats": {
         parameters: {
             query?: never;
@@ -896,10 +1024,16 @@ export interface components {
                 password: string;
             };
         };
+        UpdateNotificationPreferencesInput: {
+            emailMentions?: boolean;
+            emailAssignments?: boolean;
+            emailWatching?: boolean;
+            emailDueSoon?: boolean;
+        };
         ApiError: {
             error: {
                 /** @enum {string} */
-                code: "BAD_REQUEST" | "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL_ERROR" | "WORKSPACE_NOT_FOUND" | "BOARD_NOT_FOUND" | "LIST_NOT_FOUND" | "CARD_NOT_FOUND" | "LABEL_NOT_FOUND" | "CHECKLIST_NOT_FOUND" | "CHECKLIST_ITEM_NOT_FOUND" | "COMMENT_NOT_FOUND" | "USER_NOT_FOUND" | "MEMBER_NOT_FOUND" | "INVITATION_NOT_FOUND" | "INVITATION_EMAIL_MISMATCH" | "LAST_ADMIN" | "ACCOUNT_SUSPENDED" | "SIGN_UP_DISABLED" | "SETUP_NOT_AVAILABLE";
+                code: "BAD_REQUEST" | "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL_ERROR" | "WORKSPACE_NOT_FOUND" | "BOARD_NOT_FOUND" | "LIST_NOT_FOUND" | "CARD_NOT_FOUND" | "LABEL_NOT_FOUND" | "CHECKLIST_NOT_FOUND" | "CHECKLIST_ITEM_NOT_FOUND" | "COMMENT_NOT_FOUND" | "USER_NOT_FOUND" | "MEMBER_NOT_FOUND" | "INVITATION_NOT_FOUND" | "INVITATION_EMAIL_MISMATCH" | "LAST_ADMIN" | "ACCOUNT_SUSPENDED" | "SIGN_UP_DISABLED" | "SETUP_NOT_AVAILABLE" | "NOTIFICATION_NOT_FOUND";
                 message: string;
                 details?: unknown;
             };
@@ -1085,6 +1219,8 @@ export interface components {
                 /** @enum {string|null} */
                 boardRole: "ADMIN" | "MEMBER" | "OBSERVER" | null;
             }[];
+            watching: boolean;
+            watchedCardIds: string[];
         };
         List: {
             /** Format: uuid */
@@ -1464,6 +1600,132 @@ export interface components {
         };
         SetupStatus: {
             required: boolean;
+        };
+        Notification: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            type: "MENTIONED" | "ASSIGNED" | "COMMENTED" | "CARD_MOVED" | "CARD_CREATED" | "DUE_SOON";
+            actor: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                /** Format: email */
+                email: string;
+                image: string | null;
+            } | null;
+            board: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+            };
+            card: {
+                /** Format: uuid */
+                id: string;
+                title: string;
+            } | null;
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            readAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        NotificationPage: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                type: "MENTIONED" | "ASSIGNED" | "COMMENTED" | "CARD_MOVED" | "CARD_CREATED" | "DUE_SOON";
+                actor: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string;
+                    /** Format: email */
+                    email: string;
+                    image: string | null;
+                } | null;
+                board: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string;
+                };
+                card: {
+                    /** Format: uuid */
+                    id: string;
+                    title: string;
+                } | null;
+                payload: {
+                    [key: string]: unknown;
+                };
+                /** Format: date-time */
+                readAt: string | null;
+                /** Format: date-time */
+                createdAt: string;
+            }[];
+            /** Format: uuid */
+            nextCursor: string | null;
+            unreadCount: number;
+        };
+        NotificationPreferences: {
+            emailMentions: boolean;
+            emailAssignments: boolean;
+            emailWatching: boolean;
+            emailDueSoon: boolean;
+        };
+        WatchState: {
+            watching: boolean;
+        };
+        ActivityPage: {
+            items: {
+                /** Format: uuid */
+                id: string;
+                type: string;
+                actor: {
+                    /** Format: uuid */
+                    id: string;
+                    name: string;
+                    /** Format: email */
+                    email: string;
+                    image: string | null;
+                } | null;
+                card: {
+                    /** Format: uuid */
+                    id: string;
+                    title: string;
+                } | null;
+                payload: {
+                    [key: string]: unknown;
+                };
+                /** Format: date-time */
+                createdAt: string;
+            }[];
+            /** Format: uuid */
+            nextCursor: string | null;
+        };
+        Activity: {
+            /** Format: uuid */
+            id: string;
+            type: string;
+            actor: {
+                /** Format: uuid */
+                id: string;
+                name: string;
+                /** Format: email */
+                email: string;
+                image: string | null;
+            } | null;
+            card: {
+                /** Format: uuid */
+                id: string;
+                title: string;
+            } | null;
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Format: date-time */
+            createdAt: string;
         };
     };
     responses: never;
@@ -4529,6 +4791,447 @@ export interface operations {
             };
             /** @description Error */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_list: {
+        parameters: {
+            query?: {
+                unread?: "true" | "false";
+                cursor?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPage"];
+                };
+            };
+            /** @description Error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_readAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                notificationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Notification"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_preferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPreferences"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_updatePreferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateNotificationPreferencesInput"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPreferences"];
+                };
+            };
+            /** @description Error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_watchBoard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_unwatchBoard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_watchCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_unwatchCard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchState"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_boardActivity: {
+        parameters: {
+            query?: {
+                cursor?: unknown;
+            };
+            header?: never;
+            path: {
+                boardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityPage"];
+                };
+            };
+            /** @description Error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    NotificationsController_cardActivity: {
+        parameters: {
+            query?: {
+                cursor?: unknown;
+            };
+            header?: never;
+            path: {
+                cardId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityPage"];
+                };
+            };
+            /** @description Error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            /** @description Error */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

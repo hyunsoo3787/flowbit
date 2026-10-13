@@ -7,6 +7,7 @@ import type {
   UpdateCardInput,
 } from '@flowbit/shared';
 import { AppError } from '../common/app-error.js';
+import { DomainEvents } from '../events/domain-events.js';
 import type { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RealtimeService } from '../realtime/realtime.service.js';
@@ -25,6 +26,7 @@ export class CardsService {
     private readonly access: BoardAccessService,
     private readonly boardMembers: BoardMembersService,
     private readonly realtime: RealtimeService,
+    private readonly events: DomainEvents,
   ) {}
 
   async create(
@@ -36,7 +38,7 @@ export class CardsService {
     const list = await this.prisma.list.findUnique({ where: { id: listId } });
     if (!list) throw AppError.notFound('LIST_NOT_FOUND');
 
-    const { card, rebalanced } = await this.prisma.$transaction(async (tx) => {
+    const { card, rebalanced, activityId } = await this.prisma.$transaction(async (tx) => {
       await this.access.require(userId, list.boardId, canEditContent, {
         client: tx,
         notFound: 'LIST_NOT_FOUND',
@@ -47,7 +49,7 @@ export class CardsService {
         data: { boardId: list.boardId, listId, title: input.title, position, createdById: userId },
         include: CARD_INCLUDE,
       });
-      await tx.activity.create({
+      const activity = await tx.activity.create({
         data: {
           boardId: list.boardId,
           cardId: card.id,
@@ -56,10 +58,17 @@ export class CardsService {
           payload: { listId, title: card.title },
         },
       });
-      return { card, rebalanced };
+      return { card, rebalanced, activityId: activity.id };
     });
     await this.publishCards(rebalanced, userId, clientMutationId);
     this.publishCard(card, userId, clientMutationId);
+    this.events.emit({
+      type: 'card.created',
+      boardId: card.boardId,
+      cardId: card.id,
+      actorId: userId,
+      activityId,
+    });
     return toCardDto(card);
   }
 
@@ -120,7 +129,7 @@ export class CardsService {
     const target = await this.prisma.list.findUnique({ where: { id: input.toListId } });
     if (!target) throw AppError.notFound('LIST_NOT_FOUND');
 
-    const { card, rebalanced } = await this.prisma.$transaction(async (tx) => {
+    const { card, rebalanced, activityId } = await this.prisma.$transaction(async (tx) => {
       await this.access.require(userId, target.boardId, canEditContent, {
         client: tx,
         notFound: 'LIST_NOT_FOUND',
@@ -135,7 +144,7 @@ export class CardsService {
         data: { listId: target.id, boardId: target.boardId, position, version: { increment: 1 } },
         include: CARD_INCLUDE,
       });
-      await tx.activity.create({
+      const activity = await tx.activity.create({
         data: {
           boardId: target.boardId,
           cardId,
@@ -149,10 +158,21 @@ export class CardsService {
           },
         },
       });
-      return { card, rebalanced };
+      return { card, rebalanced, activityId: activity.id };
     });
 
     await this.publishCards(rebalanced, userId, clientMutationId);
+    if (existing.listId !== card.listId) {
+      this.events.emit({
+        type: 'card.moved',
+        boardId: card.boardId,
+        cardId,
+        actorId: userId,
+        fromListId: existing.listId,
+        toListId: card.listId,
+        activityId,
+      });
+    }
     if (existing.boardId !== card.boardId) {
       this.realtime.publish({
         type: 'card.deleted',
@@ -199,7 +219,7 @@ export class CardsService {
     if (assigned && !(await this.boardMembers.roleOf(existing.boardId, assigneeId))) {
       throw AppError.notFound('MEMBER_NOT_FOUND');
     }
-    return this.changeRelation(existing, userId, clientMutationId, async (tx) => {
+    const result = await this.changeRelation(existing, userId, clientMutationId, async (tx) => {
       if (assigned) {
         const { count } = await tx.cardAssignee.createMany({
           data: [{ cardId, userId: assigneeId }],
@@ -210,6 +230,17 @@ export class CardsService {
       const { count } = await tx.cardAssignee.deleteMany({ where: { cardId, userId: assigneeId } });
       return count > 0 ? { type: 'card.unassigned', payload: { userId: assigneeId } } : null;
     });
+    if (assigned && result.activityId) {
+      this.events.emit({
+        type: 'card.assigned',
+        boardId: existing.boardId,
+        cardId,
+        actorId: userId,
+        assigneeId,
+        activityId: result.activityId,
+      });
+    }
+    return result.card;
   }
 
   async setLabel(
@@ -222,7 +253,7 @@ export class CardsService {
     const existing = await this.requireEditable(userId, cardId);
     const label = await this.prisma.label.findUnique({ where: { id: labelId } });
     if (!label || label.boardId !== existing.boardId) throw AppError.notFound('LABEL_NOT_FOUND');
-    return this.changeRelation(existing, userId, clientMutationId, async (tx) => {
+    const result = await this.changeRelation(existing, userId, clientMutationId, async (tx) => {
       if (applied) {
         const { count } = await tx.cardLabel.createMany({
           data: [{ cardId, labelId }],
@@ -233,6 +264,7 @@ export class CardsService {
       const { count } = await tx.cardLabel.deleteMany({ where: { cardId, labelId } });
       return count > 0 ? { type: 'card.unlabeled', payload: { labelId } } : null;
     });
+    return result.card;
   }
 
   /**
@@ -246,28 +278,28 @@ export class CardsService {
     change: (
       tx: Prisma.TransactionClient,
     ) => Promise<{ type: string; payload: Prisma.InputJsonObject } | null>,
-  ): Promise<CardDto> {
-    const { card, changed } = await this.prisma.$transaction(async (tx) => {
+  ): Promise<{ card: CardDto; activityId: string | null }> {
+    const { card, activityId } = await this.prisma.$transaction(async (tx) => {
       const activity = await change(tx);
       if (!activity) {
         const card = await tx.card.findUniqueOrThrow({
           where: { id: existing.id },
           include: CARD_INCLUDE,
         });
-        return { card, changed: false };
+        return { card, activityId: null };
       }
       const card = await tx.card.update({
         where: { id: existing.id },
         data: { version: { increment: 1 } },
         include: CARD_INCLUDE,
       });
-      await tx.activity.create({
+      const created = await tx.activity.create({
         data: { boardId: existing.boardId, cardId: existing.id, actorId: userId, ...activity },
       });
-      return { card, changed: true };
+      return { card, activityId: created.id };
     });
-    if (changed) this.publishCard(card, userId, clientMutationId);
-    return toCardDto(card);
+    if (activityId) this.publishCard(card, userId, clientMutationId);
+    return { card: toCardDto(card), activityId };
   }
 
   /** Re-reads a card and broadcasts it, e.g. after its counters changed. */

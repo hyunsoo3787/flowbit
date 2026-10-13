@@ -7,6 +7,7 @@ import type {
 } from '@flowbit/shared';
 import { mentionedUserIds } from '@flowbit/shared';
 import { AppError } from '../common/app-error.js';
+import { DomainEvents } from '../events/domain-events.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RealtimeService } from '../realtime/realtime.service.js';
 import { canEditContent } from './board-policy.js';
@@ -25,6 +26,7 @@ export class CommentsService {
     private readonly prisma: PrismaService,
     private readonly cards: CardsService,
     private readonly realtime: RealtimeService,
+    private readonly events: DomainEvents,
   ) {}
 
   /** Newest first. Comment ids are UUIDv7, so they sort by creation time. */
@@ -50,14 +52,14 @@ export class CommentsService {
     clientMutationId: string | null,
   ): Promise<CommentDto> {
     const card = await this.cards.requireCard(userId, cardId, canEditContent);
-    const comment = await this.prisma.$transaction(async (tx) => {
+    const { comment, activityId } = await this.prisma.$transaction(async (tx) => {
       await lockCard(tx, cardId);
       const created = await tx.comment.create({
         data: { cardId, authorId: userId, body: input.body },
         include: AUTHOR,
       });
       await refreshCardCounters(tx, cardId);
-      await tx.activity.create({
+      const activity = await tx.activity.create({
         data: {
           boardId: card.boardId,
           cardId,
@@ -66,9 +68,18 @@ export class CommentsService {
           payload: { commentId: created.id, mentions: mentionedUserIds(created.body) },
         },
       });
-      return created;
+      return { comment: created, activityId: activity.id };
     });
     this.publish(card, userId, clientMutationId, true);
+    this.events.emit({
+      type: 'comment.created',
+      boardId: card.boardId,
+      cardId,
+      actorId: userId,
+      commentId: comment.id,
+      body: comment.body,
+      activityId,
+    });
     return toCommentDto(comment);
   }
 

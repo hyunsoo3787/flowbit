@@ -6,6 +6,7 @@ import { MailService } from '../mail/mail.service.js';
 import { OrganizationsService } from '../organizations/organizations.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ValkeyService } from '../valkey/valkey.service.js';
+import { AuthConfigController } from './auth-config.controller.js';
 import { AUTH } from './auth.constants.js';
 import { AuthGuard } from './auth.guard.js';
 import { type Auth, createAuth } from './create-auth.js';
@@ -13,6 +14,7 @@ import { mountAuthHandler } from './mount-auth-handler.js';
 
 @Global()
 @Module({
+  controllers: [AuthConfigController],
   providers: [
     {
       provide: AUTH,

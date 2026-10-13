@@ -1,5 +1,7 @@
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import i18next from 'eslint-plugin-i18next';
+import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -27,6 +29,23 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+    },
+  },
+  {
+    files: ['apps/web/src/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: { ...globals.browser },
+    },
+    plugins: { 'react-hooks': reactHooks },
+    rules: reactHooks.configs.recommended.rules,
+  },
+  {
+    // No hard-coded user-facing text in JSX (D-016).
+    files: ['apps/web/src/**/*.tsx'],
+    ignores: ['apps/web/src/**/*.test.tsx'],
+    plugins: { i18next },
+    rules: {
+      'i18next/no-literal-string': ['error', { mode: 'jsx-text-only' }],
     },
   },
   {

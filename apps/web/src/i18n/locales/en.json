@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "Flowbit",
+    "tagline": "Organize your team's work, together."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading…",
+    "or": "or",
+    "retry": "Try again",
+    "saveChanges": "Save changes"
+  },
+  "auth": {
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New password"
+    },
+    "passwordHint": "At least {{min}} characters",
+    "continueWith": "Continue with {{provider}}",
+    "backToSignIn": "Back to sign in",
+    "signIn": {
+      "title": "Sign in to Flowbit",
+      "subtitle": "Welcome back.",
+      "submit": "Sign in",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "Start organizing your work in minutes.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "disabled": "Sign-up is disabled on this server. Ask an administrator for an invitation."
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "body": "We sent a verification link to {{email}}. Open it to activate your account."
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a link to reset your password.",
+      "submit": "Send reset link",
+      "sent": "If an account exists for {{email}}, a reset link is on its way."
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "submit": "Update password",
+      "done": "Your password has been updated. Please sign in.",
+      "invalidLink": "This reset link is invalid or has expired. Request a new one."
+    },
+    "verifyBanner": {
+      "message": "Please verify your email address.",
+      "resend": "Resend email",
+      "sent": "Verification email sent."
+    }
+  },
+  "validation": {
+    "required": "This field is required.",
+    "email": "Enter a valid email address.",
+    "passwordMin": "Use at least {{min}} characters.",
+    "tooLong": "This is too long."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Can't reach the server. Check your connection and try again.",
+    "BAD_REQUEST": "The request was invalid.",
+    "VALIDATION_FAILED": "Some fields are invalid.",
+    "UNAUTHENTICATED": "Your session has ended. Please sign in again.",
+    "FORBIDDEN": "You don't have permission to do this.",
+    "NOT_FOUND": "We couldn't find what you were looking for.",
+    "CONFLICT": "This conflicts with a recent change. Refresh and try again.",
+    "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
+    "INTERNAL_ERROR": "Something went wrong on our side. Please try again.",
+    "WORKSPACE_NOT_FOUND": "This workspace doesn't exist, or you don't have access to it.",
+    "USER_ALREADY_EXISTS": "An account with this email already exists.",
+    "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL": "An account with this email already exists.",
+    "INVALID_EMAIL_OR_PASSWORD": "Incorrect email or password.",
+    "INVALID_EMAIL": "Enter a valid email address.",
+    "INVALID_PASSWORD": "Incorrect password.",
+    "EMAIL_NOT_VERIFIED": "Please verify your email address first. Check your inbox for the link.",
+    "PASSWORD_TOO_SHORT": "The password is too short.",
+    "PASSWORD_TOO_LONG": "The password is too long.",
+    "INVALID_TOKEN": "This link is invalid or has expired.",
+    "TOKEN_EXPIRED": "This link has expired.",
+    "USER_NOT_FOUND": "No account was found."
+  },
+  "nav": {
+    "home": "Home",
+    "workspaces": "Workspaces",
+    "createWorkspace": "Create workspace",
+    "account": "Account",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "signOut": "Sign out",
+    "openMenu": "Open menu"
+  },
+  "languages": {
+    "en": "English",
+    "ko": "한국어"
+  },
+  "workspaces": {
+    "roles": {
+      "ADMIN": "Admin",
+      "MEMBER": "Member",
+      "VIEWER": "Viewer"
+    },
+    "home": {
+      "title": "Your workspaces",
+      "subtitle": "A workspace holds the boards of a team, a project, or anything you organize together."
+    },
+    "empty": {
+      "title": "Create your first workspace",
+      "body": "Workspaces group the boards of a team or project. You can create more later."
+    },
+    "create": {
+      "title": "Create a workspace",
+      "name": "Workspace name",
+      "namePlaceholder": "e.g. Marketing team",
+      "description": "Description",
+      "descriptionPlaceholder": "What is this workspace for? (optional)",
+      "submit": "Create workspace",
+      "success": "Workspace created."
+    },
+    "page": {
+      "boards": "Boards",
+      "boardsSoonTitle": "Boards are coming next",
+      "boardsSoonBody": "Boards, lists and cards with drag and drop arrive in the next phase of Flowbit."
+    },
+    "settings": {
+      "open": "Workspace settings",
+      "title": "Workspace settings",
+      "success": "Workspace updated.",
+      "dangerZone": "Danger zone",
+      "delete": "Delete workspace",
+      "deleteConfirmTitle": "Delete “{{name}}”?",
+      "deleteConfirmBody": "This permanently deletes the workspace and everything in it. This can't be undone.",
+      "deleted": "Workspace deleted."
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you're looking for doesn't exist or has moved.",
+    "home": "Go to home"
+  }
+}

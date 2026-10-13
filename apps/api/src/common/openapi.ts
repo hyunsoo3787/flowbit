@@ -1,6 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, type OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import {
+  authConfigSchema,
   createWorkspaceSchema,
   ERROR_CODES,
   healthSchema,
@@ -31,6 +32,7 @@ const outputSchemas = {
       details: z.unknown().optional(),
     }),
   }),
+  AuthConfig: authConfigSchema,
   Health: healthSchema,
   UserProfile: userProfileSchema,
   Workspace: workspaceSchema,

@@ -29,3 +29,15 @@ describe('health', () => {
     expect(response.body).toHaveProperty(['paths', '/api/v1/workspaces']);
   });
 });
+
+describe('auth config', () => {
+  it('publishes the available sign-in options', async () => {
+    const response = await request(ctx.app, 'GET', '/api/v1/auth/config');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      socialProviders: [],
+      signUpEnabled: true,
+      emailVerificationRequired: false,
+    });
+  });
+});

@@ -29,6 +29,7 @@ that keeps a decision in force is appended to its entry as a dated **Amendment**
 | [D-018](#d-018-languages-for-code-docs-and-readme)                         | Languages for code, docs and README                         | Accepted                      |
 | [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted                      |
 | [D-020](#d-020-better-auth-behind-our-own-auth-module)                     | Better Auth behind our own auth module                      | Accepted                      |
+| [D-021](#d-021-instance-administrators-manage-accounts-not-content)        | Instance administrators manage accounts, not content        | Accepted                      |
 
 ---
 
@@ -528,3 +529,110 @@ decorator), never on Better Auth directly.
 **Consequences.** If Better Auth ever has to be replaced, the change is
 contained in `apps/api/src/auth/` and the web app's auth client, plus a data
 migration of the four auth tables.
+
+---
+
+## D-021: Instance administrators manage accounts, not content
+
+**Status:** Accepted
+
+**Decision.** Flowbit gets an **instance administrator** role: the people who
+run a Flowbit server (the operator of a self-hosted install, or the SaaS
+operator's staff). It is separate from the organization and workspace roles of
+[D-008](#d-008-organization--workspace--board-hierarchy) and does **not** grant
+access to anyone's content.
+
+| Admin level           | Who                                      | Manages                                                             |
+| --------------------- | ---------------------------------------- | ------------------------------------------------------------------- |
+| Workspace admin       | Workspace `ADMIN`                        | One workspace: settings, members, deletion                          |
+| Organization admin    | Organization `OWNER` / `ADMIN`           | Every workspace in the organization; org UI and policies in phase 6 |
+| Instance admin (this) | Users flagged as administrators globally | Accounts and server settings only                                   |
+
+Instance administrators can:
+
+- list and search user accounts (name, email, sign-in methods, created and last
+  active dates, number of organizations and workspaces they belong to);
+- suspend and reactivate accounts, which also ends their sessions;
+- delete accounts;
+- issue a **one-time password reset link** for a user, to hand over to that
+  person directly. This is needed on installs without SMTP, where users cannot
+  reset a forgotten password themselves. The administrator never chooses or
+  sees the new password. Every issued link is recorded in an admin action log,
+  and the user is notified by email when SMTP is configured;
+- change server settings that today need an environment variable and a
+  restart, starting with whether sign-up is open;
+- see basic instance statistics (counts of users, organizations, workspaces).
+
+Instance administrators **cannot** see workspace, board or card content
+through this role. To see content they need an ordinary organization or
+workspace membership, like anyone else. Signing in as another user
+("impersonation") for support cases is deferred to phase 6 as an `ee/` feature,
+and must write to the audit log.
+
+**Who becomes an instance admin.** Only someone who can prove access to the
+server itself (its logs or its shell) can create the first administrator:
+
+1. **Setup token.** While the instance has no administrator, the server prints
+   a one-time setup URL (`/setup?token=…`) to its log on startup. The operator
+   opens it (for example after `docker compose logs flowbit`) and creates the
+   first administrator account. The token is random, can be used only once,
+   and stops working as soon as an administrator exists.
+2. **Command line.** The `flowbit admin grant` and `flowbit admin revoke`
+   commands take an email address and, run inside the container, add or
+   remove administrators. This also recovers access if every administrator
+   account is lost.
+3. **`ADMIN_EMAILS` (optional).** For automated deployments, accounts whose
+   email is listed are administrators, but only if email verification is
+   enabled and the address has been verified. Without email verification the
+   variable is ignored, and the server logs a warning at startup.
+4. Administrators can grant and revoke the role for other accounts in the UI,
+   but cannot revoke it from the last remaining administrator.
+
+**Why.**
+
+- Self-hosters need a way to manage accounts without database access: a lost
+  password on an install without email, an employee who left, spam sign-ups.
+- Separating account management from content access limits the damage of a
+  compromised admin account, and lets a hosted service credibly promise that
+  operators don't read customer data. Plane, Mattermost and similar tools draw
+  the same line.
+- An email address alone proves nothing on an install without email
+  verification, and the first person to reach a fresh public server isn't
+  necessarily its owner. Access to the server's logs or shell is something
+  only the operator has. Jenkins, Sentry and GitLab use the same approach.
+- Basic account management is essential for running any instance, so it
+  belongs to the AGPL core, not to `ee/`
+  ([D-011](#d-011-open-core-licensing-agpl-30--commercial-ee)).
+
+**Alternatives considered.**
+
+- **First account to sign up becomes admin** (the first draft of this
+  decision): no setup at all, but on a server that is reachable before its
+  owner signs up, a stranger, or a scanning bot, could claim the role.
+- **Admins only via `ADMIN_EMAILS`:** explicit, but without email
+  verification anyone who signs up first with a listed address becomes admin.
+- **Admins set a user's new password directly** (the first draft of this
+  decision): simplest, but the administrator then knows the password and can
+  sign in as that user, which undermines "admins don't see content". A
+  one-time link handed to the user doesn't remove that possibility entirely,
+  but it is recorded, and the user notices because their old password stops
+  working.
+- **Instance admins can read all content:** convenient for support, but a
+  single compromised account would expose every organization's data.
+
+**Consequences.**
+
+- The setup token is consumed atomically, so it can create at most one
+  administrator even if it is used twice at the same moment.
+- The self-hosting guide must explain the setup URL, the `flowbit admin`
+  command, and that `ADMIN_EMAILS` requires email verification.
+- The admin action log starts as a small core table. It can later feed the
+  organization audit log of phase 6.
+- Implementation will evaluate Better Auth's admin plugin for the account
+  operations (role flag, suspension, session revocation), wrapped by our own
+  module as in [D-020](#d-020-better-auth-behind-our-own-auth-module). Its
+  impersonation feature stays disabled until phase 6.
+- Open design question for phase 3: what happens to organizations and
+  workspaces whose only owner is deleted.
+- Planned for [phase 3](ROADMAP.md#phase-3-collaboration-basics), together
+  with invitations, when several people start sharing an instance.

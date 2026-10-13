@@ -310,6 +310,13 @@ trusted from the client.
 | Manage labels                                                  | —        | ✓      | ✓     |
 | Manage board members and settings, archive or delete the board | —        | —      | ✓     |
 
+**Instance administrators** (phase 3,
+[D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content))
+are a separate, server-wide role for account management. The role is **not**
+part of the resolution above: it never grants access to organizations,
+workspaces, boards or cards. An instance admin who needs to see content needs
+an ordinary membership.
+
 The permission logic lives in one place (a policy service in `apps/api`), and
 its rules are covered by unit tests.
 

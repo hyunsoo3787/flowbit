@@ -52,7 +52,10 @@ whole stack. CI is green.
 
 ### Open items from phase 1
 
-These don't block phase 2, but each must be done by the deadline given.
+**Priority: low, deferred.** The approach to licensing and the contributor
+agreement hasn't been decided yet, so these items wait until it is. They don't
+block phase 2 or later development. The only hard deadlines are the ones below:
+the first external pull request, and the first code in `ee/`.
 
 **Before accepting the first external pull request:**
 
@@ -117,9 +120,20 @@ a phone.
 - [ ] Card covers, plus card badges on the board (due date, checklist
       progress, comment count)
 - [ ] Board filters (by label, member, due date)
+- [ ] Instance administration
+      ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content)):
+      a one-time setup URL in the server log creates the first admin, and a
+      `flowbit admin grant/revoke` command adds or recovers admins
+      (`ADMIN_EMAILS` optional, only with email verification). Admin pages to
+      list, suspend, reactivate and delete accounts, issue one-time password
+      reset links, grant or revoke the admin role, toggle sign-up, and see
+      instance statistics, with an admin action log. No access to workspace
+      content through this role.
 
 **Exit checklist:** A small team can plan and track a project end to end
-without leaving Flowbit.
+without leaving Flowbit. The person who runs the server can set up the first
+admin without any configuration, manage accounts from the UI, and help a user
+recover a lost password without email.
 
 ---
 
@@ -173,6 +187,9 @@ commercial license
 - [ ] Security policies (allowed sign-in methods, invite restrictions, session
       lifetime)
 - [ ] License-key mechanism for activating `ee/` features
+- [ ] Support impersonation: an instance admin signs in as a user to
+      investigate a problem, always recorded in the audit log
+      ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content))
 - [ ] SaaS concerns: billing integration, plan limits, tenant administration
 
 **Exit checklist:** An organization can enforce SSO for its domain, see a full

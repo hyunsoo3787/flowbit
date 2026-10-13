@@ -78,7 +78,9 @@ Flowbit follows an **open-core** model
 ## Contributing
 
 Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) to get
-started. External contributors sign a [Contributor License Agreement](CLA.md)
-once ([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)). Please
+started. External contributors will sign a
+[Contributor License Agreement](CLA.md) once
+([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)); it is still a
+draft, so please open an issue before starting work on a contribution. Please
 follow our [Code of Conduct](CODE_OF_CONDUCT.md), and report security issues as
 described in [SECURITY.md](SECURITY.md).

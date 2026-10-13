@@ -76,7 +76,8 @@ Flowbit은 **오픈 코어** 모델을 따릅니다
 ## 기여하기
 
 기여를 환영합니다. [CONTRIBUTING.md](CONTRIBUTING.md)부터 읽어 주세요. 외부
-기여자는 처음 한 번 [기여자 라이선스 동의(CLA)](CLA.md)에 서명합니다
-([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
+기여자는 처음 한 번 [기여자 라이선스 동의(CLA)](CLA.md)에 서명하게 됩니다
+([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)). CLA는 아직
+초안이라, 기여를 시작하기 전에 먼저 이슈로 논의해 주세요.
 [행동 강령](CODE_OF_CONDUCT.md)을 지켜 주시고, 보안 문제는
 [SECURITY.md](SECURITY.md)에 안내된 방법으로 비공개 제보해 주세요.

@@ -2,11 +2,17 @@ name: CLA
 
 # Asks first-time contributors to sign CLA.md (D-012). Signatures are stored on
 # the `cla-signatures` branch. The action never checks out pull request code.
+#
+# PAUSED: the CLA is still a draft (see "Open items from phase 1" in
+# docs/ROADMAP.md), so the workflow only runs when started by hand. To turn it
+# back on, create the `cla-signatures` branch and restore these triggers:
+#
+#   issue_comment:
+#     types: [created]
+#   pull_request_target:
+#     types: [opened, closed, synchronize]
 on:
-  issue_comment:
-    types: [created]
-  pull_request_target:
-    types: [opened, closed, synchronize]
+  workflow_dispatch:
 
 permissions:
   actions: write

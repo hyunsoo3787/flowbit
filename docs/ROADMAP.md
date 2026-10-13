@@ -69,7 +69,9 @@ the first external pull request, and the first code in `ee/`.
       `CODE_OF_CONDUCT.md` with a real address.
 - [x] Enable **Private vulnerability reporting** in the GitHub repository
       settings, so the link in `SECURITY.md` works.
-- [ ] Confirm the CLA workflow (`.github/workflows/cla.yml`) works on a real
+- [ ] Turn the CLA workflow (`.github/workflows/cla.yml`) back on: it is
+      paused until the CLA is finalized. Create the `cla-signatures` branch,
+      restore the triggers noted in the file, and confirm it works on a real
       pull request.
 
 **Before shipping any code in `ee/` (phase 6):**

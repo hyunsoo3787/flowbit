@@ -10,9 +10,13 @@ and why. By participating, you agree to follow the
 
 ## Contributor License Agreement
 
-External contributors sign the [CLA](CLA.md) once, on their first pull request.
-A bot will ask you to. It lets the project offer Flowbit under both the AGPL
-and a commercial license ([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
+External contributors will sign the [CLA](CLA.md) once, on their first pull
+request. It lets the project offer Flowbit under both the AGPL and a commercial
+license ([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
+
+The CLA is still a draft, and collecting signatures is paused until it is
+finalized. Until then, please open an issue to discuss a contribution before
+starting work on it.
 
 ## Development setup
 

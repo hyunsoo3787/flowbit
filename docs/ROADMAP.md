@@ -122,14 +122,18 @@ a phone.
 - [ ] Board filters (by label, member, due date)
 - [ ] Instance administration
       ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content)):
-      first account and `ADMIN_EMAILS` become instance admins; admin pages
-      to list, suspend, reactivate and delete accounts, set a user's password,
-      grant or revoke the admin role, toggle sign-up, and see instance
-      statistics. No access to workspace content through this role.
+      a one-time setup URL in the server log creates the first admin, and a
+      `flowbit admin grant/revoke` command adds or recovers admins
+      (`ADMIN_EMAILS` optional, only with email verification). Admin pages to
+      list, suspend, reactivate and delete accounts, issue one-time password
+      reset links, grant or revoke the admin role, toggle sign-up, and see
+      instance statistics, with an admin action log. No access to workspace
+      content through this role.
 
 **Exit checklist:** A small team can plan and track a project end to end
-without leaving Flowbit. The person who runs the server can manage accounts
-from the UI, including recovering a lost password without email.
+without leaving Flowbit. The person who runs the server can set up the first
+admin without any configuration, manage accounts from the UI, and help a user
+recover a lost password without email.
 
 ---
 

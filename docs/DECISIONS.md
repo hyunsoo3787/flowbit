@@ -554,8 +554,11 @@ Instance administrators can:
   active dates, number of organizations and workspaces they belong to);
 - suspend and reactivate accounts, which also ends their sessions;
 - delete accounts;
-- set a new password for a user, which is needed on installs without SMTP,
-  where users cannot reset a forgotten password themselves;
+- issue a **one-time password reset link** for a user, to hand over to that
+  person directly. This is needed on installs without SMTP, where users cannot
+  reset a forgotten password themselves. The administrator never chooses or
+  sees the new password. Every issued link is recorded in an admin action log,
+  and the user is notified by email when SMTP is configured;
 - change server settings that today need an environment variable and a
   restart, starting with whether sign-up is open;
 - see basic instance statistics (counts of users, organizations, workspaces).
@@ -566,14 +569,24 @@ workspace membership, like anyone else. Signing in as another user
 ("impersonation") for support cases is deferred to phase 6 as an `ee/` feature,
 and must write to the audit log.
 
-**Who becomes an instance admin.**
+**Who becomes an instance admin.** Only someone who can prove access to the
+server itself (its logs or its shell) can create the first administrator:
 
-1. The **first account created on a server** becomes an instance admin
-   automatically. This can be turned off, and must be for SaaS deployments.
-2. Accounts whose email is listed in the `ADMIN_EMAILS` environment variable
-   are instance admins.
-3. Instance admins can grant and revoke the role for other accounts in the UI,
-   but cannot revoke it from the last remaining admin.
+1. **Setup token.** While the instance has no administrator, the server prints
+   a one-time setup URL (`/setup?token=…`) to its log on startup. The operator
+   opens it (for example after `docker compose logs flowbit`) and creates the
+   first administrator account. The token is random, can be used only once,
+   and stops working as soon as an administrator exists.
+2. **Command line.** The `flowbit admin grant` and `flowbit admin revoke`
+   commands take an email address and, run inside the container, add or
+   remove administrators. This also recovers access if every administrator
+   account is lost.
+3. **`ADMIN_EMAILS` (optional).** For automated deployments, accounts whose
+   email is listed are administrators, but only if email verification is
+   enabled and the address has been verified. Without email verification the
+   variable is ignored, and the server logs a warning at startup.
+4. Administrators can grant and revoke the role for other accounts in the UI,
+   but cannot revoke it from the last remaining administrator.
 
 **Why.**
 
@@ -583,32 +596,42 @@ and must write to the audit log.
   compromised admin account, and lets a hosted service credibly promise that
   operators don't read customer data. Plane, Mattermost and similar tools draw
   the same line.
+- An email address alone proves nothing on an install without email
+  verification, and the first person to reach a fresh public server isn't
+  necessarily its owner. Access to the server's logs or shell is something
+  only the operator has. Jenkins, Sentry and GitLab use the same approach.
 - Basic account management is essential for running any instance, so it
   belongs to the AGPL core, not to `ee/`
   ([D-011](#d-011-open-core-licensing-agpl-30--commercial-ee)).
 
 **Alternatives considered.**
 
+- **First account to sign up becomes admin** (the first draft of this
+  decision): no setup at all, but on a server that is reachable before its
+  owner signs up, a stranger, or a scanning bot, could claim the role.
+- **Admins only via `ADMIN_EMAILS`:** explicit, but without email
+  verification anyone who signs up first with a listed address becomes admin.
+- **Admins set a user's new password directly** (the first draft of this
+  decision): simplest, but the administrator then knows the password and can
+  sign in as that user, which undermines "admins don't see content". A
+  one-time link handed to the user doesn't remove that possibility entirely,
+  but it is recorded, and the user notices because their old password stops
+  working.
 - **Instance admins can read all content:** convenient for support, but a
   single compromised account would expose every organization's data.
-- **Admins only via `ADMIN_EMAILS`:** explicit, but adds a mandatory step to
-  every install.
-- **First sign-up only:** simplest, but on a server that is reachable before
-  its owner signs up, a stranger could claim the admin role.
 
 **Consequences.**
 
-- The first-account rule must be race-free (two sign-ups at the same moment
-  must not both become admin).
-- `ADMIN_EMAILS` grants the role only to accounts whose email address is
-  verified, when email verification is enabled. Without SMTP, verification is
-  impossible, so the self-hosting guide must tell operators to create their own
-  account first, or to keep sign-up disabled until they have.
+- The setup token is consumed atomically, so it can create at most one
+  administrator even if it is used twice at the same moment.
+- The self-hosting guide must explain the setup URL, the `flowbit admin`
+  command, and that `ADMIN_EMAILS` requires email verification.
+- The admin action log starts as a small core table. It can later feed the
+  organization audit log of phase 6.
 - Implementation will evaluate Better Auth's admin plugin for the account
-  operations (role flag, suspension, session revocation, setting passwords),
-  wrapped by our own module as in
-  [D-020](#d-020-better-auth-behind-our-own-auth-module). Its impersonation
-  feature stays disabled until phase 6.
+  operations (role flag, suspension, session revocation), wrapped by our own
+  module as in [D-020](#d-020-better-auth-behind-our-own-auth-module). Its
+  impersonation feature stays disabled until phase 6.
 - Open design question for phase 3: what happens to organizations and
   workspaces whose only owner is deleted.
 - Planned for [phase 3](ROADMAP.md#phase-3-collaboration-basics), together

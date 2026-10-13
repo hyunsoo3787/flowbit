@@ -6,10 +6,12 @@ Flowbit is an open-source, Trello-style work management tool: boards, lists
 and cards with real-time collaboration. You can self-host it or run it as a
 service.
 
-> **Status: early development.** [Phase 1](docs/ROADMAP.md#phase-1-foundation)
-> is done: accounts (email + password, GitHub, Google), workspaces, English and
-> Korean UI, and a one-command Docker setup. Boards, lists and cards come next
-> in [Phase 2](docs/ROADMAP.md#phase-2-boards-lists-cards).
+> **Status: early development.** Phases [1](docs/ROADMAP.md#phase-1-foundation)
+> and [2](docs/ROADMAP.md#phase-2-boards-lists-cards) are done: accounts (email +
+> password, GitHub, Google), workspaces, boards with lists and cards, drag and
+> drop, live updates for everyone on a board, an English and Korean UI, and a
+> one-command Docker setup. Members, labels, due dates, checklists and comments
+> come next in [phase 3](docs/ROADMAP.md#phase-3-collaboration-basics).
 
 ## Goals
 

@@ -49,6 +49,7 @@
     "gen:openapi": "node dist/scripts/generate-openapi.js",
     "lint": "eslint .",
     "typecheck": "prisma generate && tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:seed": "node --env-file-if-exists=.env dist/scripts/seed.js"
   }
 }

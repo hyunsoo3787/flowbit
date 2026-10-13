@@ -9,7 +9,9 @@
     "loading": "Loading…",
     "or": "or",
     "retry": "Try again",
-    "saveChanges": "Save changes"
+    "saveChanges": "Save changes",
+    "delete": "Delete",
+    "rename": "Rename"
   },
   "auth": {
     "fields": {
@@ -87,7 +89,10 @@
     "PASSWORD_TOO_LONG": "The password is too long.",
     "INVALID_TOKEN": "This link is invalid or has expired.",
     "TOKEN_EXPIRED": "This link has expired.",
-    "USER_NOT_FOUND": "No account was found."
+    "USER_NOT_FOUND": "No account was found.",
+    "BOARD_NOT_FOUND": "This board doesn't exist, or you don't have access to it.",
+    "LIST_NOT_FOUND": "This list doesn't exist anymore, or you don't have access to it.",
+    "CARD_NOT_FOUND": "This card doesn't exist anymore, or you don't have access to it."
   },
   "nav": {
     "home": "Home",
@@ -129,11 +134,6 @@
       "submit": "Create workspace",
       "success": "Workspace created."
     },
-    "page": {
-      "boards": "Boards",
-      "boardsSoonTitle": "Boards are coming next",
-      "boardsSoonBody": "Boards, lists and cards with drag and drop arrive in the next phase of Flowbit."
-    },
     "settings": {
       "open": "Workspace settings",
       "title": "Workspace settings",
@@ -149,5 +149,80 @@
     "title": "Page not found",
     "body": "The page you're looking for doesn't exist or has moved.",
     "home": "Go to home"
+  },
+  "boards": {
+    "title": "Boards",
+    "create": "Create board",
+    "createTitle": "Create a board",
+    "name": "Board name",
+    "namePlaceholder": "e.g. Product roadmap",
+    "background": "Background",
+    "visibility": "Visibility",
+    "visibilityWORKSPACE": "Workspace",
+    "visibilityWORKSPACEHint": "Everyone in the workspace can see it.",
+    "visibilityPRIVATE": "Private",
+    "visibilityPRIVATEHint": "Only board members can see it.",
+    "created": "Board created.",
+    "emptyTitle": "No boards yet",
+    "emptyBody": "Create a board to organize work in lists and cards.",
+    "readOnly": "You can view this board but not change it.",
+    "menu": "Board menu",
+    "rename": "Rename board",
+    "delete": "Delete board",
+    "deleteConfirmTitle": "Delete “{{name}}”?",
+    "deleteConfirmBody": "This permanently deletes the board with all its lists and cards. This can't be undone.",
+    "deleted": "Board deleted.",
+    "deletedElsewhere": "This board was deleted.",
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "orange": "Orange",
+      "red": "Red",
+      "purple": "Purple",
+      "pink": "Pink",
+      "teal": "Teal",
+      "slate": "Slate"
+    }
+  },
+  "lists": {
+    "add": "Add a list",
+    "addAnother": "Add another list",
+    "namePlaceholder": "List name",
+    "submit": "Add list",
+    "menu": "List actions for {{name}}",
+    "rename": "Rename list",
+    "delete": "Delete list",
+    "deleteConfirm": "Delete the list “{{name}}” and all its cards? This can't be undone.",
+    "moveToBoard": "Move to another board",
+    "moved": "List moved to “{{board}}”.",
+    "noOtherBoards": "No other boards"
+  },
+  "cards": {
+    "add": "Add a card",
+    "titlePlaceholder": "Enter a title for this card…",
+    "submit": "Add card",
+    "inList": "in list {{list}}",
+    "title": "Card title",
+    "description": "Description",
+    "descriptionPlaceholder": "Add a more detailed description…",
+    "noDescription": "No description yet.",
+    "editDescription": "Edit description",
+    "save": "Save",
+    "markdownHint": "Markdown is supported.",
+    "move": "Move card",
+    "board": "Board",
+    "list": "List",
+    "moveSubmit": "Move",
+    "delete": "Delete card",
+    "deleteConfirm": "Delete this card? This can't be undone.",
+    "deleted": "Card deleted.",
+    "openCard": "Open card: {{title}}"
+  },
+  "dnd": {
+    "instructions": "To pick up an item, press space or enter. Use the arrow keys to move it, then press space or enter again to drop it, or press escape to cancel.",
+    "pickedUp": "Picked up {{item}}.",
+    "over": "{{item}} is over {{target}}.",
+    "dropped": "Dropped {{item}}.",
+    "cancelled": "Moving {{item}} was cancelled."
   }
 }

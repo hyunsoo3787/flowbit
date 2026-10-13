@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useChangeLanguage, useMe, useSignOut } from '@/features/auth/queries';
+import { boardQuery } from '@/features/boards/queries';
 import { CreateWorkspaceDialog } from '@/features/workspaces/create-workspace-dialog';
 import { workspacesQuery } from '@/features/workspaces/queries';
 import { currentLocale } from '@/i18n';
@@ -38,7 +39,13 @@ function WorkspaceSwitcher() {
   const { data: workspaces = [] } = useQuery(workspacesQuery);
   const params = useParams({ strict: false });
   const [creating, setCreating] = useState(false);
-  const current = workspaces.find((workspace) => workspace.id === params.workspaceId);
+  // On a board page, the current workspace is the board's.
+  const { data: board } = useQuery({
+    ...boardQuery(params.boardId ?? ''),
+    enabled: false,
+  });
+  const currentId = params.workspaceId ?? (params.boardId ? board?.workspaceId : undefined);
+  const current = workspaces.find((workspace) => workspace.id === currentId);
 
   return (
     <>
@@ -154,7 +161,7 @@ export function AppHeader() {
   const { t } = useTranslation();
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 sm:px-6">
+      <div className="flex h-14 items-center gap-2 px-4 sm:px-6">
         <Link to="/" aria-label={t('nav.home')} className="shrink-0">
           <LogoMark className="sm:hidden" />
           <Logo className="hidden sm:inline-flex" />

@@ -9,6 +9,7 @@ import type { Locale, UpdateProfileInput } from '@flowbit/shared';
 import { api, unwrap } from '@/api/client';
 import i18n from '@/i18n';
 import { authClient } from '@/lib/auth-client';
+import { closeSocket } from '@/lib/realtime';
 
 export const sessionQuery = queryOptions({
   queryKey: ['session'],
@@ -57,6 +58,7 @@ export function useSignOut() {
   const queryClient = useQueryClient();
   return async () => {
     await authClient.signOut();
+    closeSocket();
     queryClient.clear();
   };
 }

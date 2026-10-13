@@ -9,7 +9,9 @@
     "loading": "불러오는 중…",
     "or": "또는",
     "retry": "다시 시도",
-    "saveChanges": "변경 사항 저장"
+    "saveChanges": "변경 사항 저장",
+    "delete": "삭제",
+    "rename": "이름 변경"
   },
   "auth": {
     "fields": {
@@ -87,7 +89,10 @@
     "PASSWORD_TOO_LONG": "비밀번호가 너무 깁니다.",
     "INVALID_TOKEN": "링크가 유효하지 않거나 만료되었습니다.",
     "TOKEN_EXPIRED": "링크가 만료되었습니다.",
-    "USER_NOT_FOUND": "계정을 찾을 수 없습니다."
+    "USER_NOT_FOUND": "계정을 찾을 수 없습니다.",
+    "BOARD_NOT_FOUND": "보드가 없거나 접근 권한이 없습니다.",
+    "LIST_NOT_FOUND": "리스트가 더 이상 없거나 접근 권한이 없습니다.",
+    "CARD_NOT_FOUND": "카드가 더 이상 없거나 접근 권한이 없습니다."
   },
   "nav": {
     "home": "홈",
@@ -129,11 +134,6 @@
       "submit": "워크스페이스 만들기",
       "success": "워크스페이스를 만들었습니다."
     },
-    "page": {
-      "boards": "보드",
-      "boardsSoonTitle": "보드 기능이 곧 추가됩니다",
-      "boardsSoonBody": "드래그 앤 드롭이 되는 보드, 리스트, 카드는 Flowbit의 다음 단계에서 추가됩니다."
-    },
     "settings": {
       "open": "워크스페이스 설정",
       "title": "워크스페이스 설정",
@@ -149,5 +149,80 @@
     "title": "페이지를 찾을 수 없습니다",
     "body": "찾으시는 페이지가 없거나 이동되었습니다.",
     "home": "홈으로 가기"
+  },
+  "boards": {
+    "title": "보드",
+    "create": "보드 만들기",
+    "createTitle": "보드 만들기",
+    "name": "보드 이름",
+    "namePlaceholder": "예: 제품 로드맵",
+    "background": "배경색",
+    "visibility": "공개 범위",
+    "visibilityWORKSPACE": "워크스페이스",
+    "visibilityWORKSPACEHint": "워크스페이스의 모든 멤버가 볼 수 있습니다.",
+    "visibilityPRIVATE": "비공개",
+    "visibilityPRIVATEHint": "보드 멤버만 볼 수 있습니다.",
+    "created": "보드를 만들었습니다.",
+    "emptyTitle": "아직 보드가 없습니다",
+    "emptyBody": "보드를 만들어 리스트와 카드로 업무를 정리해 보세요.",
+    "readOnly": "이 보드는 볼 수만 있고 변경할 수 없습니다.",
+    "menu": "보드 메뉴",
+    "rename": "보드 이름 변경",
+    "delete": "보드 삭제",
+    "deleteConfirmTitle": "“{{name}}” 보드를 삭제할까요?",
+    "deleteConfirmBody": "보드와 그 안의 모든 리스트, 카드가 영구적으로 삭제되며 되돌릴 수 없습니다.",
+    "deleted": "보드를 삭제했습니다.",
+    "deletedElsewhere": "이 보드가 삭제되었습니다.",
+    "colors": {
+      "blue": "파랑",
+      "green": "초록",
+      "orange": "주황",
+      "red": "빨강",
+      "purple": "보라",
+      "pink": "분홍",
+      "teal": "청록",
+      "slate": "회색"
+    }
+  },
+  "lists": {
+    "add": "리스트 추가",
+    "addAnother": "리스트 추가",
+    "namePlaceholder": "리스트 이름",
+    "submit": "리스트 추가",
+    "menu": "{{name}} 리스트 메뉴",
+    "rename": "리스트 이름 변경",
+    "delete": "리스트 삭제",
+    "deleteConfirm": "“{{name}}” 리스트와 그 안의 모든 카드를 삭제할까요? 되돌릴 수 없습니다.",
+    "moveToBoard": "다른 보드로 이동",
+    "moved": "리스트를 “{{board}}” 보드로 옮겼습니다.",
+    "noOtherBoards": "다른 보드가 없습니다"
+  },
+  "cards": {
+    "add": "카드 추가",
+    "titlePlaceholder": "카드 제목을 입력하세요…",
+    "submit": "카드 추가",
+    "inList": "{{list}} 리스트",
+    "title": "카드 제목",
+    "description": "설명",
+    "descriptionPlaceholder": "자세한 설명을 추가하세요…",
+    "noDescription": "아직 설명이 없습니다.",
+    "editDescription": "설명 편집",
+    "save": "저장",
+    "markdownHint": "Markdown 문법을 쓸 수 있습니다.",
+    "move": "카드 이동",
+    "board": "보드",
+    "list": "리스트",
+    "moveSubmit": "이동",
+    "delete": "카드 삭제",
+    "deleteConfirm": "이 카드를 삭제할까요? 되돌릴 수 없습니다.",
+    "deleted": "카드를 삭제했습니다.",
+    "openCard": "카드 열기: {{title}}"
+  },
+  "dnd": {
+    "instructions": "항목을 집으려면 스페이스나 엔터를 누르세요. 화살표 키로 옮긴 뒤 스페이스나 엔터로 놓고, 취소하려면 Esc를 누르세요.",
+    "pickedUp": "{{item}}을(를) 집었습니다.",
+    "over": "{{item}}이(가) {{target}} 위에 있습니다.",
+    "dropped": "{{item}}을(를) 놓았습니다.",
+    "cancelled": "{{item}} 이동을 취소했습니다."
   }
 }

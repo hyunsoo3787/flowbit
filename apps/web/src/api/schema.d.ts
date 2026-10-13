@@ -4,1603 +4,1615 @@
  */
 
 export interface paths {
-    "/api/v1/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["HealthController_check"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/v1/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/config": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["AuthConfigController_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['HealthController_check'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/config': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MeController_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["MeController_update"];
-        trace?: never;
+    get: operations['AuthConfigController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/workspaces": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["WorkspacesController_list"];
-        put?: never;
-        post: operations["WorkspacesController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MeController_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['MeController_update'];
+    trace?: never;
+  };
+  '/api/v1/workspaces': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/workspaces/{workspaceId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["WorkspacesController_get"];
-        put?: never;
-        post?: never;
-        delete: operations["WorkspacesController_remove"];
-        options?: never;
-        head?: never;
-        patch: operations["WorkspacesController_update"];
-        trace?: never;
+    get: operations['WorkspacesController_list'];
+    put?: never;
+    post: operations['WorkspacesController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workspaces/{workspaceId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/workspaces/{workspaceId}/boards": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["BoardsController_list"];
-        put?: never;
-        post: operations["BoardsController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['WorkspacesController_get'];
+    put?: never;
+    post?: never;
+    delete: operations['WorkspacesController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['WorkspacesController_update'];
+    trace?: never;
+  };
+  '/api/v1/workspaces/{workspaceId}/boards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/boards/{boardId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["BoardsController_get"];
-        put?: never;
-        post?: never;
-        delete: operations["BoardsController_remove"];
-        options?: never;
-        head?: never;
-        patch: operations["BoardsController_update"];
-        trace?: never;
+    get: operations['BoardsController_list'];
+    put?: never;
+    post: operations['BoardsController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/boards/{boardId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/boards/{boardId}/lists": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ListsController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['BoardsController_get'];
+    put?: never;
+    post?: never;
+    delete: operations['BoardsController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['BoardsController_update'];
+    trace?: never;
+  };
+  '/api/v1/boards/{boardId}/lists': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/lists/{listId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["ListsController_remove"];
-        options?: never;
-        head?: never;
-        patch: operations["ListsController_update"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['ListsController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/lists/{listId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/lists/{listId}/move": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ListsController_move"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['ListsController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['ListsController_update'];
+    trace?: never;
+  };
+  '/api/v1/lists/{listId}/move': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/lists/{listId}/cards": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CardsController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['ListsController_move'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/lists/{listId}/cards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/cards/{cardId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["CardsController_get"];
-        put?: never;
-        post?: never;
-        delete: operations["CardsController_remove"];
-        options?: never;
-        head?: never;
-        patch: operations["CardsController_update"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['CardsController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cards/{cardId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/cards/{cardId}/move": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["CardsController_move"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['CardsController_get'];
+    put?: never;
+    post?: never;
+    delete: operations['CardsController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['CardsController_update'];
+    trace?: never;
+  };
+  '/api/v1/cards/{cardId}/move': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get?: never;
+    put?: never;
+    post: operations['CardsController_move'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        CreateWorkspaceInput: {
-            name: string;
-            description?: string;
-            /** Format: uuid */
-            organizationId?: string;
-        };
-        UpdateWorkspaceInput: {
-            name?: string;
-            description?: string | null;
-        };
-        UpdateProfileInput: {
-            name?: string;
-            /** @enum {string} */
-            locale?: "en" | "ko";
-        };
-        CreateBoardInput: {
-            name: string;
-            /**
-             * @default WORKSPACE
-             * @enum {string}
-             */
-            visibility: "PRIVATE" | "WORKSPACE";
-            /**
-             * @default blue
-             * @enum {string}
-             */
-            background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
-        };
-        UpdateBoardInput: {
-            name?: string;
-            /** @enum {string} */
-            visibility?: "PRIVATE" | "WORKSPACE";
-            /** @enum {string} */
-            background?: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
-        };
-        CreateListInput: {
-            name: string;
-            toIndex?: number;
-        };
-        UpdateListInput: {
-            name: string;
-        };
-        MoveListInput: {
-            /** Format: uuid */
-            toBoardId?: string;
-            toIndex: number;
-        };
-        CreateCardInput: {
-            title: string;
-            toIndex?: number;
-        };
-        UpdateCardInput: {
-            title?: string;
-            description?: string;
-        };
-        MoveCardInput: {
-            /** Format: uuid */
-            toListId: string;
-            toIndex: number;
-        };
-        ApiError: {
-            error: {
-                /** @enum {string} */
-                code: "BAD_REQUEST" | "VALIDATION_FAILED" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT" | "RATE_LIMITED" | "INTERNAL_ERROR" | "WORKSPACE_NOT_FOUND" | "BOARD_NOT_FOUND" | "LIST_NOT_FOUND" | "CARD_NOT_FOUND";
-                message: string;
-                details?: unknown;
-            };
-        };
-        AuthConfig: {
-            socialProviders: ("github" | "google")[];
-            signUpEnabled: boolean;
-            emailVerificationRequired: boolean;
-        };
-        Health: {
-            /** @enum {string} */
-            status: "ok" | "degraded";
-            checks: {
-                /** @enum {string} */
-                database: "up" | "down" | "disabled";
-                /** @enum {string} */
-                valkey: "up" | "down" | "disabled";
-            };
-        };
-        UserProfile: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            /** Format: email */
-            email: string;
-            emailVerified: boolean;
-            image: string | null;
-            /** @enum {string} */
-            locale: "en" | "ko";
-            /** Format: date-time */
-            createdAt: string;
-        };
-        Workspace: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            organizationId: string;
-            name: string;
-            description: string | null;
-            /** @enum {string} */
-            role: "ADMIN" | "MEMBER" | "VIEWER";
-            version: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        WorkspaceList: {
-            items: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uuid */
-                organizationId: string;
-                name: string;
-                description: string | null;
-                /** @enum {string} */
-                role: "ADMIN" | "MEMBER" | "VIEWER";
-                version: number;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-            }[];
-        };
-        Board: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            name: string;
-            /** @enum {string} */
-            visibility: "PRIVATE" | "WORKSPACE";
-            /** @enum {string} */
-            background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
-            /** @enum {string} */
-            role: "ADMIN" | "MEMBER" | "OBSERVER";
-            version: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        BoardList: {
-            items: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uuid */
-                workspaceId: string;
-                name: string;
-                /** @enum {string} */
-                visibility: "PRIVATE" | "WORKSPACE";
-                /** @enum {string} */
-                background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
-                /** @enum {string} */
-                role: "ADMIN" | "MEMBER" | "OBSERVER";
-                version: number;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-            }[];
-        };
-        BoardDetail: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            name: string;
-            /** @enum {string} */
-            visibility: "PRIVATE" | "WORKSPACE";
-            /** @enum {string} */
-            background: "blue" | "green" | "orange" | "red" | "purple" | "pink" | "teal" | "slate";
-            /** @enum {string} */
-            role: "ADMIN" | "MEMBER" | "OBSERVER";
-            version: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            lists: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uuid */
-                boardId: string;
-                name: string;
-                position: string;
-                version: number;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-            }[];
-            cards: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uuid */
-                boardId: string;
-                /** Format: uuid */
-                listId: string;
-                title: string;
-                description: string;
-                position: string;
-                version: number;
-                /** Format: date-time */
-                createdAt: string;
-                /** Format: date-time */
-                updatedAt: string;
-            }[];
-        };
-        List: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            boardId: string;
-            name: string;
-            position: string;
-            version: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        Card: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            boardId: string;
-            /** Format: uuid */
-            listId: string;
-            title: string;
-            description: string;
-            position: string;
-            version: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
+  schemas: {
+    CreateWorkspaceInput: {
+      name: string;
+      description?: string;
+      /** Format: uuid */
+      organizationId?: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    UpdateWorkspaceInput: {
+      name?: string;
+      description?: string | null;
+    };
+    UpdateProfileInput: {
+      name?: string;
+      /** @enum {string} */
+      locale?: 'en' | 'ko';
+    };
+    CreateBoardInput: {
+      name: string;
+      /**
+       * @default WORKSPACE
+       * @enum {string}
+       */
+      visibility?: 'PRIVATE' | 'WORKSPACE';
+      /**
+       * @default blue
+       * @enum {string}
+       */
+      background?: 'blue' | 'green' | 'orange' | 'red' | 'purple' | 'pink' | 'teal' | 'slate';
+    };
+    UpdateBoardInput: {
+      name?: string;
+      /** @enum {string} */
+      visibility?: 'PRIVATE' | 'WORKSPACE';
+      /** @enum {string} */
+      background?: 'blue' | 'green' | 'orange' | 'red' | 'purple' | 'pink' | 'teal' | 'slate';
+    };
+    CreateListInput: {
+      name: string;
+      toIndex?: number;
+    };
+    UpdateListInput: {
+      name: string;
+    };
+    MoveListInput: {
+      /** Format: uuid */
+      toBoardId?: string;
+      toIndex: number;
+    };
+    CreateCardInput: {
+      title: string;
+      toIndex?: number;
+    };
+    UpdateCardInput: {
+      title?: string;
+      description?: string;
+    };
+    MoveCardInput: {
+      /** Format: uuid */
+      toListId: string;
+      toIndex: number;
+    };
+    ApiError: {
+      error: {
+        /** @enum {string} */
+        code:
+          | 'BAD_REQUEST'
+          | 'VALIDATION_FAILED'
+          | 'UNAUTHENTICATED'
+          | 'FORBIDDEN'
+          | 'NOT_FOUND'
+          | 'CONFLICT'
+          | 'RATE_LIMITED'
+          | 'INTERNAL_ERROR'
+          | 'WORKSPACE_NOT_FOUND'
+          | 'BOARD_NOT_FOUND'
+          | 'LIST_NOT_FOUND'
+          | 'CARD_NOT_FOUND';
+        message: string;
+        details?: unknown;
+      };
+    };
+    AuthConfig: {
+      socialProviders: ('github' | 'google')[];
+      signUpEnabled: boolean;
+      emailVerificationRequired: boolean;
+    };
+    Health: {
+      /** @enum {string} */
+      status: 'ok' | 'degraded';
+      checks: {
+        /** @enum {string} */
+        database: 'up' | 'down' | 'disabled';
+        /** @enum {string} */
+        valkey: 'up' | 'down' | 'disabled';
+      };
+    };
+    UserProfile: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      /** Format: email */
+      email: string;
+      emailVerified: boolean;
+      image: string | null;
+      /** @enum {string} */
+      locale: 'en' | 'ko';
+      /** Format: date-time */
+      createdAt: string;
+    };
+    Workspace: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      organizationId: string;
+      name: string;
+      description: string | null;
+      /** @enum {string} */
+      role: 'ADMIN' | 'MEMBER' | 'VIEWER';
+      version: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    WorkspaceList: {
+      items: {
+        /** Format: uuid */
+        id: string;
+        /** Format: uuid */
+        organizationId: string;
+        name: string;
+        description: string | null;
+        /** @enum {string} */
+        role: 'ADMIN' | 'MEMBER' | 'VIEWER';
+        version: number;
+        /** Format: date-time */
+        createdAt: string;
+        /** Format: date-time */
+        updatedAt: string;
+      }[];
+    };
+    Board: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      workspaceId: string;
+      name: string;
+      /** @enum {string} */
+      visibility: 'PRIVATE' | 'WORKSPACE';
+      /** @enum {string} */
+      background: 'blue' | 'green' | 'orange' | 'red' | 'purple' | 'pink' | 'teal' | 'slate';
+      /** @enum {string} */
+      role: 'ADMIN' | 'MEMBER' | 'OBSERVER';
+      version: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    BoardList: {
+      items: {
+        /** Format: uuid */
+        id: string;
+        /** Format: uuid */
+        workspaceId: string;
+        name: string;
+        /** @enum {string} */
+        visibility: 'PRIVATE' | 'WORKSPACE';
+        /** @enum {string} */
+        background: 'blue' | 'green' | 'orange' | 'red' | 'purple' | 'pink' | 'teal' | 'slate';
+        /** @enum {string} */
+        role: 'ADMIN' | 'MEMBER' | 'OBSERVER';
+        version: number;
+        /** Format: date-time */
+        createdAt: string;
+        /** Format: date-time */
+        updatedAt: string;
+      }[];
+    };
+    BoardDetail: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      workspaceId: string;
+      name: string;
+      /** @enum {string} */
+      visibility: 'PRIVATE' | 'WORKSPACE';
+      /** @enum {string} */
+      background: 'blue' | 'green' | 'orange' | 'red' | 'purple' | 'pink' | 'teal' | 'slate';
+      /** @enum {string} */
+      role: 'ADMIN' | 'MEMBER' | 'OBSERVER';
+      version: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      lists: {
+        /** Format: uuid */
+        id: string;
+        /** Format: uuid */
+        boardId: string;
+        name: string;
+        position: string;
+        version: number;
+        /** Format: date-time */
+        createdAt: string;
+        /** Format: date-time */
+        updatedAt: string;
+      }[];
+      cards: {
+        /** Format: uuid */
+        id: string;
+        /** Format: uuid */
+        boardId: string;
+        /** Format: uuid */
+        listId: string;
+        title: string;
+        description: string;
+        position: string;
+        version: number;
+        /** Format: date-time */
+        createdAt: string;
+        /** Format: date-time */
+        updatedAt: string;
+      }[];
+    };
+    List: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      boardId: string;
+      name: string;
+      position: string;
+      version: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    Card: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      boardId: string;
+      /** Format: uuid */
+      listId: string;
+      title: string;
+      description: string;
+      position: string;
+      version: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    HealthController_check: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Health"];
-                };
-            };
-            /** @description Error */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  HealthController_check: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    AuthConfigController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthConfig"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Health'];
         };
+      };
+      /** @description Error */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    MeController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserProfile"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  AuthConfigController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    MeController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProfileInput"];
-            };
+        content: {
+          'application/json': components['schemas']['AuthConfig'];
         };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserProfile"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+      };
     };
-    WorkspacesController_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WorkspaceList"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  MeController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    WorkspacesController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateWorkspaceInput"];
-            };
+        content: {
+          'application/json': components['schemas']['UserProfile'];
         };
-        responses: {
-            /** @description Success */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Workspace"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    WorkspacesController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                workspaceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Workspace"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  MeController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    WorkspacesController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                workspaceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProfileInput'];
+      };
     };
-    WorkspacesController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                workspaceId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateWorkspaceInput"];
-            };
+        content: {
+          'application/json': components['schemas']['UserProfile'];
         };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Workspace"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    BoardsController_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                workspaceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BoardList"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  WorkspacesController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    BoardsController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                workspaceId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateBoardInput"];
-            };
+        content: {
+          'application/json': components['schemas']['WorkspaceList'];
         };
-        responses: {
-            /** @description Success */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Board"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    BoardsController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                boardId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BoardDetail"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  WorkspacesController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    BoardsController_remove: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                boardId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateWorkspaceInput'];
+      };
     };
-    BoardsController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                boardId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateBoardInput"];
-            };
+        content: {
+          'application/json': components['schemas']['Workspace'];
         };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Board"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    ListsController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                boardId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateListInput"];
-            };
-        };
-        responses: {
-            /** @description Success */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["List"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  WorkspacesController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        workspaceId: string;
+      };
+      cookie?: never;
     };
-    ListsController_remove: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                listId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Workspace'];
         };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    ListsController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                listId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateListInput"];
-            };
-        };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["List"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  WorkspacesController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        workspaceId: string;
+      };
+      cookie?: never;
     };
-    ListsController_move: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                listId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MoveListInput"];
-            };
+        content?: never;
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["List"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['ApiError'];
         };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    CardsController_create: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                listId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCardInput"];
-            };
-        };
-        responses: {
-            /** @description Success */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Card"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  WorkspacesController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        workspaceId: string;
+      };
+      cookie?: never;
     };
-    CardsController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                cardId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Card"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateWorkspaceInput'];
+      };
     };
-    CardsController_remove: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                cardId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Workspace'];
         };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
-    CardsController_update: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                cardId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCardInput"];
-            };
-        };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Card"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-        };
+  };
+  BoardsController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        workspaceId: string;
+      };
+      cookie?: never;
     };
-    CardsController_move: {
-        parameters: {
-            query?: never;
-            header?: {
-                /** @description Client-generated id echoed in the real-time events caused by this request. */
-                "x-client-mutation-id"?: string;
-            };
-            path: {
-                cardId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MoveCardInput"];
-            };
+        content: {
+          'application/json': components['schemas']['BoardList'];
         };
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Card"];
-                };
-            };
-            /** @description Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
-            /** @description Error */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiError"];
-                };
-            };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
     };
+  };
+  BoardsController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        workspaceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateBoardInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Board'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  BoardsController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BoardDetail'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  BoardsController_remove: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  BoardsController_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateBoardInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Board'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  ListsController_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        boardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateListInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['List'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  ListsController_remove: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        listId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  ListsController_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        listId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateListInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['List'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  ListsController_move: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        listId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MoveListInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['List'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  CardsController_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        listId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCardInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Card'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  CardsController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Card'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  CardsController_remove: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        cardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  CardsController_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        cardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateCardInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Card'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
+  CardsController_move: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Client-generated id echoed in the real-time events caused by this request. */
+        'x-client-mutation-id'?: string;
+      };
+      path: {
+        cardId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MoveCardInput'];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Card'];
+        };
+      };
+      /** @description Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+      /** @description Error */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApiError'];
+        };
+      };
+    };
+  };
 }

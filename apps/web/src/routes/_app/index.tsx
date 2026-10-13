@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { LayoutGridIcon, PlusIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Page } from '@/components/page';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -19,7 +20,11 @@ export const Route = createFileRoute('/_app/')({
 
 function HomePage() {
   const { data: workspaces } = useSuspenseQuery(workspacesQuery);
-  return workspaces.length === 0 ? <FirstWorkspace /> : <WorkspaceGrid workspaces={workspaces} />;
+  return (
+    <Page>
+      {workspaces.length === 0 ? <FirstWorkspace /> : <WorkspaceGrid workspaces={workspaces} />}
+    </Page>
+  );
 }
 
 function FirstWorkspace() {

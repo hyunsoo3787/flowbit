@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     port: 5173,
     // The API server; the browser only ever talks to this origin (D-004).
-    proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: false } },
+    proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: false, ws: true } },
   },
   test: {
     environment: 'jsdom',

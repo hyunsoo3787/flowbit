@@ -9,15 +9,15 @@ block the current one.
 > **Current status:** Planning. The foundational decisions are recorded in
 > [DECISIONS.md](DECISIONS.md), and phase 1 has not started yet.
 
-| Phase | Theme | Edition |
-|---|---|---|
-| [1](#phase-1-foundation) | Foundation | Core |
-| [2](#phase-2-boards-lists-cards) | Boards, lists, cards + real-time change broadcast | Core |
-| [3](#phase-3-collaboration-basics) | Collaboration basics | Core |
-| [4](#phase-4-presence-notifications-activity) | Presence, notifications, activity | Core |
-| [5](#phase-5-attachments-search-archive) | Attachments, search, archive | Core |
-| [6](#phase-6-enterprise) | Enterprise | `ee/` |
-| [7](#phase-7-extensions) | Extensions | Core and `ee/` |
+| Phase                                         | Theme                                             | Edition        |
+| --------------------------------------------- | ------------------------------------------------- | -------------- |
+| [1](#phase-1-foundation)                      | Foundation                                        | Core           |
+| [2](#phase-2-boards-lists-cards)              | Boards, lists, cards + real-time change broadcast | Core           |
+| [3](#phase-3-collaboration-basics)            | Collaboration basics                              | Core           |
+| [4](#phase-4-presence-notifications-activity) | Presence, notifications, activity                 | Core           |
+| [5](#phase-5-attachments-search-archive)      | Attachments, search, archive                      | Core           |
+| [6](#phase-6-enterprise)                      | Enterprise                                        | `ee/`          |
+| [7](#phase-7-extensions)                      | Extensions                                        | Core and `ee/` |
 
 ---
 
@@ -162,18 +162,21 @@ audit trail, and manage all of its workspaces centrally.
 demand.
 
 ### Views
+
 - [ ] Table view (sort, filter, bulk edit)
 - [ ] Calendar view (by start and due date)
 - [ ] Timeline (Gantt) view
 - [ ] Custom fields on cards (text, number, date, select, checkbox)
 
 ### Automation
+
 - [ ] Rule engine: trigger, then conditions, then actions (e.g. "when a card
       moves to Done, complete all checklists")
 - [ ] Scheduled rules (e.g. "every Monday at 9:00, create a card")
 - [ ] Due-date rules (e.g. "one day before due, notify assignees")
 
 ### Integrations and import
+
 - [ ] Personal API tokens and scoped API access
 - [ ] Outgoing webhooks (signed, retried, with delivery logs)
 - [ ] Trello import (board JSON export)
@@ -182,11 +185,13 @@ demand.
       is merged)
 
 ### AI (pluggable, off by default)
+
 - [ ] Provider abstraction: users bring their own API key or a local model
 - [ ] Summarize a card and its comment thread
 - [ ] Create cards from natural language
 - [ ] Suggest labels and assignees, split meeting notes into cards
 
 ### Later / to evaluate
+
 - [ ] Real-time level 3: concurrent editing of card descriptions (CRDT)
 - [ ] Native mobile apps

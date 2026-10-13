@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+dist
+coverage
+.turbo
+apps/api/src/generated
+apps/api/openapi.json
+apps/web/src/api/schema.d.ts
+apps/web/src/routeTree.gen.ts
+LICENSE
+ee/LICENSE

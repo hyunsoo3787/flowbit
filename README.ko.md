@@ -25,15 +25,15 @@ Flowbit은 Trello 스타일의 오픈소스 업무 관리 도구입니다. 보�
 
 ## 기술 스택
 
-| 영역 | 선택 |
-|---|---|
-| 언어 | 전 구간 TypeScript |
-| 웹 앱 | React, Vite, TanStack Router·Query, Tailwind CSS, shadcn/ui, dnd-kit |
-| API 서버 | NestJS(Fastify), REST + OpenAPI |
-| 실시간 | Socket.IO + Valkey |
-| 데이터베이스 | PostgreSQL + Prisma |
-| 모노레포 | pnpm + Turborepo |
-| 테스트 | Vitest, Playwright |
+| 영역         | 선택                                                                 |
+| ------------ | -------------------------------------------------------------------- |
+| 언어         | 전 구간 TypeScript                                                   |
+| 웹 앱        | React, Vite, TanStack Router·Query, Tailwind CSS, shadcn/ui, dnd-kit |
+| API 서버     | NestJS(Fastify), REST + OpenAPI                                      |
+| 실시간       | Socket.IO + Valkey                                                   |
+| 데이터베이스 | PostgreSQL + Prisma                                                  |
+| 모노레포     | pnpm + Turborepo                                                     |
+| 테스트       | Vitest, Playwright                                                   |
 
 ## 문서
 

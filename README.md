@@ -27,15 +27,15 @@ service.
 
 ## Tech stack
 
-| Layer | Choice |
-|---|---|
-| Language | TypeScript, end to end |
-| Web app | React, Vite, TanStack Router and Query, Tailwind CSS, shadcn/ui, dnd-kit |
-| API server | NestJS (Fastify), REST + OpenAPI |
-| Real-time | Socket.IO + Valkey |
-| Database | PostgreSQL + Prisma |
-| Monorepo | pnpm + Turborepo |
-| Testing | Vitest, Playwright |
+| Layer      | Choice                                                                   |
+| ---------- | ------------------------------------------------------------------------ |
+| Language   | TypeScript, end to end                                                   |
+| Web app    | React, Vite, TanStack Router and Query, Tailwind CSS, shadcn/ui, dnd-kit |
+| API server | NestJS (Fastify), REST + OpenAPI                                         |
+| Real-time  | Socket.IO + Valkey                                                       |
+| Database   | PostgreSQL + Prisma                                                      |
+| Monorepo   | pnpm + Turborepo                                                         |
+| Testing    | Vitest, Playwright                                                       |
 
 ## Documentation
 

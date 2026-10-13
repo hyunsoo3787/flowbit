@@ -232,40 +232,40 @@ erDiagram
 
 ### Identity and tenancy
 
-| Entity | Key fields | Notes |
-|---|---|---|
-| `User` | email (unique), name, avatarUrl, locale, passwordHash?, emailVerifiedAt? | `passwordHash` is null for OAuth/SSO-only users |
-| `AuthAccount` | userId, provider (`github`, `google`, `oidc:<id>`, `saml:<id>`), providerAccountId | Links an external identity to a user |
-| `Session` | userId, tokenHash, expiresAt, userAgent, ip | Server-side sessions |
-| `Organization` | name, slug, isPersonal | Created automatically per user ([D-008](DECISIONS.md#d-008-organization--workspace--board-hierarchy)) |
-| `OrganizationMember` | orgId, userId, role: `OWNER` \| `ADMIN` \| `MEMBER` | |
-| `Workspace` | orgId, name, slug, description | |
-| `WorkspaceMember` | workspaceId, userId, role: `ADMIN` \| `MEMBER` \| `VIEWER` | |
-| `Invitation` | scope (workspace or board), scopeId, email?, token, role, expiresAt | Email or link invites (phase 3) |
+| Entity               | Key fields                                                                         | Notes                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `User`               | email (unique), name, avatarUrl, locale, passwordHash?, emailVerifiedAt?           | `passwordHash` is null for OAuth/SSO-only users                                                       |
+| `AuthAccount`        | userId, provider (`github`, `google`, `oidc:<id>`, `saml:<id>`), providerAccountId | Links an external identity to a user                                                                  |
+| `Session`            | userId, tokenHash, expiresAt, userAgent, ip                                        | Server-side sessions                                                                                  |
+| `Organization`       | name, slug, isPersonal                                                             | Created automatically per user ([D-008](DECISIONS.md#d-008-organization--workspace--board-hierarchy)) |
+| `OrganizationMember` | orgId, userId, role: `OWNER` \| `ADMIN` \| `MEMBER`                                |                                                                                                       |
+| `Workspace`          | orgId, name, slug, description                                                     |                                                                                                       |
+| `WorkspaceMember`    | workspaceId, userId, role: `ADMIN` \| `MEMBER` \| `VIEWER`                         |                                                                                                       |
+| `Invitation`         | scope (workspace or board), scopeId, email?, token, role, expiresAt                | Email or link invites (phase 3)                                                                       |
 
 ### Boards and cards
 
-| Entity | Key fields | Notes |
-|---|---|---|
-| `Board` | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` \| `PUBLIC`, background, archivedAt? | |
-| `BoardMember` | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER` | |
-| `List` | boardId, name, position, archivedAt? | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering)) |
-| `Card` | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverId?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing |
-| `CardAssignee` | cardId, userId | |
-| `Label` | boardId, name?, color | |
-| `CardLabel` | cardId, labelId | |
-| `Checklist` | cardId, title, position | |
-| `ChecklistItem` | checklistId, text, position, completedAt?, assigneeId?, dueAt? | |
-| `Comment` | cardId, authorId, body (Markdown), editedAt?, deletedAt? | |
-| `Attachment` | cardId, uploaderId, storageKey, fileName, mimeType, size | Storage driver per [D-019](DECISIONS.md#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) |
-| `Watch` | userId, boardId? or cardId? | For notifications (phase 4) |
+| Entity          | Key fields                                                                                                                      | Notes                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` \| `PUBLIC`, background, archivedAt?                                    |                                                                                                           |
+| `BoardMember`   | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER`                                                                        |                                                                                                           |
+| `List`          | boardId, name, position, archivedAt?                                                                                            | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))           |
+| `Card`          | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverId?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing                                     |
+| `CardAssignee`  | cardId, userId                                                                                                                  |                                                                                                           |
+| `Label`         | boardId, name?, color                                                                                                           |                                                                                                           |
+| `CardLabel`     | cardId, labelId                                                                                                                 |                                                                                                           |
+| `Checklist`     | cardId, title, position                                                                                                         |                                                                                                           |
+| `ChecklistItem` | checklistId, text, position, completedAt?, assigneeId?, dueAt?                                                                  |                                                                                                           |
+| `Comment`       | cardId, authorId, body (Markdown), editedAt?, deletedAt?                                                                        |                                                                                                           |
+| `Attachment`    | cardId, uploaderId, storageKey, fileName, mimeType, size                                                                        | Storage driver per [D-019](DECISIONS.md#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) |
+| `Watch`         | userId, boardId? or cardId?                                                                                                     | For notifications (phase 4)                                                                               |
 
 ### Activity and notifications
 
-| Entity | Key fields | Notes |
-|---|---|---|
-| `Activity` | boardId, cardId?, actorId, type, payload (JSONB), createdAt | Append-only, written in the same transaction as the change |
-| `Notification` | userId, activityId, readAt? | Fan-out from activity (phase 4) |
+| Entity         | Key fields                                                  | Notes                                                      |
+| -------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
+| `Activity`     | boardId, cardId?, actorId, type, payload (JSONB), createdAt | Append-only, written in the same transaction as the change |
+| `Notification` | userId, activityId, readAt?                                 | Fan-out from activity (phase 4)                            |
 
 ### Later phases (indicative)
 
@@ -294,13 +294,13 @@ trusted from the client.
 5. Otherwise, no access. The API responds with `404` (not `403`), so it
    doesn't reveal that the board exists.
 
-| Capability | Observer | Member | Admin |
-|---|---|---|---|
-| View board, cards, comments | ✓ | ✓ | ✓ |
-| Comment | — | ✓ | ✓ |
-| Create, edit and move cards and lists | — | ✓ | ✓ |
-| Manage labels | — | ✓ | ✓ |
-| Manage board members and settings, archive or delete the board | — | — | ✓ |
+| Capability                                                     | Observer | Member | Admin |
+| -------------------------------------------------------------- | -------- | ------ | ----- |
+| View board, cards, comments                                    | ✓        | ✓      | ✓     |
+| Comment                                                        | —        | ✓      | ✓     |
+| Create, edit and move cards and lists                          | —        | ✓      | ✓     |
+| Manage labels                                                  | —        | ✓      | ✓     |
+| Manage board members and settings, archive or delete the board | —        | —      | ✓     |
 
 The permission logic lives in one place (a policy service in `apps/api`), and
 its rules are covered by unit tests.
@@ -385,10 +385,10 @@ services:
 
 ## Testing strategy
 
-| Level | Tool | Scope |
-|---|---|---|
-| Unit | Vitest | Domain logic, permission policy, fractional indexing, shared schemas |
-| API integration | Vitest + real PostgreSQL (Testcontainers or Compose) | Endpoints, transactions, tenant isolation |
-| Real-time | Vitest + Socket.IO client | Room authorization, event delivery, echo suppression |
-| End-to-end | Playwright | Critical user flows in Chromium (multi-browser later), including two-client real-time scenarios |
-| License | License checker in CI | [D-013](DECISIONS.md#d-013-permissive-only-dependency-policy) |
+| Level           | Tool                                                 | Scope                                                                                           |
+| --------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Unit            | Vitest                                               | Domain logic, permission policy, fractional indexing, shared schemas                            |
+| API integration | Vitest + real PostgreSQL (Testcontainers or Compose) | Endpoints, transactions, tenant isolation                                                       |
+| Real-time       | Vitest + Socket.IO client                            | Room authorization, event delivery, echo suppression                                            |
+| End-to-end      | Playwright                                           | Critical user flows in Chromium (multi-browser later), including two-client real-time scenarios |
+| License         | License checker in CI                                | [D-013](DECISIONS.md#d-013-permissive-only-dependency-policy)                                   |

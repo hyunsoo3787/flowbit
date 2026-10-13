@@ -6,28 +6,28 @@ entry in place: mark it **Superseded** and add a new entry that explains why.
 
 Status values: **Accepted**, **Proposed**, **Superseded by D-XXX**.
 
-| ID | Decision | Status |
-|---|---|---|
-| [D-001](#d-001-full-product-scope-built-in-phases) | Full product scope, built in phases | Accepted |
-| [D-002](#d-002-support-both-self-hosting-and-saas) | Support both self-hosting and SaaS | Accepted |
-| [D-003](#d-003-typescript-across-the-whole-stack) | TypeScript across the whole stack | Accepted |
-| [D-004](#d-004-separate-spa-and-api-server-in-one-monorepo) | Separate SPA and API server in one monorepo | Accepted |
-| [D-005](#d-005-nestjs-for-the-api-server) | NestJS for the API server | Accepted |
-| [D-006](#d-006-rest--openapi-as-the-api-style) | REST + OpenAPI as the API style | Accepted |
-| [D-007](#d-007-postgresql-only-with-prisma) | PostgreSQL only, with Prisma | Accepted |
-| [D-008](#d-008-organization--workspace--board-hierarchy) | Organization > Workspace > Board hierarchy | Accepted |
-| [D-009](#d-009-authentication-methods) | Authentication methods | Accepted |
-| [D-010](#d-010-real-time-sync-over-websockets) | Real-time sync over WebSockets | Accepted |
-| [D-011](#d-011-open-core-licensing-agpl-30--commercial-ee) | Open-core licensing (AGPL-3.0 + commercial `ee/`) | Accepted |
-| [D-012](#d-012-cla-for-external-contributions) | CLA for external contributions | Accepted |
-| [D-013](#d-013-permissive-only-dependency-policy) | Permissive-only dependency policy | Accepted |
-| [D-014](#d-014-frontend-stack) | Frontend stack | Accepted |
-| [D-015](#d-015-fractional-indexing-for-ordering) | Fractional indexing for ordering | Accepted |
-| [D-016](#d-016-internationalization-from-day-one-en-ko) | Internationalization from day one (en, ko) | Accepted |
-| [D-017](#d-017-responsive-web--pwa-for-mobile) | Responsive web + PWA for mobile | Accepted |
-| [D-018](#d-018-languages-for-code-docs-and-readme) | Languages for code, docs and README | Accepted |
+| ID                                                                         | Decision                                                    | Status   |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------- | -------- |
+| [D-001](#d-001-full-product-scope-built-in-phases)                         | Full product scope, built in phases                         | Accepted |
+| [D-002](#d-002-support-both-self-hosting-and-saas)                         | Support both self-hosting and SaaS                          | Accepted |
+| [D-003](#d-003-typescript-across-the-whole-stack)                          | TypeScript across the whole stack                           | Accepted |
+| [D-004](#d-004-separate-spa-and-api-server-in-one-monorepo)                | Separate SPA and API server in one monorepo                 | Accepted |
+| [D-005](#d-005-nestjs-for-the-api-server)                                  | NestJS for the API server                                   | Accepted |
+| [D-006](#d-006-rest--openapi-as-the-api-style)                             | REST + OpenAPI as the API style                             | Accepted |
+| [D-007](#d-007-postgresql-only-with-prisma)                                | PostgreSQL only, with Prisma                                | Accepted |
+| [D-008](#d-008-organization--workspace--board-hierarchy)                   | Organization > Workspace > Board hierarchy                  | Accepted |
+| [D-009](#d-009-authentication-methods)                                     | Authentication methods                                      | Accepted |
+| [D-010](#d-010-real-time-sync-over-websockets)                             | Real-time sync over WebSockets                              | Accepted |
+| [D-011](#d-011-open-core-licensing-agpl-30--commercial-ee)                 | Open-core licensing (AGPL-3.0 + commercial `ee/`)           | Accepted |
+| [D-012](#d-012-cla-for-external-contributions)                             | CLA for external contributions                              | Accepted |
+| [D-013](#d-013-permissive-only-dependency-policy)                          | Permissive-only dependency policy                           | Accepted |
+| [D-014](#d-014-frontend-stack)                                             | Frontend stack                                              | Accepted |
+| [D-015](#d-015-fractional-indexing-for-ordering)                           | Fractional indexing for ordering                            | Accepted |
+| [D-016](#d-016-internationalization-from-day-one-en-ko)                    | Internationalization from day one (en, ko)                  | Accepted |
+| [D-017](#d-017-responsive-web--pwa-for-mobile)                             | Responsive web + PWA for mobile                             | Accepted |
+| [D-018](#d-018-languages-for-code-docs-and-readme)                         | Languages for code, docs and README                         | Accepted |
 | [D-019](#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) | Attachment storage: local disk or any S3-compatible service | Accepted |
-| [D-020](#d-020-better-auth-behind-our-own-auth-module) | Better Auth behind our own auth module | Accepted |
+| [D-020](#d-020-better-auth-behind-our-own-auth-module)                     | Better Auth behind our own auth module                      | Accepted |
 
 ---
 
@@ -41,11 +41,12 @@ scope up front but build it in phases (see [ROADMAP.md](ROADMAP.md)), and every
 phase ends with something people can use.
 
 **Why.**
+
 - If we build everything at once, the product stays unusable for a long time.
   We can't validate anything, and outside contributors have no way in.
 - Some things are hard to add later: the tenancy hierarchy, the permission
-  model, an event-driven write path for real-time sync. So the *design* covers
-  the full scope even though the *implementation* is incremental.
+  model, an event-driven write path for real-time sync. So the _design_ covers
+  the full scope even though the _implementation_ is incremental.
 
 **Alternatives considered.** A narrow MVP with no forward design, which tends
 to need costly rewrites. Building the full scope in one pass.
@@ -57,6 +58,7 @@ to need costly rewrites. Building the full scope in one pass.
 **Status:** Accepted
 
 **Decision.** One codebase serves both deployment modes:
+
 - **Self-hosted:** a single `docker compose up` brings up the app, PostgreSQL
   and Valkey. Configuration is done with environment variables.
 - **SaaS:** a multi-tenant deployment of the same code, scaled horizontally.
@@ -65,6 +67,7 @@ to need costly rewrites. Building the full scope in one pass.
 is the main path to sustainability (see D-011).
 
 **Consequences.**
+
 - No hard dependency on any cloud vendor's proprietary service.
 - The API server must be stateless, which means sessions live in the DB or
   Valkey and real-time fan-out goes through Valkey, so it can run as multiple
@@ -80,6 +83,7 @@ is the main path to sustainability (see D-011).
 **Decision.** Both the frontend and the backend are written in TypeScript.
 
 **Why.**
+
 - The browser side is effectively TypeScript or JavaScript regardless of the
   backend choice. Using TS for the backend too means one language to learn,
   review and hire for.
@@ -91,6 +95,7 @@ is the main path to sustainability (see D-011).
   a faster compiled backend gives little practical gain.
 
 **Alternatives considered.**
+
 - **Go:** strong second choice. Single-binary deploys, great concurrency, easy
   to learn. Rejected because types can't be shared with the frontend and the
   team would work in two languages.
@@ -112,6 +117,7 @@ is the main path to sustainability (see D-011).
 is a standalone API server. Both live in one pnpm + Turborepo monorepo.
 
 **Why.**
+
 - Real-time collaboration needs long-lived WebSocket connections. A standalone
   Node server handles these naturally, while serverless or full-stack
   framework route handlers handle them poorly.
@@ -133,6 +139,7 @@ to the framework.
 **Decision.** The API server uses NestJS, running on its Fastify adapter.
 
 **Why.**
+
 - Its opinionated structure (modules, dependency injection, guards, pipes) is
   close to Spring. That makes code review predictable and onboarding easier
   as the codebase grows.
@@ -155,6 +162,7 @@ is generated from the server code. A typed frontend client is generated from
 that spec.
 
 **Why.**
+
 - A public, documented API (like Trello's) is a product feature. It enables
   webhooks, integrations, scripts, a future native app, and third-party tools.
 - Generating the client from the spec gives most of tRPC's end-to-end type
@@ -165,6 +173,7 @@ suitable as a public API. GraphQL: flexible, but more complex for both
 implementers and consumers.
 
 **Conventions** (to be detailed in phase 1):
+
 - Base path `/api/v1`, JSON bodies, cursor-based pagination.
 - Errors use stable machine-readable codes, and the frontend localizes them
   (see D-016).
@@ -181,6 +190,7 @@ implementers and consumers.
 the migration tool.
 
 **Why.**
+
 - PostgreSQL is the standard for both self-hosted and SaaS deployments. It has
   strong transactions, JSONB, full-text search (enough for early search), and
   row-level security if we ever need it.
@@ -205,6 +215,7 @@ the UI** until enterprise features need it. Every user gets a personal
 organization automatically, and the UI only shows "my workspaces".
 
 **Why.**
+
 - From the user's point of view this behaves exactly like a simple
   Workspace > Board model.
 - Enterprise features attach naturally to an organization: SSO with domain
@@ -228,6 +239,7 @@ chain. See [ARCHITECTURE.md](ARCHITECTURE.md#authorization).
 **Status:** Accepted
 
 **Decision.** Supported sign-in methods:
+
 1. Email + password (required for self-hosting). Phase 1.
 2. OAuth with GitHub and Google. Phase 1.
 3. SSO with OIDC and SAML, configured per organization. Phase 6, in `ee/`.
@@ -245,13 +257,14 @@ chain. See [ARCHITECTURE.md](ARCHITECTURE.md#authorization).
 Socket.IO, with the Valkey adapter for fan-out across API replicas. The work
 is split into levels:
 
-| Level | What | Phase |
-|---|---|---|
-| 1. Change broadcast | Card, list and board changes appear instantly for everyone | 2 |
-| 2. Presence | Who's viewing, who's editing | 4 |
-| 3. Concurrent text editing | Several people typing in one description (CRDT) | Not planned yet; revisit in phase 7 |
+| Level                      | What                                                       | Phase                               |
+| -------------------------- | ---------------------------------------------------------- | ----------------------------------- |
+| 1. Change broadcast        | Card, list and board changes appear instantly for everyone | 2                                   |
+| 2. Presence                | Who's viewing, who's editing                               | 4                                   |
+| 3. Concurrent text editing | Several people typing in one description (CRDT)            | Not planned yet; revisit in phase 7 |
 
 **Why.**
+
 - Collaboration is the core of the product. Building the write path as
   "commit, then publish a domain event" from phase 2 means real-time is never
   bolted on later.
@@ -268,6 +281,7 @@ need rework.
 **Status:** Accepted
 
 **Decision.**
+
 - Everything outside `ee/` is licensed under **AGPL-3.0**.
 - Code under `ee/` (enterprise features such as SSO/SAML, audit logs and
   advanced admin) is under a **commercial license**. It is source-visible, but
@@ -276,6 +290,7 @@ need rework.
   that cannot accept the AGPL (dual licensing).
 
 **Why.**
+
 - The AGPL keeps the product open and stops a competitor from running a
   closed, modified hosted version without sharing their changes.
 - Open core plus dual licensing is a proven model (GitLab, Mattermost,
@@ -287,6 +302,7 @@ commercial protection. FSL or BSL: protection, but they are source-available
 rather than OSI open source.
 
 **Consequences.**
+
 - Core code must never import from `ee/`. `ee/` plugs into the core through
   defined extension points (see [ARCHITECTURE.md](ARCHITECTURE.md#open-core-boundary)).
 - D-012 and D-013 follow from this decision.
@@ -322,6 +338,7 @@ fails the build on violations.
 copyleft or restricted third-party code.
 
 **Consequences.**
+
 - **Valkey** (BSD-3-Clause) is used instead of Redis, because Redis 7.4 and
   later are no longer under a permissive license. Valkey is protocol-compatible.
 - **MinIO** (AGPL) is not bundled. See D-019.
@@ -335,17 +352,17 @@ copyleft or restricted third-party code.
 
 **Decision.**
 
-| Concern | Choice |
-|---|---|
-| Build / dev server | Vite |
-| UI library | React |
-| Routing | TanStack Router |
-| Server state | TanStack Query (patched by real-time events) |
-| Styling / components | Tailwind CSS + shadcn/ui (Radix primitives) |
-| Drag and drop | dnd-kit |
-| Forms / validation | React Hook Form + Zod (schemas shared via `packages/shared`) |
-| i18n | i18next + react-i18next |
-| Tests | Vitest (unit), Playwright (end-to-end) |
+| Concern              | Choice                                                       |
+| -------------------- | ------------------------------------------------------------ |
+| Build / dev server   | Vite                                                         |
+| UI library           | React                                                        |
+| Routing              | TanStack Router                                              |
+| Server state         | TanStack Query (patched by real-time events)                 |
+| Styling / components | Tailwind CSS + shadcn/ui (Radix primitives)                  |
+| Drag and drop        | dnd-kit                                                      |
+| Forms / validation   | React Hook Form + Zod (schemas shared via `packages/shared`) |
+| i18n                 | i18next + react-i18next                                      |
+| Tests                | Vitest (unit), Playwright (end-to-end)                       |
 
 **Why.** These are widely used, well documented and permissively licensed.
 shadcn/ui copies component source into the repo, so we own and can theme it.
@@ -434,6 +451,7 @@ interfaces (the current user, the session check, and a public-route
 decorator), never on Better Auth directly.
 
 **Scope of responsibility.**
+
 - Better Auth answers **who the user is**. It handles email + password
   sign-up and sign-in, password hashing, email verification, password reset,
   GitHub and Google OAuth with account linking, sessions, CSRF and origin
@@ -444,6 +462,7 @@ decorator), never on Better Auth directly.
   organization plugin is **not** used.
 
 **Integration rules.**
+
 - Better Auth's handler is mounted directly on the Fastify instance at
   `/api/auth/*`. Our own guard resolves the session for every other route via
   `auth.api.getSession()`, and routes are protected by default. We don't use a
@@ -462,6 +481,7 @@ decorator), never on Better Auth directly.
   messages in the web app.
 
 **Why.**
+
 - Authentication is security-critical. A maintained library handles token
   expiry, timing-safe comparisons, session fixation, CSRF and rate limiting,
   which leaves much less security-sensitive code for us to write and review.
@@ -474,6 +494,7 @@ decorator), never on Better Auth directly.
   (`better-auth` 1.7.x, latest release in September 2026).
 
 **Alternatives considered.**
+
 - **Passport via `@nestjs/passport`:** mature and officially supported by
   NestJS, but it only covers the "verify this credential" step. Sessions,
   email verification, password reset, account linking and rate limiting would

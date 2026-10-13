@@ -153,8 +153,15 @@ sequenceDiagram
 - Cursor-based pagination: `?cursor=...&limit=...`.
 - Error body: `{ "error": { "code": "BOARD_NOT_FOUND", "message": "...", "details": {} } }`.
   The `code` values are stable and defined in `packages/shared`.
-- Each mutating request may include a `clientMutationId` header. It is echoed
-  in the response and in the resulting real-time events.
+- Each mutating request may include an `x-client-mutation-id` header. It is
+  echoed in the resulting real-time events.
+- Ordered items (lists, cards) are placed with a target index, never with a
+  raw position: `POST /lists/:id/move { toIndex, toBoardId? }` and
+  `POST /cards/:id/move { toListId, toIndex }`. The server computes the
+  fractional-index key between the neighbours at that index, after locking the
+  parent board or list so concurrent inserts get distinct keys. Positions are
+  stored with the "C" collation so the database sorts them in byte order, like
+  the application ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering)).
 - The OpenAPI spec is generated at build time and the web client is generated
   from it, so the spec is the contract.
 
@@ -183,24 +190,31 @@ sequenceDiagram
 See [D-010](DECISIONS.md#d-010-real-time-sync-over-websockets) for the levels
 and the phase each one lands in.
 
-- **Connection:** The client opens one Socket.IO connection after sign-in,
-  authenticated with the same session.
+- **Connection:** The client opens one Socket.IO connection at
+  `/api/socket.io` (so proxies only forward `/api`). It is authenticated with
+  the session cookie when it connects, and connections from origins other than
+  `PUBLIC_URL` and `TRUSTED_ORIGINS` are refused.
 - **Rooms:** When a board page opens, the client joins `board:{boardId}`. The
-  server checks read access before allowing the join. User-level events
-  (notifications) go to `user:{userId}`.
-- **Events:** Each event has the form
-  `{ type, boardId, entity, data, actorId, clientMutationId, version }`, where
-  `type` is something like `card.updated`, `card.moved` or `list.created`.
-- **Echo suppression:** A client ignores events that carry a
-  `clientMutationId` it generated itself, because it already applied that
-  change optimistically.
+  server checks read access before allowing the join. When a board becomes
+  private, sockets of people who lost access are removed from the room; when it
+  is deleted, the room is closed. User-level events (notifications, phase 4)
+  will go to `user:{userId}`.
+- **Events:** `board.updated`, `board.deleted`, `list.upserted`,
+  `list.deleted`, `card.upserted` and `card.deleted`. Each carries `boardId`,
+  `actorId`, `clientMutationId` and the full entity (or its id when deleted);
+  see `packages/shared/src/realtime.ts`. A card or list that moves to another
+  board is announced as deleted on the old board and upserted on the new one.
+- **Echo suppression:** Mutations send a client-generated id in the
+  `x-client-mutation-id` header. A client ignores events that carry an id it
+  generated itself, because it already applied that change optimistically.
 - **Ordering and staleness:** Every mutable entity has an integer `version`
   that increases on each update. The client drops events older than the
   version it has in cache.
 - **Reconnect:** After a reconnect, the client refetches the active board to
   catch up. Event replay is not planned.
 - **Scale-out:** The Socket.IO Valkey adapter delivers events to clients
-  connected to any replica.
+  connected to any replica. Without Valkey, a single instance delivers them in
+  memory.
 
 ---
 
@@ -255,7 +269,7 @@ erDiagram
 
 | Entity          | Key fields                                                                                                                      | Notes                                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` \| `PUBLIC`, background, archivedAt?                                    |                                                                                                           |
+| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` (`PUBLIC` later), background, archivedAt? (phase 5)                     |                                                                                                           |
 | `BoardMember`   | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER`                                                                        |                                                                                                           |
 | `List`          | boardId, name, position, archivedAt?                                                                                            | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))           |
 | `Card`          | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverId?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing                                     |
@@ -289,17 +303,18 @@ erDiagram
 Authorization is checked in the service layer on every request. It is never
 trusted from the client.
 
-**Effective board access** is resolved in this order:
+**Effective board access:**
 
 1. **Org `OWNER` or `ADMIN`:** full admin access to every workspace and board
-   in the organization.
-2. **Explicit `BoardMember` role:** `ADMIN`, `MEMBER` or `OBSERVER`.
-3. **Workspace membership**, if the board's visibility is `WORKSPACE`:
-   - Workspace `ADMIN` has the same access as a board `ADMIN`.
-   - Workspace `MEMBER` has the same access as a board `MEMBER`.
-   - Workspace `VIEWER` has the same access as a board `OBSERVER`.
-4. **`PUBLIC` board:** read-only access for anyone, including anonymous users.
-5. Otherwise, no access. The API responds with `404` (not `403`), so it
+   in the organization, including private boards.
+2. Otherwise, the **highest** of:
+   - the explicit `BoardMember` role: `ADMIN`, `MEMBER` or `OBSERVER`;
+   - for boards with `WORKSPACE` visibility, the role derived from the
+     workspace membership: workspace `ADMIN` → board `ADMIN`, `MEMBER` →
+     `MEMBER`, `VIEWER` → `OBSERVER`.
+3. **`PUBLIC` board** (later phase): read-only access for anyone, including
+   anonymous users.
+4. Otherwise, no access. The API responds with `404` (not `403`), so it
    doesn't reveal that the board exists.
 
 | Capability                                                     | Observer | Member | Admin |
@@ -309,6 +324,10 @@ trusted from the client.
 | Create, edit and move cards and lists                          | —        | ✓      | ✓     |
 | Manage labels                                                  | —        | ✓      | ✓     |
 | Manage board members and settings, archive or delete the board | —        | —      | ✓     |
+
+Creating a board requires the workspace role `ADMIN` or `MEMBER`; its creator
+becomes the board's `ADMIN`. Moving a list or card to another board requires
+edit rights (`MEMBER` or `ADMIN`) on both boards.
 
 **Instance administrators** (phase 3,
 [D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content))

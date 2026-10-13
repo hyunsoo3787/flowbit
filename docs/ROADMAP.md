@@ -6,8 +6,8 @@ ends with something people can use, plus an exit checklist. Phases are
 sequential, but items from later phases can be picked up early if they don't
 block the current one.
 
-> **Current status:** Phase 1 (foundation) is implemented. Phase 2 (boards,
-> lists and cards) is next.
+> **Current status:** Phases 1 (foundation) and 2 (boards, lists, cards and
+> real-time updates) are implemented. Phase 3 (collaboration basics) is next.
 
 | Phase                                         | Theme                                             | Edition        |
 | --------------------------------------------- | ------------------------------------------------- | -------------- |
@@ -69,7 +69,9 @@ the first external pull request, and the first code in `ee/`.
       `CODE_OF_CONDUCT.md` with a real address.
 - [x] Enable **Private vulnerability reporting** in the GitHub repository
       settings, so the link in `SECURITY.md` works.
-- [ ] Confirm the CLA workflow (`.github/workflows/cla.yml`) works on a real
+- [ ] Turn the CLA workflow (`.github/workflows/cla.yml`) back on: it is
+      paused until the CLA is finalized. Create the `cla-signatures` branch,
+      restore the triggers noted in the file, and confirm it works on a real
       pull request.
 
 **Before shipping any code in `ee/` (phase 6):**
@@ -83,22 +85,22 @@ the first external pull request, and the first code in `ee/`.
 
 **Goal:** The core Trello loop, with live updates for everyone on the board.
 
-- [ ] Boards: create, rename, delete, visibility (private, workspace),
+- [x] Boards: create, rename, delete, visibility (private, workspace),
       background color
-- [ ] Lists: create, rename, reorder, move between boards
-- [ ] Cards: create, edit title and description (Markdown), reorder, move
+- [x] Lists: create, rename, reorder, move between boards
+- [x] Cards: create, edit title and description (Markdown), reorder, move
       between lists and boards
-- [ ] Drag and drop with dnd-kit (mouse, touch, keyboard)
-- [ ] Fractional-index ordering
+- [x] Drag and drop with dnd-kit (mouse, touch, keyboard)
+- [x] Fractional-index ordering
       ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))
-- [ ] Board and workspace roles, enforced in the API
-- [ ] Optimistic UI updates with rollback on error
-- [ ] **Real-time level 1:** domain events after commit, Socket.IO board
+- [x] Board and workspace roles, enforced in the API
+- [x] Optimistic UI updates with rollback on error
+- [x] **Real-time level 1:** domain events after commit, Socket.IO board
       rooms, Valkey adapter, client cache patching, echo suppression via
       `clientMutationId`
       ([D-010](DECISIONS.md#d-010-real-time-sync-over-websockets))
-- [ ] Card detail view (modal with its own URL)
-- [ ] End-to-end tests for the main board flows
+- [x] Card detail view (modal with its own URL)
+- [x] End-to-end tests for the main board flows
 
 **Exit checklist:** Two browsers on the same board see each other's card moves
 and edits instantly. Permissions are enforced server-side. The board works on

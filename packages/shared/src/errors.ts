@@ -15,6 +15,9 @@ export const ERROR_CODES = [
   'RATE_LIMITED',
   'INTERNAL_ERROR',
   'WORKSPACE_NOT_FOUND',
+  'BOARD_NOT_FOUND',
+  'LIST_NOT_FOUND',
+  'CARD_NOT_FOUND',
 ] as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[number];

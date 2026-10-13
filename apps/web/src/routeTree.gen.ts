@@ -16,7 +16,9 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
+import { Route as AppBBoardIdRouteImport } from './routes/_app/b/$boardId'
 import { Route as AppWWorkspaceIdRouteImport } from './routes/_app/w/$workspaceId'
+import { Route as AppBBoardIdCCardIdRouteImport } from './routes/_app/b/$boardId/c/$cardId'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -51,10 +53,20 @@ const AuthSignUpRoute = AuthSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppBBoardIdRoute = AppBBoardIdRouteImport.update({
+  id: '/b/$boardId',
+  path: '/b/$boardId',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppWWorkspaceIdRoute = AppWWorkspaceIdRouteImport.update({
   id: '/w/$workspaceId',
   path: '/w/$workspaceId',
   getParentRoute: () => AppRoute,
+} as any)
+const AppBBoardIdCCardIdRoute = AppBBoardIdCCardIdRouteImport.update({
+  id: '/c/$cardId',
+  path: '/c/$cardId',
+  getParentRoute: () => AppBBoardIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -63,7 +75,9 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/b/$boardId': typeof AppBBoardIdRouteWithChildren
   '/w/$workspaceId': typeof AppWWorkspaceIdRoute
+  '/b/$boardId/c/$cardId': typeof AppBBoardIdCCardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -71,7 +85,9 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/b/$boardId': typeof AppBBoardIdRouteWithChildren
   '/w/$workspaceId': typeof AppWWorkspaceIdRoute
+  '/b/$boardId/c/$cardId': typeof AppBBoardIdCCardIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -82,7 +98,9 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/b/$boardId': typeof AppBBoardIdRouteWithChildren
   '/_app/w/$workspaceId': typeof AppWWorkspaceIdRoute
+  '/_app/b/$boardId/c/$cardId': typeof AppBBoardIdCCardIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -92,7 +110,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/b/$boardId'
     | '/w/$workspaceId'
+    | '/b/$boardId/c/$cardId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,7 +120,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/b/$boardId'
     | '/w/$workspaceId'
+    | '/b/$boardId/c/$cardId'
   id:
     | '__root__'
     | '/_app'
@@ -110,7 +132,9 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_app/'
+    | '/_app/b/$boardId'
     | '/_app/w/$workspaceId'
+    | '/_app/b/$boardId/c/$cardId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -169,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignUpRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/b/$boardId': {
+      id: '/_app/b/$boardId'
+      path: '/b/$boardId'
+      fullPath: '/b/$boardId'
+      preLoaderRoute: typeof AppBBoardIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/w/$workspaceId': {
       id: '/_app/w/$workspaceId'
       path: '/w/$workspaceId'
@@ -176,16 +207,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWWorkspaceIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/b/$boardId/c/$cardId': {
+      id: '/_app/b/$boardId/c/$cardId'
+      path: '/c/$cardId'
+      fullPath: '/b/$boardId/c/$cardId'
+      preLoaderRoute: typeof AppBBoardIdCCardIdRouteImport
+      parentRoute: typeof AppBBoardIdRoute
+    }
   }
 }
 
+interface AppBBoardIdRouteChildren {
+  AppBBoardIdCCardIdRoute: typeof AppBBoardIdCCardIdRoute
+}
+
+const AppBBoardIdRouteChildren: AppBBoardIdRouteChildren = {
+  AppBBoardIdCCardIdRoute: AppBBoardIdCCardIdRoute,
+}
+
+const AppBBoardIdRouteWithChildren = AppBBoardIdRoute._addFileChildren(
+  AppBBoardIdRouteChildren,
+)
+
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppBBoardIdRoute: typeof AppBBoardIdRouteWithChildren
   AppWWorkspaceIdRoute: typeof AppWWorkspaceIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppBBoardIdRoute: AppBBoardIdRouteWithChildren,
   AppWWorkspaceIdRoute: AppWWorkspaceIdRoute,
 }
 

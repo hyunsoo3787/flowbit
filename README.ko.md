@@ -6,10 +6,13 @@ Flowbit은 Trello 스타일의 오픈소스 업무 관리 도구입니다. 보�
 실시간 협업 기능을 제공하며, 직접 설치해서 쓰거나(셀프 호스팅) 서비스 형태로
 운영할 수 있습니다.
 
-> **현재 상태: 초기 개발 단계.** [1단계](docs/ROADMAP.md#phase-1-foundation)를
-> 마쳤습니다. 계정(이메일·비밀번호, GitHub, Google), 워크스페이스, 영어·한국어
-> UI, 명령 한 줄로 실행되는 Docker 구성이 갖춰져 있습니다. 보드, 리스트, 카드는
-> 다음 [2단계](docs/ROADMAP.md#phase-2-boards-lists-cards)에서 추가됩니다.
+> **현재 상태: 초기 개발 단계.** [1단계](docs/ROADMAP.md#phase-1-foundation)와
+> [2단계](docs/ROADMAP.md#phase-2-boards-lists-cards)를 마쳤습니다. 계정(이메일·비밀번호,
+> GitHub, Google), 워크스페이스, 리스트와 카드로 구성된 보드, 드래그 앤 드롭,
+> 같은 보드를 보는 모두에게 즉시 반영되는 실시간 업데이트, 영어·한국어 UI,
+> 명령 한 줄로 실행되는 Docker 구성이 갖춰져 있습니다. 멤버, 라벨, 마감일,
+> 체크리스트, 댓글은 다음 [3단계](docs/ROADMAP.md#phase-3-collaboration-basics)에서
+> 추가됩니다.
 
 ## 목표
 
@@ -73,7 +76,8 @@ Flowbit은 **오픈 코어** 모델을 따릅니다
 ## 기여하기
 
 기여를 환영합니다. [CONTRIBUTING.md](CONTRIBUTING.md)부터 읽어 주세요. 외부
-기여자는 처음 한 번 [기여자 라이선스 동의(CLA)](CLA.md)에 서명합니다
-([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
+기여자는 처음 한 번 [기여자 라이선스 동의(CLA)](CLA.md)에 서명하게 됩니다
+([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)). CLA는 아직
+초안이라, 기여를 시작하기 전에 먼저 이슈로 논의해 주세요.
 [행동 강령](CODE_OF_CONDUCT.md)을 지켜 주시고, 보안 문제는
 [SECURITY.md](SECURITY.md)에 안내된 방법으로 비공개 제보해 주세요.

@@ -6,6 +6,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module.js';
 import { createOpenApiDocument } from './common/openapi.js';
 import { ENV, type Env } from './config/env.js';
+import { RealtimeIoAdapter } from './realtime/realtime-io.adapter.js';
 import { serveWebApp } from './web/serve-web-app.js';
 
 const LOG_LEVELS: Record<Env['LOG_LEVEL'], LogLevel[]> = {
@@ -29,6 +30,7 @@ export async function createApp(options: CreateAppOptions = {}): Promise<NestFas
   const env = app.get<Env>(ENV);
 
   app.setGlobalPrefix('api/v1');
+  app.useWebSocketAdapter(new RealtimeIoAdapter(app));
   app.enableShutdownHooks();
 
   SwaggerModule.setup('api/docs', app, () => createOpenApiDocument(app), {

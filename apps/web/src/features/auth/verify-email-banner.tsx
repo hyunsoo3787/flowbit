@@ -23,7 +23,7 @@ export function VerifyEmailBanner() {
 
   return (
     <div className="border-b bg-accent/60 text-accent-foreground">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-sm sm:px-6">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-sm sm:px-6">
         <span>{t('auth.verifyBanner.message')}</span>
         <Button variant="link" size="sm" className="h-auto p-0" onClick={resend} disabled={sending}>
           {t('auth.verifyBanner.resend')}

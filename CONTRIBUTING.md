@@ -10,9 +10,13 @@ and why. By participating, you agree to follow the
 
 ## Contributor License Agreement
 
-External contributors sign the [CLA](CLA.md) once, on their first pull request.
-A bot will ask you to. It lets the project offer Flowbit under both the AGPL
-and a commercial license ([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
+External contributors will sign the [CLA](CLA.md) once, on their first pull
+request. It lets the project offer Flowbit under both the AGPL and a commercial
+license ([D-012](docs/DECISIONS.md#d-012-cla-for-external-contributions)).
+
+The CLA is still a draft, and collecting signatures is paused until it is
+finalized. Until then, please open an issue to discuss a contribution before
+starting work on it.
 
 ## Development setup
 
@@ -32,6 +36,9 @@ cp apps/api/.env.example apps/api/.env
 # Create the database schema
 pnpm --filter @flowbit/api db:migrate
 
+# Optional: test accounts and sample boards (see below)
+pnpm build && pnpm --filter @flowbit/api db:seed
+
 # Start everything: API on :3000, web app on :5173 (proxies /api to the API)
 pnpm dev
 ```
@@ -40,6 +47,21 @@ Open <http://localhost:5173>. Without SMTP configured, emails such as the
 verification link are printed in the API's log.
 
 API documentation is served at <http://localhost:3000/api/docs>.
+
+### Test accounts
+
+`pnpm --filter @flowbit/api db:seed` creates a workspace with one account per
+role, so you can check permissions without inviting anyone:
+
+| Email                | Role in the "Flowbit team" workspace |
+| -------------------- | ------------------------------------ |
+| `admin@flowbit.dev`  | Admin (also owns a private board)    |
+| `member@flowbit.dev` | Member: can edit boards              |
+| `viewer@flowbit.dev` | Viewer: read-only                    |
+
+The password for all of them is `flowbit-dev-password`. Run the command again
+with `--reset` to recreate the data. The script refuses to run when
+`NODE_ENV=production`.
 
 ## Project layout
 

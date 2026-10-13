@@ -29,10 +29,10 @@ function AppLayout() {
   }, [me]);
 
   return (
-    <div className="flex min-h-svh flex-col">
+    <div className="flex h-svh flex-col">
       <AppHeader />
       <VerifyEmailBanner />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      <main className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         <Outlet />
       </main>
     </div>

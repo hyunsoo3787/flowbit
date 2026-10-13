@@ -64,7 +64,7 @@ These don't block phase 2, but each must be done by the deadline given.
       company founded later).
 - [ ] Replace the placeholder reporting contact `conduct@flowbit.invalid` in
       `CODE_OF_CONDUCT.md` with a real address.
-- [ ] Enable **Private vulnerability reporting** in the GitHub repository
+- [x] Enable **Private vulnerability reporting** in the GitHub repository
       settings, so the link in `SECURITY.md` works.
 - [ ] Confirm the CLA workflow (`.github/workflows/cla.yml`) works on a real
       pull request.

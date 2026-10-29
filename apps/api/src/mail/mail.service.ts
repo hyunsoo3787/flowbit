@@ -22,6 +22,11 @@ export class MailService {
     this.transport = env.SMTP_URL ? createTransport(env.SMTP_URL) : null;
   }
 
+  /** Whether email really leaves the server (SMTP is configured). */
+  get configured(): boolean {
+    return this.transport !== null;
+  }
+
   async send(to: string, content: MailContent): Promise<void> {
     if (!this.transport) {
       this.outbox.push({ to, ...content });

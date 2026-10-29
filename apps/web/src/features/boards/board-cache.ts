@@ -4,6 +4,7 @@ import {
   type BoardEvent,
   type Card,
   comparePositions,
+  type Label,
   type List,
 } from '@flowbit/shared';
 import { generateKeyBetween } from 'fractional-indexing';
@@ -41,6 +42,24 @@ export function removeCard(board: BoardDetail, cardId: string): BoardDetail {
   return { ...board, cards: board.cards.filter((card) => card.id !== cardId) };
 }
 
+export function upsertLabel(board: BoardDetail, label: Label): BoardDetail {
+  if (label.boardId !== board.id) return board;
+  return { ...board, labels: upsert(board.labels, label) };
+}
+
+/** Removes a label from the board and from every card that had it. */
+export function removeLabel(board: BoardDetail, labelId: string): BoardDetail {
+  return {
+    ...board,
+    labels: board.labels.filter((label) => label.id !== labelId),
+    cards: board.cards.map((card) =>
+      card.labelIds.includes(labelId)
+        ? { ...card, labelIds: card.labelIds.filter((id) => id !== labelId) }
+        : card,
+    ),
+  };
+}
+
 /** Applies changed board fields, keeping the caller's role, lists and cards. */
 export function updateBoardFields(board: BoardDetail, update: Omit<Board, 'role'>): BoardDetail {
   if (board.version > update.version) return board;
@@ -48,7 +67,10 @@ export function updateBoardFields(board: BoardDetail, update: Omit<Board, 'role'
   return { ...board, name, visibility, background, version, updatedAt };
 }
 
-/** Applies a real-time event. `board.deleted` is handled by the caller. */
+/**
+ * Applies a real-time event. `board.deleted` and `card.content` (which
+ * concerns data loaded with the card dialog) are handled by the caller.
+ */
 export function applyEvent(board: BoardDetail, event: BoardEvent): BoardDetail {
   switch (event.type) {
     case 'board.updated':
@@ -61,7 +83,14 @@ export function applyEvent(board: BoardDetail, event: BoardEvent): BoardDetail {
       return upsertCard(board, event.card);
     case 'card.deleted':
       return removeCard(board, event.cardId);
+    case 'label.upserted':
+      return upsertLabel(board, event.label);
+    case 'label.deleted':
+      return removeLabel(board, event.labelId);
+    case 'members.updated':
+      return { ...board, members: event.members };
     case 'board.deleted':
+    case 'card.content':
       return board;
   }
 }

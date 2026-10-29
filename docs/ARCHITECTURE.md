@@ -72,8 +72,10 @@ flowbit/
 │   │   │   ├── auth/        # Better Auth wrapper, session guard (D-020)
 │   │   │   ├── workspaces/  # one folder per feature: controller, service, policy
 │   │   │   ├── common/      # error format, validation pipes, OpenAPI helpers
-│   │   │   ├── realtime/    # Socket.IO gateway, event publishing (planned)
-│   │   │   └── jobs/        # background workers and schedulers (planned)
+│   │   │   ├── realtime/    # Socket.IO gateway, event publishing, presence
+│   │   │   ├── events/      # in-process domain events (feed notifications)
+│   │   │   ├── notifications/ # notifications, watching, activity feeds
+│   │   │   └── jobs/        # job queue and recurring tasks on Valkey (D-022)
 │   │   ├── prisma/          # schema.prisma, migrations
 │   │   └── openapi.json     # generated API contract (committed)
 │   └── web/                 # React SPA (AGPL-3.0)
@@ -145,6 +147,14 @@ sequenceDiagram
 - Events are published **after commit**. If reliable delivery to external
   consumers such as webhooks becomes necessary, we will move to a
   transactional outbox (an `outbox` table plus a relay worker).
+- **Notifications** react to in-process domain events (`card.created`,
+  `card.assigned`, `card.moved`, `comment.created`) emitted after commit, so
+  the board services don't depend on them. Recipients are mentioned people,
+  assignees, and watchers of the card or its board, never the actor, and only
+  people who can still see the board. Each notification is pushed to the
+  recipient's sockets at once; the email goes through the job queue and
+  respects the recipient's preferences. A recurring task sends "due soon"
+  reminders once per due date.
 
 ### API conventions
 
@@ -197,13 +207,25 @@ and the phase each one lands in.
 - **Rooms:** When a board page opens, the client joins `board:{boardId}`. The
   server checks read access before allowing the join. When a board becomes
   private, sockets of people who lost access are removed from the room; when it
-  is deleted, the room is closed. User-level events (notifications, phase 4)
-  will go to `user:{userId}`.
+  is deleted, the room is closed. Every connection also joins
+  `user:{userId}`, which receives `notification` and `notifications:changed`.
+- **Presence (level 2):** On every join and leave, the server sends the room a
+  `board:presence` event with everyone who has the board open (read with
+  `fetchSockets()`, so it works across replicas). Clients send `card:editing`
+  while someone edits a card's description or writes a comment; the server
+  relays it to the others on the board. The signal is renewed every few
+  seconds and expires on its own if a tab disappears.
 - **Events:** `board.updated`, `board.deleted`, `list.upserted`,
-  `list.deleted`, `card.upserted` and `card.deleted`. Each carries `boardId`,
-  `actorId`, `clientMutationId` and the full entity (or its id when deleted);
-  see `packages/shared/src/realtime.ts`. A card or list that moves to another
-  board is announced as deleted on the old board and upserted on the new one.
+  `list.deleted`, `card.upserted`, `card.deleted`, `label.upserted`,
+  `label.deleted` and `members.updated` (the full list of people with access).
+  Each carries `boardId`, `actorId`, `clientMutationId` and the full entity (or
+  its id when deleted); see `packages/shared/src/realtime.ts`. A card or list
+  that moves to another board is announced as deleted on the old board and
+  upserted on the new one.
+- **Card content:** Checklists and comments are loaded with the card dialog,
+  not with the board. A `card.content` event (`part: checklists | comments`)
+  tells clients showing that card to refetch the part; the card's badge counts
+  arrive as a `card.upserted` event.
 - **Echo suppression:** Mutations send a client-generated id in the
   `x-client-mutation-id` header. A client ignores events that carry an id it
   generated itself, because it already applied that change optimistically.
@@ -263,24 +285,24 @@ erDiagram
 | `OrganizationMember` | orgId, userId, role: `OWNER` \| `ADMIN` \| `MEMBER`                                                    |                                                                                                                 |
 | `Workspace`          | organizationId, name, description?, createdById?, version                                              |                                                                                                                 |
 | `WorkspaceMember`    | workspaceId, userId, role: `ADMIN` \| `MEMBER` \| `VIEWER`                                             |                                                                                                                 |
-| `Invitation`         | scope (workspace or board), scopeId, email?, token, role, expiresAt                                    | Email or link invites (phase 3)                                                                                 |
+| `Invitation`         | workspaceId, boardId?, email?, token, workspaceRole? or boardRole?, expiresAt, acceptedAt?, revokedAt? | Email invites are used once; a link (no email) works for anyone until it expires or is replaced                 |
 
 ### Boards and cards
 
-| Entity          | Key fields                                                                                                                      | Notes                                                                                                     |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` (`PUBLIC` later), background, archivedAt? (phase 5)                     |                                                                                                           |
-| `BoardMember`   | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER`                                                                        |                                                                                                           |
-| `List`          | boardId, name, position, archivedAt?                                                                                            | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))           |
-| `Card`          | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverId?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing                                     |
-| `CardAssignee`  | cardId, userId                                                                                                                  |                                                                                                           |
-| `Label`         | boardId, name?, color                                                                                                           |                                                                                                           |
-| `CardLabel`     | cardId, labelId                                                                                                                 |                                                                                                           |
-| `Checklist`     | cardId, title, position                                                                                                         |                                                                                                           |
-| `ChecklistItem` | checklistId, text, position, completedAt?, assigneeId?, dueAt?                                                                  |                                                                                                           |
-| `Comment`       | cardId, authorId, body (Markdown), editedAt?, deletedAt?                                                                        |                                                                                                           |
-| `Attachment`    | cardId, uploaderId, storageKey, fileName, mimeType, size                                                                        | Storage driver per [D-019](DECISIONS.md#d-019-attachment-storage-local-disk-or-any-s3-compatible-service) |
-| `Watch`         | userId, boardId? or cardId?                                                                                                     | For notifications (phase 4)                                                                               |
+| Entity          | Key fields                                                                                                                         | Notes                                                                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `Board`         | workspaceId, name, visibility: `PRIVATE` \| `WORKSPACE` (`PUBLIC` later), background, archivedAt? (phase 5)                        |                                                                                                                                         |
+| `BoardMember`   | boardId, userId, role: `ADMIN` \| `MEMBER` \| `OBSERVER`                                                                           |                                                                                                                                         |
+| `List`          | boardId, name, position, archivedAt?                                                                                               | `position` is a fractional index ([D-015](DECISIONS.md#d-015-fractional-indexing-for-ordering))                                         |
+| `Card`          | boardId, listId, title, description (Markdown), position, startAt?, dueAt?, dueCompletedAt?, coverColor?, archivedAt?, createdById | `boardId` is denormalized for permission checks and real-time routing; comment and checklist counts are kept on the card for the badges |
+| `CardAssignee`  | cardId, userId                                                                                                                     |                                                                                                                                         |
+| `Label`         | boardId, name (may be empty), color (a palette key)                                                                                | New boards get six unnamed labels; labels are taken off cards that move to another board                                                |
+| `CardLabel`     | cardId, labelId                                                                                                                    |                                                                                                                                         |
+| `Checklist`     | cardId, title, position                                                                                                            |                                                                                                                                         |
+| `ChecklistItem` | checklistId, text, position, completedAt?, assigneeId?, dueAt?                                                                     |                                                                                                                                         |
+| `Comment`       | cardId, authorId, body (Markdown, mentions as `<@userId>`), editedAt?                                                              | Deleted comments are removed                                                                                                            |
+| `Attachment`    | cardId, uploaderId, storageKey, fileName, mimeType, size                                                                           | Storage driver per [D-019](DECISIONS.md#d-019-attachment-storage-local-disk-or-any-s3-compatible-service)                               |
+| `Watch`         | userId, boardId? or cardId?                                                                                                        | For notifications (phase 4)                                                                                                             |
 
 ### Activity and notifications
 

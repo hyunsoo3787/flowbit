@@ -6,8 +6,9 @@ ends with something people can use, plus an exit checklist. Phases are
 sequential, but items from later phases can be picked up early if they don't
 block the current one.
 
-> **Current status:** Phases 1 (foundation) and 2 (boards, lists, cards and
-> real-time updates) are implemented. Phase 3 (collaboration basics) is next.
+> **Current status:** Phases 1 to 4 are implemented: foundation; boards,
+> lists, cards and real-time updates; collaboration basics; presence,
+> notifications and activity. Phase 5 (attachments, search, archive) is next.
 
 | Phase                                         | Theme                                             | Edition        |
 | --------------------------------------------- | ------------------------------------------------- | -------------- |
@@ -112,17 +113,18 @@ a phone.
 
 **Goal:** A team can actually run its work on Flowbit.
 
-- [ ] Invite members to a workspace or board (email invite and link invite),
+- [x] Invite members to a workspace or board (email invite and link invite),
       manage roles
-- [ ] Card assignees
-- [ ] Labels (per board, with color and name)
-- [ ] Start and due dates, due-complete toggle
-- [ ] Checklists with items (reorder, complete, assign, due date per item)
-- [ ] Comments (Markdown, edit, delete, @mentions)
-- [ ] Card covers, plus card badges on the board (due date, checklist
-      progress, comment count)
-- [ ] Board filters (by label, member, due date)
-- [ ] Instance administration
+- [x] Card assignees
+- [x] Labels (per board, with color and name)
+- [x] Start and due dates, due-complete toggle
+- [x] Checklists with items (reorder, complete, assign, due date per item)
+- [x] Comments (Markdown, edit, delete, @mentions)
+- [x] Card covers (colors; image covers come with attachments in phase 5),
+      plus card badges on the board (due date, checklist progress, comment
+      count)
+- [x] Board filters (by keyword, label, member, due date), kept in the URL
+- [x] Instance administration
       ([D-021](DECISIONS.md#d-021-instance-administrators-manage-accounts-not-content)):
       a one-time setup URL in the server log creates the first admin, and a
       `flowbit admin grant/revoke` command adds or recovers admins
@@ -143,14 +145,15 @@ recover a lost password without email.
 
 **Goal:** People always know what changed and who is around.
 
-- [ ] **Real-time level 2:** board presence (avatars of viewers), "editing"
+- [x] **Real-time level 2:** board presence (avatars of viewers), "editing"
       indicators
-- [ ] Activity log for boards and cards (who did what, when)
-- [ ] In-app notifications (mentions, assignments, due soon, comments on
+- [x] Activity log for boards and cards (who did what, when)
+- [x] In-app notifications (mentions, assignments, due soon, comments on
       watched cards)
-- [ ] Watch / unwatch cards and boards
-- [ ] Email notifications (SMTP, localized), with per-user preferences
-- [ ] Background job infrastructure (queue and scheduler on Valkey)
+- [x] Watch / unwatch cards and boards
+- [x] Email notifications (SMTP, localized), with per-user preferences
+- [x] Background job infrastructure (queue and scheduler on Valkey,
+      [D-022](DECISIONS.md#d-022-a-small-job-queue-on-valkey-lists))
 
 **Exit checklist:** A mention or assignment reaches the user in the app and
 by email. Every change on a card shows up in its activity feed.

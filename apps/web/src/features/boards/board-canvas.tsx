@@ -46,7 +46,14 @@ function containerOf(columns: Columns, id: UniqueIdentifier, data?: { listId?: s
   return Object.keys(columns).find((listId) => columns[listId]!.includes(key));
 }
 
-export function BoardCanvas({ board }: { board: BoardDetail }) {
+export function BoardCanvas({
+  board,
+  visibleCardIds,
+}: {
+  board: BoardDetail;
+  /** Set while a filter is active: only these cards are shown. */
+  visibleCardIds?: Set<string>;
+}) {
   const { t } = useTranslation();
   const canEdit = board.role !== 'OBSERVER';
   const columns = useMemo(() => boardColumns(board), [board]);
@@ -170,22 +177,30 @@ export function BoardCanvas({ board }: { board: BoardDetail }) {
     >
       <div className="flex h-full items-start gap-3 overflow-x-auto px-4 pb-4 sm:px-6">
         <SortableContext items={listIds} strategy={horizontalListSortingStrategy}>
-          {columns.map(({ list }) => (
-            <ListColumn
-              key={list.id}
-              board={board}
-              list={list}
-              cards={(layout[list.id] ?? []).flatMap((id) => {
-                const card = cardsById.get(id);
-                return card ? [card] : [];
-              })}
-              canEdit={canEdit}
-            />
-          ))}
+          {columns.map(({ list }) => {
+            const cards = (layout[list.id] ?? []).flatMap((id) => {
+              const card = cardsById.get(id);
+              return card ? [card] : [];
+            });
+            const shown = visibleCardIds
+              ? cards.filter((card) => visibleCardIds.has(card.id))
+              : cards;
+            return (
+              <ListColumn
+                key={list.id}
+                board={board}
+                list={list}
+                cards={shown}
+                canEdit={canEdit}
+                dragDisabled={visibleCardIds !== undefined}
+                hiddenCount={cards.length - shown.length}
+              />
+            );
+          })}
         </SortableContext>
 
         {canEdit ? (
-          <div className="w-72 shrink-0 rounded-xl bg-muted/80 p-2">
+          <div className="w-72 shrink-0 rounded-xl bg-muted/80 p-2 text-foreground">
             <Composer
               openLabel={columns.length === 0 ? t('lists.add') : t('lists.addAnother')}
               placeholder={t('lists.namePlaceholder')}
@@ -200,7 +215,7 @@ export function BoardCanvas({ board }: { board: BoardDetail }) {
       <DragOverlay>
         {activeCard ? (
           <div className="w-68">
-            <CardTileContent card={activeCard} dragging />
+            <CardTileContent card={activeCard} board={board} dragging />
           </div>
         ) : activeList ? (
           <div className="w-72 rotate-1 rounded-xl bg-muted p-3 font-semibold shadow-lg ring-2 ring-primary/40">

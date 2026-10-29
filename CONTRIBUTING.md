@@ -59,7 +59,8 @@ role, so you can check permissions without inviting anyone:
 | `member@flowbit.dev` | Member: can edit boards              |
 | `viewer@flowbit.dev` | Viewer: read-only                    |
 
-The password for all of them is `flowbit-dev-password`. Run the command again
+`admin@flowbit.dev` is also an instance administrator, so you can try the
+admin pages. The password for all of them is `flowbit-dev-password`. Run the command again
 with `--reset` to recreate the data. The script refuses to run when
 `NODE_ENV=production`.
 

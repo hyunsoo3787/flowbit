@@ -10,8 +10,8 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { RealtimeService } from '../realtime/realtime.service.js';
 import { BoardAccessService } from './board-access.service.js';
 import { canEditContent } from './board-policy.js';
-import { toCardDto, toListDto } from './mappers.js';
-import { listPosition, lockBoard } from './ordering.js';
+import { CARD_INCLUDE, toCardDto, toListDto } from './mappers.js';
+import { dropForeignLabels, listPosition, lockBoard } from './ordering.js';
 
 const END = Number.MAX_SAFE_INTEGER;
 
@@ -95,6 +95,12 @@ export class ListsService {
         data: { boardId: toBoardId, position, version: { increment: 1 } },
       });
       if (crossBoard) {
+        const cardIds = await tx.card.findMany({ where: { listId }, select: { id: true } });
+        await dropForeignLabels(
+          tx,
+          cardIds.map((card) => card.id),
+          toBoardId,
+        );
         await tx.card.updateMany({
           where: { listId },
           data: { boardId: toBoardId, version: { increment: 1 } },
@@ -121,7 +127,7 @@ export class ListsService {
         listId,
       });
       this.publishList(list, userId, clientMutationId);
-      const cards = await this.prisma.card.findMany({ where: { listId } });
+      const cards = await this.prisma.card.findMany({ where: { listId }, include: CARD_INCLUDE });
       for (const card of cards) {
         this.realtime.publish({
           type: 'card.upserted',

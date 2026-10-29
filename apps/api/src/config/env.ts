@@ -33,6 +33,19 @@ const envSchema = z
     AUTH_DISABLE_SIGN_UP: booleanString.default(false),
     /** Defaults to true in production. */
     AUTH_RATE_LIMIT: booleanString.optional(),
+    /**
+     * Comma-separated emails of instance administrators (D-021). Only honored
+     * with email verification on, and only for verified addresses.
+     */
+    ADMIN_EMAILS: z
+      .string()
+      .optional()
+      .transform((value) =>
+        (value ?? '')
+          .split(',')
+          .map((email) => email.trim().toLowerCase())
+          .filter(Boolean),
+      ),
 
     GITHUB_CLIENT_ID: z.string().optional(),
     GITHUB_CLIENT_SECRET: z.string().optional(),

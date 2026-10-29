@@ -1,25 +1,26 @@
 import {
-  BOARD_BACKGROUNDS,
   BOARD_NAME_MAX_LENGTH,
   BOARD_VISIBILITIES,
-  type BoardBackground,
   type BoardDetail,
   type BoardVisibility,
 } from '@flowbit/shared';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
+  ActivityIcon,
   EyeIcon,
   LockIcon,
   MoreHorizontalIcon,
   PaletteIcon,
   Trash2Icon,
+  UserPlusIcon,
   UsersIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { InlineEdit } from '@/components/inline-edit';
+import { AvatarStack } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -31,6 +32,7 @@ import {
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuRadioGroup,
@@ -41,19 +43,39 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ActivityList } from '@/features/activity/activity-list';
+import { BoardShareDialog } from '@/features/members/members-dialogs';
 import { workspaceQuery } from '@/features/workspaces/queries';
 import { errorMessage } from '@/lib/errors';
 import { cn } from '@/lib/utils';
-import { BACKGROUND_CLASSES } from './backgrounds';
-import { useDeleteBoard, useUpdateBoard } from './queries';
+import { BackgroundPicker } from './background-picker';
+import { boardSurface } from './backgrounds';
+import { BoardFilterButton } from './board-filter';
+import type { BoardFilter } from './filters';
+import { useBoardLive } from './board-live';
+import { useDeleteBoard, useSetWatch, useUpdateBoard } from './queries';
 
-export function BoardHeader({ board }: { board: BoardDetail }) {
+const ON_BOARD = 'text-inherit hover:bg-current/15 hover:text-inherit dark:hover:bg-current/15';
+
+export function BoardHeader({
+  board,
+  filter,
+  onFilterChange,
+}: {
+  board: BoardDetail;
+  filter: BoardFilter;
+  onFilterChange: (filter: BoardFilter) => void;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: workspace } = useQuery(workspaceQuery(board.workspaceId));
   const updateBoard = useUpdateBoard(board.id);
   const deleteBoard = useDeleteBoard(board.id);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [changingBackground, setChangingBackground] = useState(false);
+  const [showingActivity, setShowingActivity] = useState(false);
+  const setWatch = useSetWatch(board.id);
+  const { viewers } = useBoardLive();
   const isAdmin = board.role === 'ADMIN';
   const VisibilityIcon = board.visibility === 'PRIVATE' ? LockIcon : UsersIcon;
 
@@ -68,16 +90,18 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 text-white sm:px-6">
-      <nav className="flex min-w-0 items-center gap-2 text-sm text-white/80">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 sm:px-6">
+      <nav className="flex min-w-0 items-center gap-2 text-sm">
         <Link
           to="/w/$workspaceId"
           params={{ workspaceId: board.workspaceId }}
-          className="max-w-40 truncate rounded-sm hover:text-white hover:underline"
+          className="max-w-40 truncate rounded-sm opacity-80 hover:underline hover:opacity-100"
         >
           {workspace?.name}
         </Link>
-        <span aria-hidden>/</span>
+        <span className="opacity-80" aria-hidden>
+          /
+        </span>
       </nav>
       <h1 className="min-w-0 text-lg font-bold">
         <InlineEdit
@@ -86,88 +110,141 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
           maxLength={BOARD_NAME_MAX_LENGTH}
           disabled={!isAdmin}
           onSave={(name) => updateBoard.mutate({ name })}
-          className="hover:bg-white/15! disabled:hover:bg-transparent"
+          className="hover:bg-current/15! disabled:hover:bg-transparent!"
           inputClassName="text-base"
         />
       </h1>
       <span
-        className="inline-flex items-center gap-1 rounded-md bg-white/15 px-2 py-0.5 text-xs"
+        className="inline-flex items-center gap-1 rounded-md bg-current/10 px-2 py-0.5 text-xs"
         title={t(`boards.visibility${board.visibility}Hint`)}
       >
         <VisibilityIcon className="size-3.5" aria-hidden />
         {t(`boards.visibility${board.visibility}`)}
       </span>
       {board.role === 'OBSERVER' ? (
-        <span className="inline-flex items-center gap-1 rounded-md bg-black/20 px-2 py-0.5 text-xs">
+        <span className="inline-flex items-center gap-1 rounded-md bg-current/15 px-2 py-0.5 text-xs">
           <EyeIcon className="size-3.5" aria-hidden />
           {t('boards.readOnly')}
         </span>
       ) : null}
 
-      {isAdmin ? (
+      <div className="ml-auto flex items-center gap-1">
+        {viewers.length > 1 ? (
+          <span
+            className="hidden items-center gap-1.5 pr-1 text-xs opacity-80 sm:flex"
+            title={t('live.viewing', { names: viewers.map((user) => user.name).join(', ') })}
+          >
+            <span className="size-2 rounded-full bg-green-500" aria-hidden />
+            <AvatarStack users={viewers} max={4} />
+            <span className="sr-only">
+              {t('live.viewing', { names: viewers.map((user) => user.name).join(', ') })}
+            </span>
+          </span>
+        ) : null}
+        <BoardShareDialog
+          board={board}
+          trigger={
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-md px-1.5 py-1 outline-none hover:bg-current/15 focus-visible:ring-2 focus-visible:ring-current"
+              aria-label={t('members.share')}
+            >
+              <AvatarStack users={board.members.map((member) => member.user)} max={5} />
+              {isAdmin ? (
+                <span className="hidden items-center gap-1 text-sm font-medium sm:flex">
+                  <UserPlusIcon className="size-4" aria-hidden />
+                  {t('members.share')}
+                </span>
+              ) : null}
+            </button>
+          }
+        />
+        <BoardFilterButton
+          board={board}
+          filter={filter}
+          onChange={onFilterChange}
+          className={ON_BOARD}
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto text-white hover:bg-white/15 hover:text-white"
-              aria-label={t('boards.menu')}
-            >
+            <Button variant="ghost" size="icon" className={ON_BOARD} aria-label={t('boards.menu')}>
               <MoreHorizontalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <PaletteIcon />
-                {t('boards.background')}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={board.background}
-                  onValueChange={(value) =>
-                    updateBoard.mutate({ background: value as BoardBackground })
-                  }
-                >
-                  {BOARD_BACKGROUNDS.map((color) => (
-                    <DropdownMenuRadioItem key={color} value={color}>
-                      <span
-                        className={cn('size-4 rounded-sm', BACKGROUND_CLASSES[color])}
-                        aria-hidden
-                      />
-                      {t(`boards.colors.${color}`)}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <VisibilityIcon />
-                {t('boards.visibility')}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={board.visibility}
-                  onValueChange={(value) =>
-                    updateBoard.mutate({ visibility: value as BoardVisibility })
-                  }
-                >
-                  {BOARD_VISIBILITIES.map((option) => (
-                    <DropdownMenuRadioItem key={option} value={option}>
-                      {t(`boards.visibility${option}`)}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onSelect={() => setConfirmingDelete(true)}>
-              <Trash2Icon />
-              {t('boards.delete')}
+            <DropdownMenuCheckboxItem
+              checked={board.watching}
+              onCheckedChange={(checked) => setWatch.mutate({ watching: checked === true })}
+            >
+              <EyeIcon />
+              {t('watch.watchBoard')}
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuItem onSelect={() => setShowingActivity(true)}>
+              <ActivityIcon />
+              {t('activity.title')}
             </DropdownMenuItem>
+            {isAdmin ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setChangingBackground(true)}>
+                  <PaletteIcon />
+                  {t('boards.changeBackground')}
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <VisibilityIcon />
+                    {t('boards.visibility')}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup
+                      value={board.visibility}
+                      onValueChange={(value) =>
+                        updateBoard.mutate({ visibility: value as BoardVisibility })
+                      }
+                    >
+                      {BOARD_VISIBILITIES.map((option) => (
+                        <DropdownMenuRadioItem key={option} value={option}>
+                          {t(`boards.visibility${option}`)}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onSelect={() => setConfirmingDelete(true)}>
+                  <Trash2Icon />
+                  {t('boards.delete')}
+                </DropdownMenuItem>
+              </>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+      <Dialog open={showingActivity} onOpenChange={setShowingActivity}>
+        <DialogContent
+          closeLabel={t('common.close')}
+          className="max-h-[85svh] overflow-y-auto sm:max-w-lg"
+        >
+          <DialogHeader>
+            <DialogTitle>{t('activity.title')}</DialogTitle>
+            <DialogDescription>{t('activity.boardHint', { name: board.name })}</DialogDescription>
+          </DialogHeader>
+          {showingActivity ? (
+            <ActivityList source={{ kind: 'board', id: board.id }} board={board} />
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      {changingBackground ? (
+        <BackgroundDialog
+          board={board}
+          onClose={() => setChangingBackground(false)}
+          onSave={(background) => {
+            updateBoard.mutate({ background });
+            setChangingBackground(false);
+          }}
+        />
       ) : null}
 
       <Dialog open={confirmingDelete} onOpenChange={setConfirmingDelete}>
@@ -187,5 +264,49 @@ export function BoardHeader({ board }: { board: BoardDetail }) {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+/** Picks a new background with a live preview; nothing changes until Save. */
+function BackgroundDialog({
+  board,
+  onClose,
+  onSave,
+}: {
+  board: BoardDetail;
+  onClose: () => void;
+  onSave: (background: string) => void;
+}) {
+  const { t } = useTranslation();
+  const [background, setBackground] = useState(board.background);
+  const surface = boardSurface(background);
+
+  return (
+    <Dialog open onOpenChange={(open) => (open ? undefined : onClose())}>
+      <DialogContent closeLabel={t('common.close')}>
+        <DialogHeader>
+          <DialogTitle>{t('boards.changeBackground')}</DialogTitle>
+        </DialogHeader>
+        <div
+          className={cn(
+            'grid h-24 place-items-center rounded-lg px-4 text-center font-semibold',
+            surface.className,
+          )}
+          style={surface.style}
+          aria-hidden
+        >
+          <span className="line-clamp-2">{board.name}</span>
+        </div>
+        <BackgroundPicker value={background} onChange={setBackground} />
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t('common.cancel')}
+          </Button>
+          <Button onClick={() => onSave(background)} disabled={background === board.background}>
+            {t('common.saveChanges')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
